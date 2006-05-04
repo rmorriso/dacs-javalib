@@ -1,0 +1,118 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Getting Started with the DACS Java Library</title><link rel="stylesheet" href="/css/mldocs.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.69.1"><style type="text/css">
+body { background-image: url('http://docbook.sourceforge.net/release/images/draft.png');
+       background-repeat: no-repeat;
+       background-position: top left;
+       /* The following properties make the watermark "fixed" on the page. */
+       /* I think that's just a bit too distracting for the reader... */
+       /* background-attachment: fixed; */
+       /* background-position: center center; */
+     }</style><link rel="start" href="index.html" title="DACS Java Library Version 0.55 System Documentation"><link rel="up" href="index.html" title="DACS Java Library Version 0.55 System Documentation"><link rel="prev" href="index.html" title="DACS Java Library Version 0.55 System Documentation"><link rel="next" href="ar01s03.html" title="System Overview"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Getting Started with the DACS Java Library</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="index.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s03.html">Next</a></td></tr></table><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="sysdoc-sect-2"></a>Getting Started with the DACS Java Library</h2></div></div></div><p class="remark"><i><span class="remark"><span class="emphasis"><em>$Id: getting-started.xml 26 2005-10-17 16:43:43Z rmorriso $</em></span></span></i></p><div class="simplesect" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id246208"></a>Prerequisites</h3></div></div></div><p>
+Before building the DJL, JDK 1.5 and Ant 1.6 must be installed.
+In addition, the (optional) sample Web application requires
+a servlet container such as Apache Tomcat.
+Once you have those, continue with the steps below.
+</p></div><div class="simplesect" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id246221"></a>Download Distribution</h3></div></div></div><p>
+Download the DJL distribution from SourceForge at
+</p><p>
+<a href="http://sourceforge.net/projects/dacs-contrib" target="_top">
+http://sourceforge.net/projects/dacs-contrib
+</a>
+</p><p>
+Untar the distribution to your build area.
+The resulting dacs-javalib directory contains ant build scripts, required
+third-party libraries, and documentation for the following 5 component projects:
+</p><div class="itemizedlist"><ul type="disc"><li><p><a href="http://dacs.fedroot.com/docs/javalib/dacs-client/" target="_top">
+dacs-client
+</a></p></li><li><p><a href="http://dacs.fedroot.com/docs/javalib/dacs-javalib-examples/" target="_top">
+dacs-javalib-examples
+</a></p></li><li><p><a href="http://dacs.fedroot.com/docs/javalib/dacs-services/" target="_top">
+dacs-services
+</a></p></li><li><p><a href="http://dacs.fedroot.com/docs/javalib/dacs-xmlbeans/" target="_top">
+dacs-xmlbeans
+</a></p></li><li><p><a href="http://dacs.fedroot.com/docs/javalib/dacs-web/" target="_top">
+dacs-web
+</a></p></li><li><p><a href="http://dacs.fedroot.com/docs/javalib/fedutil/" target="_top">
+fedutil
+</a></p></li></ul></div><p>
+</p><p>
+The <code class="filename">docs</code> directory
+contains complete Java docs and a current version of this document.
+The <code class="filename">lib</code> directory
+contains third party software including the following two key libraries
+which do the heavy lifting in dacs-javalib:
+
+</p><div class="variablelist"><dl><dt><span class="term">
+<a href="http://jakarta.apache.org/commons/httpclient" target="_top">
+Jakarta Commons HttpClient Version 3.0
+</a>
+</span></dt><dd><p>
+HttpClient provides "an efficient, up-to-date, and feature-rich package
+implementing the client side of the most recent HTTP
+standards and recommendations."
+HttpClient provides greater flexibility and control than native java.net.
+</p><p>
+The DJL extends HttpClient to provide client support for interaction
+with DACS-enabled HTTP servers.
+</p></dd><dt><span class="term">
+<a href="http://xmlbeans.apache.org" target="_top">
+Apache XMLBeans Version 2.1
+</a>
+</span></dt><dd><p>
+XMLBeans is a technology for accessing XML by binding it to Java types. 
+The DJL uses XMLBeans capability for compilation of XML schema to Java types.
+In this way DACS Web service XML document replies can be accessed via
+JavaBeans-style accessors after the fashion of "getFoo" and "setFoo".
+</p></dd></dl></div><p>
+</p></div><div class="simplesect" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id291823"></a>Build &amp; Test</h3></div></div></div><p>
+Each of the component projects has been developed in NetBeans 5.0 IDE
+and has been packaged with its NetBeans project structure intact.
+If you are comfortable in NetBeans, simply open the projects
+and you're off to the races.
+</p><p>
+If NetBeans isn't your cup of tea, you can use the provided freeform ant 
+scripts instead.
+Executing the following from the dacs-javalib directory
+cleans, builds and tests all component projects:
+</p><pre class="programlisting">
+
+   ant clean-all
+   ant build-all
+   ant test-all
+
+</pre><p>
+Note that some tests of Java Swing components will not succeed on a headless
+host.
+For details of failed tests, check the contents of the 
+<code class="filename">build/test/results</code>
+directory in the respective subproject.
+</p><p>
+To run a freeform ant script on an individual subproject, cd into the
+subproject directory and run:
+</p><pre class="programlisting">
+
+   ant -f freeform-build.xml &lt;target&gt;
+
+</pre><p>
+Use the jar target to compile and jar a J2SE subproject to its dist directory.
+Use the war target for dacs-web, which is a J2EE project.
+</p><p>
+Ant targets are also provided to clean the project,
+to run project JUnit tests and to generate JavaDocs.
+Consult freeform-build.xml and freeform.properties in subproject directories
+for details.
+</p></div><div class="simplesect" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id291875"></a>Running the Examples</h3></div></div></div><p>
+The dacs-javalib-examples subproject includes several very simple examples
+corresponding to recipes described in 
+<a href="ar01s04.html" title="DACS Java Library Cookbook">the section called &#8220;DACS Java Library Cookbook&#8221;</a>.
+Assuming a successful build, you can run them from the dacs-javalib directory
+as follows:
+</p><pre class="programlisting">
+
+   ant run-example-1
+   ant run-example-2
+   ant run-example-4_5_6
+   ant run-example-7_8_9_10
+
+</pre><p>
+Some of the examples rely on Java Swing and will not run on a headless host.
+</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="index.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">DACS Java Library Version 0.55 System Documentation </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> System Overview</td></tr></table></div></body></html>

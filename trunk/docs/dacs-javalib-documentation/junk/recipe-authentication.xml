@@ -1,0 +1,190 @@
+<sect1 id="sysdoc-sect-4">
+<title>Recipe: Authentication</title>
+<remark><emphasis>$Id: examples.xml 26 2005-10-17 16:43:43Z rmorriso $</emphasis></remark>
+<para>
+As we saw in the previous recipe, 
+access may denied if a request is not accompanied by valid
+DACS credentials (in the form of an HTTP Cookie).
+DACS supports a variety of authentication mechanisms through which
+credentials may be obtained, including X.509 certificates
+and multi-factor authentication.
+However, the current version of DJL, supports only simple 
+username/password forms of authentication.
+</para>
+<para>
+One approach (which we shall quickly abandon)
+is to use DJL's
+&javalib.DacsAuthenticateService;
+directly to obtain DACS credentials.
+We need to pass the base URI for DACS services in an authenticating
+jurisdiction as well as
+the username and password of an account in that jurisdiction.
+The next example shows the steps involved in authenticating a user
+John Smith.
+</para>
+<example width="60%">
+<title>Direct Authentication</title>
+<programlisting>
+
+  String baseuri = "https://demo.fedroot.com/metalogic/dacs";
+  String jurisdiction = "METALOGIC";
+  String username = "smith";
+  String password = "foozle";
+  DacsContext dacscontext = new DacsContext();
+  try {
+      // prepare a DacsAuthenticateService for invocation in METALOGIC
+      DacsAuthenticateService dacsservice =
+              new DacsAuthenticateService(baseuri, jurisdiction, username, password);
+      // execute the service's DacsGetMethod wrt the dacscontext
+      DacsGetMethod dacsget = dacsservice.getDacsGetMethod();
+      int dacsstatus = dacscontext.executeMethod(dacsget);
+      if (dacsstatus == DacsStatus.SC_OK) {
+          // parse the response stream as XML
+          XmlObject expectedXmlObject = XmlObject.Factory.parse(dacsget.getResponseBodyAsStream());
+          // Check that reply is an instance of the DacsAuthReplyDocument
+          System.out.println(expectedXmlObject.getClass().getName());
+          if(expectedXmlObject instanceof DacsAuthReplyDocument) {
+              DacsAuthReplyDocument doc =
+                      (DacsAuthReplyDocument)expectedXmlObject;
+              // get DacsAuthReply element
+              DacsAuthReplyDocument.DacsAuthReply authreply = doc.getDacsAuthReply();
+              // if authentication was successful credentials will be set
+              if (authreply.isSetDacsCurrentCredentials()) 
+                 return "success: " + authreply.getDacsCurrentCredentials();
+          } else {
+              return "failure: incorrect XML document type";
+          }
+      } else {
+          return "failure: dacsstatus = " + DacsStatus.getStatusText(dacsstatus);
+      }
+  } catch (Exception e) {
+      e.printStackTrace();
+  }
+
+</programlisting>
+</example>
+<para>
+That was a mouthful.
+If authentication is successful, the example code
+will set DACS credentials in a cookie in 
+<literal>dacscontext.</literal>
+These credentials will be sent
+with subsequent HTTP requests executed 
+with respect to <literal>dacscontext.</literal>
+</para>
+<para>
+Let's look at another way to authenticate Smith that takes better
+advantage of the abstract data types provided by the dacs-client library.
+The DJL defines a class
+&javalib.DacsUserAccount;
+that encapsulates username/password authentication.
+A DacsUserAccount is defined with respect to a given
+DACS federation and jurisdiction, implemented in
+the DJL classes
+&javalib.Federation;
+and
+&javalib.Jurisdiction;
+respectively.
+The DJL defines a subclass 
+&javalib.UserContext;
+of
+&javalib.DacsContext;
+to represent the human
+or system entity on whose behalf
+the application's interaction with DACS
+is executed.
+A UserContext may capture the results of authenticating with one
+&javalib.DacsUserAccount;
+or many.
+</para>
+<para>
+Let's reprise the previous example using these
+classes.
+First we create a user context to represent Smith.
+In a middleware application we might pass session id as the
+name but for this example we use a simple string
+"john.smith".
+</para>
+<example width="60%">
+<title>Instantiate a Unique UserContext</title>
+<programlisting>
+
+    String name = "john.smith";
+    UserContext smith = UserContext.getInstance(name);
+
+</programlisting>
+</example>
+<para>
+Our next step is to obtain DACS credentials
+for <literal>smith</literal>
+in jurisdiction <literal>METALOGIC.</literal>
+We first obtain a unique instance of
+&javalib.Federation;
+for the <literal>DEMO</literal> federation.
+We invoke
+&javalib.Federation.getInstance;,
+passing the DACS baseuri of the <literal>FEDADMIN</literal>
+jurisdiction in <literal>DEMO.</literal>
+<footnote>
+<para>
+We have chosen the <literal>FEDADMIN</literal>
+application jurisdiction because it is present in a default
+installation of DACS.
+But the baseuri of any jurisdiction in the federation
+could be used instead.
+</para>
+</footnote>
+
+</para>
+<example width="60%">
+<title>Authenticate with DacsUserAccount</title>
+<programlisting>
+
+  try {
+     String dacsbaseuri = "https://demo.fedroot.com/fedadmin/dacs";
+     DacsContext dacscontext = new DacsContext();
+     // instantiate federation and jurisdiction objects
+     Federation demoFed = Federation.getInstance(dacscontext, dacsbaseuri);
+     Jurisdiction mlJur = demoFed.getJurisdictionByName("METALOGIC");
+     DacsUserAccount account = new DacsUserAccount(demoFed, mlJur, "smith", "yes");
+     // authenticate user smith with respect to account
+     smith.authenticate(account, "foozle");
+  } catch (DacsException e) {
+     e.printStackTrace();
+  }
+
+</programlisting>
+</example>
+
+<para>
+<literal>demoFed</literal> holds meta information about the federation
+itself as well as the list of
+&javalib.Jurisdiction;
+objects for each jurisdiction in the federation.
+We retrieve the jurisdiction object for <literal>METALOGIC</literal>
+by invoking
+&javalib.Federation.getJurisdictionByName;.
+Then we create the
+&javalib.DacsUserAccount;
+and authenticate in UserContext <literal>smith</literal>
+with respect to that account.
+</para>
+<para>
+Successful authentication sets DACS credentials in a cookie
+in <literal>smith</literal>.
+A complete list of credentials can be obtained as shown in the next example
+assuming <literal>smith</literal> has been authenticated as described.
+</para>
+<example width="60%">
+<title>Print User Credentials</title>
+<programlisting>
+
+  for (org.apache.commons.httpclient.Cookie cookie : smith.getDacsCookies()) {
+     System.out.println("Credential: " + cookie);
+  }
+
+</programlisting>
+</example>
+
+</sect1>
+

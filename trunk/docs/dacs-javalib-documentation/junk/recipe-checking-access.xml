@@ -1,0 +1,257 @@
+<sect1 id="sysdoc-sect-3">
+<title>Recipe: Checking Access</title>
+<remark><emphasis>$Id: recipe-checking-access.xml 26 2005-10-17 16:43:43Z rmorriso $</emphasis></remark>
+<para>
+Applications that interact with DACS-enabled servers must be coded
+so that access control events which may occur in a workflow can be recognized 
+and handled appropriately by the application.
+Unfortunately this is not simply a matter of examining the 
+HTTP response status.
+This is so because of the variety of configuration options 
+provided by DACS on the server side for handling
+access-denied events.
+For example, DACS may be configured to generate an HTTP status 403 response,
+a browser redirect (HTTP status 3xx) to a configured event-handler, 
+or an HTML or XML response document (HTTP status 200).
+</para>
+<para>
+To support the coding of client workflow DACS provides a mechanism to 
+to request that an
+<ulink url="http://dacs.fedroot.com/dtd-xsd/dacs_acs.xsd">
+XML document
+</ulink>
+be returned describing the details of the DACS access control decision
+associated with a given HTTP request.
+An application may do nothing more than parse the XML and report
+that access has been denied with an accompanying explanation.
+But in some cases, for example requests requiring authentication or
+notice acknowledgment, DACS returns sufficient information to allow 
+an application to implement a
+work flow that will allow its user to establish missing preconditions that will
+permit access.
+</para>
+<para>
+Let's look at some examples with much of the exception handling
+that would go into live code elided for the purposes of brevity.
+We will be referring to two live
+DACS federations, DEMO and ORAFED:
+</para>
+<itemizedlist mark="none">
+<listitem>
+<segmentedlist>
+<?dbhtml list-presentation="list"?>
+<segtitle>Name</segtitle>
+<segtitle>Federation Domain</segtitle>
+<segtitle>fedadmin uri</segtitle>
+<seglistitem>
+<seg>DEMO</seg>
+<seg>demo.fedroot.com</seg>
+<seg>https://demo.fedroot.com/fedadmin/dacs</seg>
+</seglistitem>
+</segmentedlist>
+</listitem>
+
+<listitem>
+<segmentedlist>
+<?dbhtml list-presentation="list"?>
+<segtitle>Name</segtitle>
+<segtitle>Federation Domain</segtitle>
+<segtitle>fedadmin uri</segtitle>
+<seglistitem>
+<seg>ORAFED</seg>
+<seg>orafed.org</seg>
+<seg>http://fedadmin.orafed.org/dacs</seg>
+</seglistitem>
+</segmentedlist>
+</listitem>
+</itemizedlist>
+
+<para>
+The <literal>fedadmin uri</literal> specifies the base location 
+of DACS services with respect to a well-known application jurisdiction
+<literal>FEDADMIN</literal>
+that by convention we will create in each DACS federation.
+<footnote>
+<para>
+This convention is entirely of our own invention.
+The DACS distribution does not require it.
+</para>
+</footnote>
+</para>
+<para>
+Before we consider the case where access is denied, let's
+see how to construct a request that will be allowed.
+Of course, we could simply access a resource that is outside
+of DACS control entirely, but that wouldn't be very interesting.
+Instead we will request a resource in the <literal>TEST</literal>
+jurisdiction of federation <literal>DEMO</literal>
+that is under DACS control, but for which an ACL
+has been defined to allow unresticted access:
+</para>
+<para>
+<ulink url="https://demo.fedroot.com/test/dacs-wrapped/hello-dacs.shtml">
+https://demo.fedroot.com/test/dacs-wrapped/hello-dacs.shtml
+</ulink>
+</para>
+<para>
+Here is the governing ACL:
+</para>
+<programlisting>
+<![CDATA[
+  <acl_rule>
+    <services>
+      <service url_pattern="/dacs-wrapped/hello-dacs.shtml"/>
+    </services>
+    <rule order="deny,allow"/>
+  </acl_rule>
+]]>
+</programlisting>
+<para>
+The empty rule with order "deny,allow" will always allow access.
+The following example captures a snippet of Java code that uses
+the DJL 
+&javalib.DacsGetMethod;
+to access "hello-dacs.shtml."
+</para>
+
+<example id="ex-1" width="60%">
+<title>Make a DACS Request</title>
+<programlisting>
+
+  DacsContext dacscontext = new DacsContext();
+  DacsGetMethod dacsget = new DacsGetMethod("https://demo.fedroot.com/test/dacs-wrapped/hello-dacs.shtml");
+  int httpstatus = dacscontext.executeMethod(dacsget);
+  if (httpstatus == DacsStatus.SC_OK) {
+      String s = dacsget.getResponseBodyAsString();
+      System.out.println(s);
+  } else {
+    // handle error
+  }
+
+</programlisting>
+</example>
+
+<para>
+The example code produces the following output (edited for readability): 
+</para>
+<programlisting>
+  "Hello Jakarta Commons-HttpClient 3.0-rc4 from DACS jurisdiction TEST"
+</programlisting>
+
+<para>
+The greeting echos the value of the HTTP_USER_AGENT environment variable ("Jakarta ...")
+set by the Apache server and the value of DACS_ACS_JURISDICTION ("TEST") inserted
+into the environment by DACS.
+<footnote>
+<para>
+The Jakarta Commons HttpClient project provides the framework used by DJL 
+for working with the client side of the HTTP protocol.
+The DacsContext and its subclass UserContext appearing in the examples 
+are DACS wrapper classes 
+for the Jakarta Commons HttpClient class.
+</para>
+</footnote>
+</para>
+<para>
+Well, that wasn't too bad.
+But had a different ACL been in place the result might have been different.
+The following ACL allows access only to an authenticated user:
+</para>
+<programlisting>
+<![CDATA[
+  <acl_rule>
+    <services>
+      <service url_pattern="/dacs-wrapped/hello-user.shtml"/>
+    </services>
+    <rule order="allow,deny">
+       <allow>
+          user("auth")
+       </allow>
+    </rule>
+  </acl_rule>
+]]>
+</programlisting>
+<para>
+OK. 
+We can see from the rule that we need to be authenticated.
+Why not call a DJL method to do just that?
+Well, we could, and in some cases that is a perfectly
+acceptable solution (see Recipe TODO),
+but in general, it is unreasonable to expect a
+client application to be aware, a priori, of the access conditions
+that have been implemented at a DACS site.
+A better approach is to assume no foreknowledge
+and design our code to handle access denied events gracefully.
+The code in the next example shows one way this can be done.
+As in the previous example we make use of DacsGetMethod, 
+this time executing the DacsGetMethod in "check-only" mode.
+</para>
+
+<example id="ex-2" width="60%">
+<title>Checking a DACS Request</title>
+<programlisting>
+
+  DacsContext dacscontext = new DacsContext();
+  DacsGetMethod dacsget = new DacsGetMethod("https://demo.fedroot.com/test/dacs-wrapped/hello-user.shtml");
+  // execute dacsget in check_only mode, requesting an XML reply
+  int httpstatus = dacscontext.executeMethod(dacsget, DACS.AcsCheck.check_only, DACS.ReplyFormat.XMLSCHEMA);
+  switch (dacsstatus) {
+  case DacsStatus.SC_OK:
+    System.out.println("DacsGet returned status: " + DacsStatus.getStatusText(dacsstatus));
+    System.out.println(dacsget.getResponseBodyAsString()); 
+    break;
+  case DacsStatus.SC_DACS_ACCESS_DENIED:
+    System.out.println("DacsGet returned status: " + DacsStatus.getStatusText(dacsstatus));
+    System.out.println(dacsget.getResponseBodyAsString());
+    break;
+  case DacsStatus.SC_DACS_ACCESS_ERROR:
+    System.out.println("DacsGet returned status: " + DacsStatus.getStatusText(dacsstatus));
+    break;
+  default:
+    System.out.println("DacsGet returned status: " + DacsStatus.getStatusText(dacsstatus));
+    break;
+  }
+
+</programlisting>
+</example>
+<para>
+The example code produces the the following output (edited for readability):
+</para>
+<programlisting>
+<![CDATA[
+  <?xml version="1.0" encoding="UTF-8" ?> 
+   <dacs_acs xmlns="http://fedroot.com/dacs/v1.4" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://fedroot.com/dacs/v1.4 /dtd-xsd/dacs_acs.xsd">
+     <access_denied>
+          <event902 message="Access denied, user not authenticated" 
+                handler="https://demo.fedroot.com/fedadmin/utils/login.php" /> 
+     </access_denied>
+   </dacs_acs>
+]]>
+</programlisting>
+<para>
+In this example, the request is not executed.
+Instead, DACS performs its standard evaluation and returns an
+XML document reply describing its decision.
+The XML tells us that if the request had actually been made DACS would have denied
+access because there were no accompanying DACS credentials for an authenticated user.
+The XML document references a login handler URL (as configured on the server).
+A DACS-aware client application can use this information to construct a
+login workflow to allow a user to obtain required DACS credentials
+before accessing DACS-wrapped resources.
+Luckily, creating a DACS-aware client isn't that hard.
+The DJL includes Java 
+<ulink url="http://dacs.fedroot.com/docs/javalib/dacs-services/com/fedroot/dacs/xmlbeans/package-summary.html">
+XMLBeans
+</ulink>
+classes for each 
+DACS XML document type that a client application may need to parse.
+The complete set of DACS DTDs and their XML schema translations is
+available at
+<ulink url="http://dacs.fedroot.com/dtd-xsd">
+http://dacs.fedroot.com/dtd-xsd
+</ulink>
+</para>
+</sect1>
+

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article SYSTEM "../docbook-xml/docbookx.dtd"
+[
+<!ENTITY % dacs   SYSTEM "../ent/dacs-docbook.ent">
+%dacs;
+<!ENTITY % vers   SYSTEM "../ent/version.ent">
+%vers;
+<!ENTITY % javadoc SYSTEM "../javadoc.ent">
+%javadoc;
+
+<!ENTITY section1 SYSTEM "intro.xml">
+<!ENTITY section2 SYSTEM "getting-started.xml">
+<!ENTITY section3 SYSTEM "system.xml">
+<!ENTITY section4 SYSTEM "recipes.xml">
+<!-- ENTITY section7 SYSTEM "recipe-notice-acknowledgement.xml" -->
+<!ENTITY glossary SYSTEM "glossary.xml">
+]>
+
+<article id="javalib-system-manual" status="draft">
+<title>DACS Java Library Version 0.55 System Documentation</title>
+<subtitle>
+&dacsdocs.version;
+<?dbtimestamp format="B d, Y H:M:S"?>
+</subtitle>
+    
+<articleinfo>
+<releaseinfo><emphasis>$Id: javalib-system-documentation.xml 31 2005-10-17 18:01:36Z rmorriso $</emphasis></releaseinfo>
+
+  <edition>First</edition>
+  <authorgroup>
+    <corpauthor>
+      <ulink url="http://fedroot.com/metalogic">Metalogic Software</ulink>
+    </corpauthor>
+    <corpauthor>
+      <ulink url="http://dss.ca">Distributed Systems Software</ulink>
+    </corpauthor>
+  </authorgroup>
+
+  <copyright>
+    <year>2005-2006</year>
+    <holder>Metalogic Software</holder>
+  </copyright>
+
+<legalnotice>
+<para>This release of the &DJL; and its documentation may only be used
+and distributed under the terms of the Metalogic licensing agreement 
+  <ulink url="http://fedroot.com/licenses/metalogic.txt">http://fedroot.com/licenses/metalogic.txt</ulink>.  
+  All rights reserved.
+</para>
+</legalnotice>
+
+<abstract>
+<para>
+This is the system documentation for the &DJL;.
+Documentation on DACS - the Distributed Access Control System -  
+may be found at the
+<ulink url="http://dacs.dss.ca">DACS home page</ulink>. 
+The DACS distribution itself is available for download from SourceForge:
+<ulink url="http://sourceforge.net/projects/dacs">
+http://sourceforge.net/projects/dacs.
+</ulink>
+This document is a beginning but readers should be aware that there
+are gaps in the coverage and that documentation lags behind code.
+</para>
+<para>
+This first version of &DJL; implements Java wrapper classes for selected 
+<application>DACS</application> services,  and provides
+an HTTP client through which DACS
+services may be accessed and DACS credentials obtained and managed.
+The &DJL; is open source software and has been released as a companion
+project to DACS on SourceForge:
+<ulink url="http://sourceforge.net/projects/dacs-contrib">
+http://sourceforge.net/projects/dacs-contrib
+</ulink> 
+</para>
+<para>
+<emphasis role="bold">Note that the &DJL; adds no new functionality to DACS.</emphasis>
+</para>
+</abstract>
+</articleinfo>
+
+<!--
+-->
+&section1;
+&section2;
+&section3;
+&section4;
+&glossary;
+</article>

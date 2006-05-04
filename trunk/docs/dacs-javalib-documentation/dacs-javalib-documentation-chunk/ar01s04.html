@@ -1,0 +1,586 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>DACS Java Library Cookbook</title><link rel="stylesheet" href="/css/mldocs.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.69.1"><style type="text/css">
+body { background-image: url('http://docbook.sourceforge.net/release/images/draft.png');
+       background-repeat: no-repeat;
+       background-position: top left;
+       /* The following properties make the watermark "fixed" on the page. */
+       /* I think that's just a bit too distracting for the reader... */
+       /* background-attachment: fixed; */
+       /* background-position: center center; */
+     }</style><link rel="start" href="index.html" title="DACS Java Library Version 0.55 System Documentation"><link rel="up" href="index.html" title="DACS Java Library Version 0.55 System Documentation"><link rel="prev" href="ar01s03.html" title="System Overview"><link rel="next" href="apa.html" title="A. Glossary"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">DACS Java Library Cookbook</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ar01s03.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apa.html">Next</a></td></tr></table><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="sysdoc-sect-4"></a>DACS Java Library Cookbook</h2></div></div></div><p class="remark"><i><span class="remark"><span class="emphasis"><em>$Id: examples.xml 26 2005-10-17 16:43:43Z rmorriso $</em></span></span></i></p><p>
+In the belief that an example is worth a thousand words of
+abstract description, we offer a number of simple recipes for
+common DACS tasks.
+</p><p>
+In the example code that follows much of the error-checking
+that would go into live code has been elided for the purpose of brevity.
+Working code for each of the examples may be found in
+the dacs-javalib-examples
+package included in the <span class="application">DACS Java Library</span> distribution.
+</p><p>
+In the examples we will be referring to a live
+DACS federation, DEMO:
+</p><div class="itemizedlist"><ul type="none"><li style="list-style-type: none"><div class="segmentedlist"><div class="seglistitem"><div class="seg"><strong><span class="segtitle">Name: </span></strong>DEMO</div><div class="seg"><strong><span class="segtitle">Federation Domain: </span></strong>demo.fedroot.com</div><div class="seg"><strong><span class="segtitle">fedadmin uri: </span></strong>https://demo.fedroot.com/fedadmin/dacs</div></div></div></li></ul></div><p>
+The <code class="code">fedadmin uri</code> specifies the base location 
+of DACS services with respect to a well-known application jurisdiction
+<code class="literal">FEDADMIN</code>
+that by convention we will create in each DACS federation.
+<sup>[<a name="id292815" href="#ftn.id292815">2</a>]</sup>
+</p><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="recipe-hello-world"></a>Recipe: Hello World</h3></div></div></div><p>
+
+Before we consider the case where access is denied, let's
+see how to construct a request that will be allowed.
+Of course, we could simply access a resource that is outside
+of DACS control entirely, but that wouldn't be very interesting.
+Instead we will request a resource in the <code class="literal">TEST</code>
+jurisdiction of federation <code class="literal">DEMO</code>
+that is under DACS control, but for which an ACL
+has been defined to allow unresticted access:
+</p><p>
+<a href="https://demo.fedroot.com/test/dacs-wrapped/hello-dacs.shtml" target="_top">
+https://demo.fedroot.com/test/dacs-wrapped/hello-dacs.shtml
+</a>
+</p><p>
+Here is the governing ACL:
+</p><pre class="programlisting">
+
+  &lt;acl_rule&gt;
+    &lt;services&gt;
+      &lt;service url_pattern="/dacs-wrapped/hello-dacs.shtml"/&gt;
+    &lt;/services&gt;
+    &lt;rule order="deny,allow"/&gt;
+  &lt;/acl_rule&gt;
+
+</pre><p>
+The empty rule with order "deny,allow" allows access by default.
+The following example captures a snippet of Java code that uses
+the DJL 
+<a href="http://dacs.fedroot.com/docs/javalib/dacs-services/com/fedroot/dacs/http/DacsGetMethod.html" target="_top">
+DacsGetMethod
+</a>
+to access "hello-dacs.shtml."
+</p><div class="example"><a name="ex-1"></a><p class="title"><b>Example 1. Make a DACS Request</b></p><pre class="programlisting">
+
+  DacsContext dacscontext = new DacsContext();
+  String resource_uri = "https://demo.fedroot.com/test/dacs-wrapped/hello-user.shtml";
+  DacsGetMethod dacsget = new DacsGetMethod(resource_uri);
+  int dacsstatus = dacscontext.executeMethod(dacsget);
+  if (dacsstatus == DacsStatus.SC_OK) {
+      String s = dacsget.getResponseBodyAsString();
+      System.out.println(s);
+  } else {
+    // handle error
+  }
+
+</pre></div><p>
+The example code produces the following output (edited for readability): 
+</p><pre class="programlisting">
+  "Hello Jakarta Commons-HttpClient 3.0 from DACS jurisdiction TEST"
+</pre><p>
+The greeting echos the value of the HTTP_USER_AGENT environment variable ("Jakarta ...")
+set by the Apache server and the value of DACS_ACS_JURISDICTION ("TEST") inserted
+into the environment by DACS.
+<sup>[<a name="id292930" href="#ftn.id292930">3</a>]</sup>
+</p><p>
+That was simple enough as "hello world" examples go. 
+But things don't really get interesting until we start bumping into DACS
+access control.
+Consider the following ACL which restricts access only to authenticated users:
+</p><pre class="programlisting">
+
+  &lt;acl_rule&gt;
+    &lt;services&gt;
+      &lt;service url_pattern="/dacs-wrapped/hello-user.shtml"/&gt;
+    &lt;/services&gt;
+    &lt;rule order="allow,deny"&gt;
+       &lt;allow&gt;
+          user("auth")
+       &lt;/allow&gt;
+    &lt;/rule&gt;
+  &lt;/acl_rule&gt;
+
+</pre><p>
+Suppose we execute the code in <a href="ar01s04.html#ex-1" title="Example 1. Make a DACS Request">Example 1, &#8220;Make a DACS Request&#8221;</a> with the 
+following value for resource_uri:
+</p><p>
+<a href="https://demo.fedroot.com/test/dacs-wrapped/hello-user.shtml" target="_top">
+https://demo.fedroot.com/test/dacs-wrapped/hello-user.shtml
+</a>
+</p><p>
+DACS will deny access and generate a browser redirect to a login form.
+If the user agent is a dumb browser a redirect to a
+login form is just the ticket: the user
+supplies a valid username
+and password and is redirected to back to resource_uri 
+to which access is now allowed.
+</p><p>
+This behaviour will not, however, be appropriate for typical
+thick client or middleware applications that have not been
+designed from the ground up to be DACS-aware.
+Moreover, it is neither reasonable nor appropriate to
+build into an application foreknowledge of the access control
+rules that have been implemented at specific DACS sites
+(as was done in the hello-dacs example).
+</p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="recipe-checking-access"></a>Recipe: Checking Access</h3></div></div></div><p>
+Applications that interact with DACS-enabled servers must be coded
+so that access control events which may occur in a workflow can be recognized 
+and handled appropriately by the application.
+<sup>[<a name="id293008" href="#ftn.id293008">4</a>]</sup>
+</p><p>
+To support coding of client workflow that reacts gracefully to
+DACS access denied events a DacsMethod may be executed
+in one of two possible "check modes:"
+</p><div class="itemizedlist"><ul type="disc"><li><p>
+<code class="function">CHECK_ONLY</code> mode causes DACS to return its access control
+decision in an XML response
+</p></li><li><p>
+<code class="function">CHECK_FAIL</code> mode behavior is identical to CHECK_ONLY if DACS would
+deny access, but if access is allowed, the request is executed as
+if no mode had been selected
+</p></li></ul></div><p>
+In each check mode, DACS responds with an
+<a href="http://dacs.fedroot.com/dtd-xsd/dacs_acs.xsd" target="_top">
+XML document
+</a>
+describing the details of the DACS access control decision
+associated with a given HTTP request.
+The requesting application may do nothing more than parse the XML and report
+that access has been denied with an accompanying explanation.
+But in some cases, for example requests requiring authentication or
+notice acknowledgment, DACS returns sufficient information to allow 
+an application to implement a
+work flow that will allow its user to establish missing preconditions that may
+permit access.
+</p><p>
+<a href="ar01s04.html#ex-2" title="Example 2. Checking a DACS Request">Example 2, &#8220;Checking a DACS Request&#8221;</a> illustrates 
+the execution of a DacsGetMethod in CHECK_ONLY mode.
+</p><div class="example"><a name="ex-2"></a><p class="title"><b>Example 2. Checking a DACS Request</b></p><pre class="programlisting">
+
+  DacsContext dacscontext = new DacsContext();
+  String resource_uri = "https://demo.fedroot.com/test/dacs-wrapped/hello-user.shtml";
+  DacsGetMethod dacsget = new DacsGetMethod(resource_uri);
+  // execute dacsget in check_only mode, requesting an XML reply
+  int dacsstatus = dacscontext.executeMethod(dacsget, DACS.AcsCheck.check_only, DACS.ReplyFormat.XMLSCHEMA);
+  switch (dacsstatus) {
+  case DacsStatus.SC_OK:
+    System.out.println("DacsGet returned status: " + DacsStatus.getStatusText(dacsstatus));
+    System.out.println(dacsget.getResponseBodyAsString()); 
+    break;
+  case DacsStatus.SC_DACS_ACCESS_DENIED:
+    System.out.println("DacsGet returned status: " + DacsStatus.getStatusText(dacsstatus));
+    System.out.println(dacsget.getResponseBodyAsString());
+    break;
+  case DacsStatus.SC_DACS_ACCESS_ERROR:
+    System.out.println("DacsGet returned status: " + DacsStatus.getStatusText(dacsstatus));
+    break;
+  default:
+    System.out.println("DacsGet returned unknown status");
+    break;
+  }
+
+</pre></div><p>
+The DacsGetRequest is not executed.
+Instead, DACS performs its standard evaluation against the
+request and returns a
+<a href="http://dacs.fedroot.com/dtd-xsd/dacs_acs.xsd" target="_top">
+DACS_ACS document
+</a> reply describing its decision (edited for readability):
+</p><pre class="programlisting">
+
+  &lt;?xml version="1.0" encoding="UTF-8" ?&gt; 
+   &lt;dacs_acs xmlns="http://fedroot.com/dacs/v1.4" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://fedroot.com/dacs/v1.4 /dtd-xsd/dacs_acs.xsd"&gt;
+     &lt;access_denied&gt;
+          &lt;event902 message="Access denied, user not authenticated" 
+                handler="https://demo.fedroot.com/fedadmin/utils/login.php" /&gt; 
+     &lt;/access_denied&gt;
+   &lt;/dacs_acs&gt;
+
+</pre><p>
+The DACS_ACS document contains an access denied element identifying
+event902 (NO_AUTH) as the cause:
+if the request had actually been made 
+DACS would have denied access because there were no accompanying 
+DACS credentials for an authenticated user.
+The DACS_ACS document references a login handler URL (as configured on the server).
+A DACS-aware client application might use this information to construct a
+login workflow to allow a user to obtain required DACS credentials
+before accessing DACS-wrapped resources.
+</p><p>
+Luckily, as we shall see in the recipes that follow,                                       creating DACS-aware clients isn't that hard.
+</p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="recipe-authentication"></a>Recipe: Authentication</h3></div></div></div><p>
+As we saw in the previous recipe, 
+access may be denied if a request is not accompanied by valid
+DACS credentials (in the form of an HTTP Cookie).
+DACS supports a variety of authentication mechanisms through which
+credentials may be obtained, including X.509 certificates
+and multi-factor authentication.
+However the current version of DJL supports only simple 
+username/password forms of authentication.
+</p><p>
+One approach to authentication (which we shall quickly abandon)
+is to use DJL's
+<a href="http://dacs.fedroot.com/docs/javalib/dacs-services/com/fedroot/dacs/services/DacsAuthenticateService.html" target="_top">
+DacsAuthenticateService
+</a>
+directly to obtain DACS credentials.
+We need to pass to the service the base URI for DACS in an authenticating
+jurisdiction as well as
+the username and password of an account in that jurisdiction.
+<a href="ar01s04.html#ex-3" title="Example 3. Direct Authentication">Example 3, &#8220;Direct Authentication&#8221;</a> shows the steps involved in authenticating a user
+John Smith.
+</p><div class="example"><a name="ex-3"></a><p class="title"><b>Example 3. Direct Authentication</b></p><pre class="programlisting">
+
+  String baseuri = "https://demo.fedroot.com/metalogic/dacs";
+  String jurisdiction = "METALOGIC";
+  String username = "smith";
+  String password = "foozle";
+  DacsContext dacscontext = new DacsContext();
+  try {
+      // prepare a DacsAuthenticateService for invocation in METALOGIC
+      DacsAuthenticateService dacsservice =
+              new DacsAuthenticateService(baseuri, jurisdiction, username, password);
+      // execute the service's DacsGetMethod wrt the dacscontext
+      DacsGetMethod dacsget = dacsservice.getDacsGetMethod();
+      int dacsstatus = dacscontext.executeMethod(dacsget);
+      if (dacsstatus == DacsStatus.SC_OK) {
+          // parse the response stream as XML
+          XmlObject expectedXmlObject = XmlObject.Factory.parse(dacsget.getResponseBodyAsStream());
+          // Check that reply is an instance of the DacsAuthReplyDocument
+          System.out.println(expectedXmlObject.getClass().getName());
+          if(expectedXmlObject instanceof DacsAuthReplyDocument) {
+              DacsAuthReplyDocument doc =
+                      (DacsAuthReplyDocument)expectedXmlObject;
+              // get DacsAuthReply element
+              DacsAuthReplyDocument.DacsAuthReply authreply = doc.getDacsAuthReply();
+              // if authentication was successful credentials will be set
+              if (authreply.isSetDacsCurrentCredentials()) 
+                 return "success: " + authreply.getDacsCurrentCredentials();
+          } else {
+              return "failure: incorrect XML document type";
+          }
+      } else {
+          return "failure: dacsstatus = " + DacsStatus.getStatusText(dacsstatus);
+      }
+  } catch (Exception e) {
+      e.printStackTrace();
+  }
+
+</pre></div><p>
+The <code class="literal">DacsAuthenticateService</code> request is executed and, 
+if the response status is <code class="literal">SC_OK</code>, 
+the response stream is parsed as a 
+<code class="literal">DacsAuthReply</code> document, extracting the
+<code class="literal">DacsCurrentCredentials</code> element.
+If authentication is successful DACS credentials are set in a cookie in 
+<code class="literal">dacscontext.</code>
+These credentials will be sent (according to cookie semantics)
+with subsequent HTTP requests executed 
+with respect to <code class="literal">dacscontext.</code>
+</p><p>
+Let's look at another way to authenticate Smith that takes better
+advantage of the abstract data types provided by the dacs-client library.
+The DJL defines a class
+<a href="http://dacs.fedroot.com/docs/javalib/dacs-client/com/fedroot/dacs/DacsUserAccount.html" target="_top">
+DacsUserAccount
+</a>
+that encapsulates username/password authentication.
+A DacsUserAccount is defined with respect to a given
+DACS federation and jurisdiction, implemented in
+the DJL classes
+<a href="http://dacs.fedroot.com/docs/javalib/dacs-client/com/fedroot/dacs/Federation.html" target="_top">
+Federation
+</a>
+and
+<a href="http://dacs.fedroot.com/docs/javalib/dacs-client/com/fedroot/dacs/Jurisdiction.html" target="_top">
+Jurisdiction
+</a>
+respectively.
+The DJL defines a subclass 
+<a href="http://dacs.fedroot.com/docs/javalib/dacs-client/com/fedroot/dacs/UserContext.html" target="_top">
+UserContext
+</a>
+of
+<a href="http://dacs.fedroot.com/docs/javalib/dacs-client/com/fedroot/dacs/DacsContext.html" target="_top">
+DacsContext
+</a>
+to represent the human
+or system entity on whose behalf
+the application's interaction with DACS
+is executed.
+A UserContext may capture the results of authenticating with one
+<a href="http://dacs.fedroot.com/docs/javalib/dacs-client/com/fedroot/dacs/DacsUserAccount.html" target="_top">
+DacsUserAccount
+</a>
+or many.
+</p><p>
+Let's reprise the previous example using these
+classes.
+First we create a usercontext to represent Smith.
+In a middleware application we might pass session id as the
+name but for this example we use a simple string
+"john.smith".
+</p><div class="example"><a name="ex-4"></a><p class="title"><b>Example 4. Instantiate a Unique UserContext</b></p><pre class="programlisting">
+
+    String name = "john.smith";
+    UserContext smith = UserContext.getInstance(name);
+
+</pre></div><p>
+<a href="ar01s04.html#ex-5" title="Example 5. Authenticate with DacsUserAccount">Example 5, &#8220;Authenticate with DacsUserAccount&#8221;</a> shows the steps 
+to obtain DACS credentials
+for <code class="literal">smith</code>
+in jurisdiction <code class="literal">METALOGIC.</code>
+We first obtain a unique instance of
+<a href="http://dacs.fedroot.com/docs/javalib/dacs-client/com/fedroot/dacs/Federation.html" target="_top">
+Federation
+</a>
+for the <code class="literal">DEMO</code> federation.
+We invoke
+<a href="http://dacs.fedroot.com/docs/javalib/dacs-client/com/fedroot/dacs/Federation.html#getInstance(com.fedroot.dacs.DacsContext,%20java.lang.String)" target="_top">
+Federation.getInstance()
+</a>,
+passing the DACS baseuri of the <code class="literal">FEDADMIN</code>
+jurisdiction in <code class="literal">DEMO.</code>
+<sup>[<a name="id293466" href="#ftn.id293466">5</a>]</sup>
+The Federation <code class="literal">demoFed</code> holds meta information about the federation
+itself as well as the list of
+<a href="http://dacs.fedroot.com/docs/javalib/dacs-client/com/fedroot/dacs/Jurisdiction.html" target="_top">
+Jurisdiction
+</a>
+objects constructed for each jurisdiction in the federation.
+We retrieve the jurisdiction for <code class="literal">METALOGIC</code>
+by invoking
+<a href="http://dacs.fedroot.com/docs/javalib/dacs-client/com/fedroot/dacs/Federation.html#getJurisdictionByName(java.lang.String)" target="_top">
+getJurisdictionByName()
+</a>.
+Then we create the
+<a href="http://dacs.fedroot.com/docs/javalib/dacs-client/com/fedroot/dacs/DacsUserAccount.html" target="_top">
+DacsUserAccount
+</a>
+and authenticate in UserContext <code class="literal">smith</code>
+with respect to that account.
+</p><div class="example"><a name="ex-5"></a><p class="title"><b>Example 5. Authenticate with DacsUserAccount</b></p><pre class="programlisting">
+
+  try {
+     String dacsbaseuri = "https://demo.fedroot.com/fedadmin/dacs";
+     DacsContext dacscontext = new DacsContext();
+     // instantiate federation and jurisdiction objects
+     Federation demoFed = Federation.getInstance(dacscontext, dacsbaseuri);
+     Jurisdiction mlJur = demoFed.getJurisdictionByName("METALOGIC");
+     DacsUserAccount account = new DacsUserAccount(demoFed, mlJur, "smith", "yes");
+     // authenticate user smith with respect to account
+     smith.authenticate(account, "foozle");
+  } catch (DacsException e) {
+     e.printStackTrace();
+  }
+
+</pre></div><p>
+Successful authentication sets DACS credentials for
+<code class="literal">account</code> in a cookie
+in UserContext <code class="literal">smith</code>.
+It is possible to authenticate with respect to many DacsUserAccounts.
+A complete list of credentials associated with a UserContext 
+can be obtained as shown in the next example.
+</p><div class="example"><a name="ex-6"></a><p class="title"><b>Example 6. Print User Credentials</b></p><pre class="programlisting">
+
+  for (org.apache.commons.httpclient.Cookie cookie : smith.getDacsCookies()) {
+     System.out.println("Credential: " + cookie);
+  }
+
+</pre></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="sysdoc-sect-6"></a>Recipe: Notice Acknowlegement</h3></div></div></div><p>
+Some web service providers have a requirement that users must
+acknowledge some form of notice before access can be granted to an
+associated resource, in addition to usual access control
+constraints.
+In DACS such constraints are expressed by means of the
+<code class="function">ack()</code> predicate as illustrated in the ACL below.
+</p><pre class="programlisting">
+
+  &lt;acl_rule&gt;
+    &lt;services&gt;
+      &lt;service url_pattern="/dacs-wrapped/notice-required.html"/&gt;
+    &lt;/services&gt;
+    &lt;rule order="allow,deny" pass_credentials="all" pass_http_cookie="yes"&gt;
+      &lt;allow&gt;
+         ack("http://demo.fedroot.com/test/notices/arjis-disclaimer.html",
+             "http://demo.fedroot.com/test/notices/usgs-disclaimer.html")
+      &lt;/allow&gt;
+    &lt;/rule&gt;
+  &lt;/acl_rule&gt;
+
+</pre><p>
+TO BE COMPLETED ....
+
+</p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="recipe-thick-client"></a>Recipe: Sample Thick Client</h3></div></div></div><p>
+In this recipe we bring together several components of the
+<span class="application">DACS Java Library</span> in a sample application written in Swing.
+The sample does nothing terribly useful in itself but serves as an example
+of some basic patterns that may be used when developing thick client
+applications.
+Of particular interest is the use of CHECK_FAIL mode combined with custom event handlers
+to isolate access denied processing.
+</p><p>
+The top of the GUI component hierarchy is DacsClientFrame which initializes
+the application, presents the results of executing canned or custom
+HTTP requests and acts as a dispatcher
+for DacsLoginFrame, DacsNatFrame, and DacsUsernameFrame.
+Canned requests may be selected from the Action combo box or a custom
+URL may be entered.
+These requests may be executed directly 
+or one of the check boxes may
+selected to enabled CHECK_ONLY (Enable Check Only)
+or CHECK_FAIL (Enable Event Handling) mode. 
+The request is invoked by clicking "Go."
+</p><div class="figure"><a name="sysdoc-fig-4"></a><p class="title"><b>Figure 4. Sample Thick Client</b></p><div class="mediaobject"><img src="images/thick-client.png" alt="Sample Thick Client"></div></div><p>
+In the excerpt below, DacsClientFrame is initialized with a usercontext
+and federation.
+Subsequent user interactions are executed with respect to this environment.
+User credential and notice acknowledgement cookies are stored in the
+UserContext and may be viewed/editied by clicking the "Usernames" and "NATs"
+buttons respectively.
+</p><div class="example"><a name="ex-7"></a><p class="title"><b>Example 7. DirectClientFrame</b></p><pre class="programlisting">
+
+  public DacsClientFrame(UserContext usercontext, Federation federation) 
+  throws Exception {
+
+    this.federation = federation;
+    this.usercontext = usercontext;
+    this.usercontext.setDacs902EventHandler(federation, new Event902Handler(this));
+    this.usercontext.setDacs905EventHandler(federation, new Event905Handler(this));
+
+       [ ... ]
+  }
+</pre></div><p>
+Two custom event handlers are associated with usercontext: 
+<code class="function">Event902Handler</code> and
+<code class="function">Event905Handler</code>.
+If the Enable Event Handling checkbox is checked in DacsClientFrame
+DACS requests are executed in CHECK_FAIL mode.
+In this mode, a DACS 902 or 905 event generated by a DacsMethod
+results in a call-back to the respective handler.
+The screen capture in <a href="ar01s04.html#sysdoc-fig-4" title="Figure 4. Sample Thick Client">Figure 4, &#8220;Sample Thick Client&#8221;</a>
+shows login and notice acknowledgement
+dialogs that implement
+<a href="http://dacs.fedroot.com/docs/javalib/dacs-client/com/fedroot/dacs/util/Dacs902EventHandler.html" target="_top">
+Dacs902EventHandler
+</a>
+and
+<a href="http://dacs.fedroot.com/docs/javalib/dacs-client/com/fedroot/dacs/util/Dacs905EventHandler.html" target="_top">
+Dacs905EventHandler
+</a>
+interfaces required by the call-back mechanism.
+Event processing is defined in the <code class="function">handleEvent()</code>
+interface method excerpted below.
+</p><div class="example"><a name="ex-8"></a><p class="title"><b>Example 8. Event902Handler</b></p><pre class="programlisting">
+
+  int handleEvent(DacsContext dacscontext, DacsGetMethod dacsget, DacsAccess902Event event) {
+    try {
+      Federation federation = Federation.getInstance(dacscontext, event.getJurUri());
+      // open a login dialog for this federation
+      DacsLoginDialog dialog = new DacsLoginDialog(this.parent, "DACS Login", federation, dacscontext);
+      if(dialog.showDialog()){ // user login was successful
+          dialog.dispose();
+          // return the result of executing dacsget again in the modified context
+          return dacscontext.executeMethod(dacsget, DACS.AcsCheck.check_fail, DACS.ReplyFormat.XMLSCHEMA);
+      } else { // User selected cancel
+          dialog.dispose();
+          return DacsStatus.SC_DACS_ACCESS_DENIED;
+      }
+    } catch (Exception e) {
+        return DacsStatus.SC_DACS_ACCESS_DENIED;
+    }
+  }
+</pre></div><p>
+The Event902Handler presents a login dialog 
+</p><div class="example"><a name="ex-9"></a><p class="title"><b>Example 9. Event905Handler</b></p><pre class="programlisting">
+
+  public int handleEvent(DacsContext dacscontext, DacsGetMethod dacsget, DacsAccess905Event event) {
+      try {
+        // execute DacsNoticePresentationService to get notices back for acceptance
+        // then execute DacsNoticePresentationService to send user's acceptance and get NAT
+        DacsNotices notices = new DacsNotices(dacscontext, event);
+        DacsNoticePresentationDialog dialog = 
+            new DacsNoticePresentationDialog(
+                   this.parent, "DACS Notices Must Be Acknowledged", dacscontext, notices);
+        if(dialog.showDialog()){ // user clicked ACCEPT                
+            // send user accept response via DacsNoticeAckService
+            if (notices.acceptNotices(dacscontext)) {
+                dialog.dispose();
+                // return the result of executing dacsget again in the modified context
+                return dacscontext.executeMethod(dacsget, DACS.AcsCheck.check_fail, DACS.ReplyFormat.XMLSCHEMA);
+            } else {
+                // Notice acceptance failed
+                return DacsStatus.SC_DACS_ACCESS_DENIED;
+            }
+        } else {
+            // User declined or closed dialog without accepting
+            dialog.dispose();
+            return DacsStatus.SC_DACS_ACCESS_DENIED;
+        }
+      } catch (Exception e) {
+        return DacsStatus.SC_DACS_ACCESS_DENIED;
+      }
+  }
+</pre></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="recipe-web-application"></a>Recipe: Sample Web Application</h3></div></div></div><p>
+<span class="emphasis"><em>
+The Sample Web Application and its documentation is incomplete.
+</em></span>
+</p><p>
+The <span class="application">DACS Java Library</span> distribution includes a project called
+dacs-web which is a very preliminary example illustrating
+the use of the DJL in J2EE middleware application.
+</p><p>
+Build as above either as a NetBeans project or using the
+provided freeform ant build script.
+Then deploy the resulting War file to your servlet container
+of choice.
+Some features of dacs-web assume the application is being proxied
+<sup>[<a name="id293875" href="#ftn.id293875">6</a>]</sup>
+behind a DACS-enabled Web server.
+If Apache and Tomcat are deployed on the same
+host configuration like the following would be required
+in the relevant VirtualHost definition of Apache:
+</p><pre class="programlisting">
+
+    &lt;Location /dacs-web&gt;
+       AuthType DACS
+       Require valid-user
+       AuthDACS dacs-acs
+       ProxyPass https://localhost:8080/dacs-web/
+       ProxyPassReverse https://localhost:8080/dacs-web/
+    &lt;/Location&gt;
+
+</pre><p>
+The above assumes a private deployment of Tomcat that is accessible only
+via a public-facing Apache Web server.
+Allowing access to Tomcat except through Apache+DACS obviously would defeat the
+purpose of access control.
+</p></div><div class="footnotes"><br><hr width="100" align="left"><div class="footnote"><p><sup>[<a name="ftn.id292815" href="#id292815">2</a>] </sup>
+This convention is entirely of our own invention.
+The DACS distribution does not require it.
+</p></div><div class="footnote"><p><sup>[<a name="ftn.id292930" href="#id292930">3</a>] </sup>
+The Jakarta Commons HttpClient project provides the framework used by DJL 
+for working with the client side of the HTTP protocol.
+The DacsContext and its subclass UserContext appearing in the examples 
+are DACS wrapper classes 
+for the Jakarta Commons HttpClient class.
+</p></div><div class="footnote"><p><sup>[<a name="ftn.id293008" href="#id293008">4</a>] </sup>
+Unfortunately this is not simply a matter of examining the 
+HTTP response status.
+This is so because of the variety of configuration options 
+provided by DACS on the server side for handling
+access-denied events.
+For example, DACS may be configured to generate an HTTP status 403 response,
+a browser redirect (HTTP status 3xx) to a configured event-handler, 
+or an HTML or XML response document (HTTP status 200).
+</p></div><div class="footnote"><p><sup>[<a name="ftn.id293466" href="#id293466">5</a>] </sup>
+We have chosen the <code class="literal">FEDADMIN</code>
+application jurisdiction because it is present in our default
+installation of DACS.
+But the baseuri of any jurisdiction in the federation
+could be used instead.
+</p></div><div class="footnote"><p><sup>[<a name="ftn.id293875" href="#id293875">6</a>] </sup>
+DACS currently is available only for the Apache Web server.
+DACS-wrapping a servlet container or other Web server must therefore
+be accomplished by a proxy configuration of Apache.
+</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s03.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="apa.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">System Overview </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> A. Glossary</td></tr></table></div></body></html>

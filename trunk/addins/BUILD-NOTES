@@ -1,0 +1,62 @@
+This is the README for the DACS Java Library (DJL).
+
+Please see docs/dacs-javalib-documentation.html or http://dacs.fedroot.com/dacs-javalib/docs
+for details on how to build and use the DACS Java Library.
+
+The DJL distribution comprises 6 component projects:
+
+   dacs-client,
+   dacs-javalib-examples,
+   dacs-services,
+   dacs-xmlbeans,
+   dacs-web,
+   dacs_ajax and
+   fedutil.
+
+The base directory (where you found this README file) includes an ant build script
+and properties file, a docs directory containing complete Java docs (including
+a current version of this document) and a lib directory containing all required
+third party software including two key libraries: 
+
+     httpclient-3.0, and 
+     xmlbeans-2.1.0.
+
+Each of the subprojects was developed in the NetBeans 5.0 IDE. The NetBeans
+project directory structure is included in each subproject. If NetBeans
+isn't your cup of tea, you can use the provided freeform ant scripts instead.
+
+PREREQUISISTES
+
+The dacs-javalib requires J2SE 1.5 and ant 1.6. Ensure these are installed
+and correctly configured.
+
+BUILDING
+
+To build all subprojects run
+
+     ant build-all
+
+TESTING
+
+To test all subprojects run
+
+     ant test-all
+
+Note that some tests of Java Swing components will not succeed on a headless
+host.
+
+For details of failed tests, check the contents of the build/test/results
+directory in the respective subproject.
+
+RUNNING
+
+The dacs-javalib-examples subproject includes several very simple examples
+corresponding to recipes documented in docs/dacs-javalib-documentation.html
+(you DID read that, right?).
+
+Run them like so:
+
+ant run-example-1, ant run-example-2, etc
+
+Again, some of the examples will not run on a headless host.
+

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: dacs_admin.dtd 635 2005-10-26 19:19:29Z brachman $ -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://fedroot.com/dacs/v1.4"
+  xmlns:dacs="http://fedroot.com/dacs/v1.4"
+  elementFormDefault="qualified">
+  
+  <xs:include schemaLocation="common.xsd"/>
+  <xs:include schemaLocation="acl.xsd"/>
+  
+  
+  <xs:element name="dacs_admin">
+    <xs:complexType>
+      <xs:choice>
+        <xs:element ref="dacs:acls"/>
+        <xs:element ref="dacs:acl"/>
+        <xs:element ref="dacs:user_accounts"/>
+        <xs:element ref="dacs:revocations"/>
+        <xs:element ref="dacs:common_status"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="acls">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="dacs:acl_header"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="acl_header">
+    <xs:complexType>
+      <xs:attribute name="name" use="required" type="xs:string"/>
+      <xs:attribute name="enabled" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="yes"/>
+            <xs:enumeration value="no"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="acl">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="dacs:acl_header"/>
+        <xs:choice>
+          <xs:element minOccurs="0" ref="dacs:acl_rule"/>
+          <xs:element ref="dacs:services"/>
+          <xs:element maxOccurs="unbounded" ref="dacs:rule"/>
+        </xs:choice>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="user_accounts">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="dacs:user_account"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="user_account">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="dacs:roles">
+          <xs:attribute name="name" use="required" type="xs:string"/>
+          <xs:attribute name="enabled" use="required">
+            <xs:simpleType>
+              <xs:restriction base="xs:token">
+                <xs:enumeration value="yes"/>
+                <xs:enumeration value="no"/>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:complexType name="roles">
+    <xs:sequence>
+      <xs:element ref="dacs:roles"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:element name="roles">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="dacs:role"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="role">
+    <xs:complexType>
+      <xs:attribute name="name" use="required" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="revocations">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="dacs:revocation"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="revocation">
+    <xs:complexType>
+      <xs:attribute name="type" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="deny"/>
+            <xs:enumeration value="revoke"/>
+            <xs:enumeration value="comment"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="item" use="required" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

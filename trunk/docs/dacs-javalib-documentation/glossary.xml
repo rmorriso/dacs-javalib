@@ -1,0 +1,174 @@
+<appendix>
+<title>Glossary</title>
+<glossdiv>
+<remark><emphasis>$Id: glossary.xml 21 2004-09-15 22:17:42Z rmorriso $</emphasis></remark>
+<glossentry id="application-jurisdiction">
+<glossterm>Application Jurisdiction</glossterm>
+<glossdef>
+<para>
+A jurisdiction deployed for the purpose of housing and administering
+access to a Web application.
+An application jurisdiction does not typically provide authentication
+services but does define application specific access control and roles.
+</para>
+</glossdef>
+</glossentry>
+<glossentry id="authentication">
+<glossterm>Authentication</glossterm>
+<glossdef>
+<para>
+The procedure by which a person or program obtains credentials
+that represent a DACS identity, usually by asserting a DACS
+username that represents an identity and providing information
+that only that identity is likely to know or possess. After
+successful authentication, a person or program is said to have
+authenticated.  DACS can interface with a wide variety of
+authentication methods and provides some of its own; new
+methods can easily be added.
+</para>
+</glossdef>
+</glossentry>
+<glossentry id="authorization">
+<glossterm>Authorization</glossterm>
+<glossdef>
+<para>
+The procedure that determines, in a particular context, whether
+a request for a given resource or object should be allowed. If
+an identity is authorized to perform a certain operation on the
+object, access is granted, otherwise it is denied. Access
+control rules are one method of describing which identity or
+identities should be granted - or denied - access to a
+particular resource. Coarse-grained access control involves
+making a high-level decision of whether access to an object
+should be granted; this is usually an all-or-nothing decision.
+Fine-grained access control is used within a program to decide
+whether access to a lower-level resource (some data, an
+administrative function, a menu) should be granted.
+</para>
+</glossdef>
+</glossentry>
+<glossentry id="authentication-module">
+<glossterm>Authentication module</glossterm>
+<glossdef>
+<para>
+A web service that implements a particular method and DACS style of
+authentication.
+</para>
+</glossdef>
+</glossentry>
+
+<glossentry id="credentials">
+<glossterm>credentials</glossterm>
+<glossdef>
+<para>
+A data structure that identifies and describes an object
+(usually a human being), confering that identity on whomever possesses the
+credentials.
+To help prevent and detect tampering, credentials are protected using
+cryptographic techniques whenever they might be vulnerable to interception.
+</para>
+</glossdef>
+</glossentry>
+
+<glossentry id="dacs">
+<glossterm>DACS</glossterm>
+<glossdef>
+<para>
+The Distributed Access Control System, a set of software components
+that provides federated identity management and access control functionality.
+</para>
+</glossdef>
+</glossentry>
+
+<glossentry id="dacs-wrapped">
+<glossterm>DACS-wrapped</glossterm>
+<glossdef>
+<para>
+A web service under DACS's access control is said to be DACS-wrapped.
+</para>
+</glossdef>
+</glossentry>
+<glossentry id="dacs-identity">
+<glossterm>DACS identity</glossterm>
+<glossdef>
+<para>
+A unique, syntactically correct name. Each authenticated user
+is identified by a DACS username consisting of the name of the
+authenticating jurisdiction, its federation, and a username
+within the jurisdiction. Entities such as federations,
+jurisdictions, and groups have names. More than one person or
+program may correspond to an identity.  Federated identity or
+single sign-on is the ability to recognize a user identity
+across jurisdictions or even across federations.
+</para>
+</glossdef>
+</glossentry>
+
+<glossentry id="federation">
+<glossterm>Federation</glossterm>
+<glossdef>
+<para>
+A collection of
+<glossterm linkend="jurisdiction">jurisdictions</glossterm> that
+interoperate closely to provide light-weight, single sign-on functionality
+by sharing certain configuration information.
+</para>
+</glossdef>
+</glossentry>
+
+<glossentry id="jurisdiction">
+<glossterm>Jurisdiction</glossterm>
+<glossdef>
+<para>
+A web server or virtual web server, uniquely named, that provides
+authentication for users associated with it, access control for resources
+associated with it, or both.
+</para>
+</glossdef>
+</glossentry>
+
+    <glossentry id="middleware">
+        <glossterm>Middleware</glossterm>
+        <glossdef>
+            <para>
+                A software component or service deployed in a middle tier of a
+                multi-tiered Web architecture.
+                In a 3-tier architecture, middleware typically communicates with
+                user agents in tier 1 and with services deployed in tier 3.
+            </para>
+        </glossdef>
+    </glossentry>
+<glossentry id="role-based-access-control">
+<glossterm>Role-based Access Control</glossterm>
+<glossdef>
+<para>
+An authorization method whereby attributes or roles associated with an
+identity may be examined when determining whether access to a resource
+should be granted or denied.
+</para>
+</glossdef>
+</glossentry>
+
+<glossentry id="single-sign-on">
+<glossterm>Single sign-on</glossterm>
+<glossdef>
+<para>
+An authentication infrastructure whereby an identity, having been
+established at one location in the system, is recognized throughout
+the system.
+</para>
+</glossdef>
+</glossentry>
+
+<glossentry id="user-agent">
+<glossterm>User agent</glossterm>
+<glossdef>
+<para>
+Software that a human being uses to interact with a system.
+</para>
+</glossdef>
+</glossentry>
+</glossdiv>
+</appendix>
+
+

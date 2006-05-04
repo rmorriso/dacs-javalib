@@ -1,0 +1,15 @@
+<!ENTITY ACS "<acronym>ACS</acronym>">
+<!ENTITY APACHE_HOME "<envar>$APACHE_HOME</envar>">
+<!ENTITY APACHE_CONF "<envar>$APACHE_HOME</envar><filename>/conf</filename>">
+<!ENTITY APACHE_DOCS "<envar>$APACHE_HOME</envar><filename>/local/apache/htdocs</filename>">
+<!ENTITY DACS "<acronym>DACS</acronym>">
+<!ENTITY DACS_HOME "<envar>$DACS_HOME</envar>">
+<!ENTITY DJL "<application>DACS Java Library</application>">
+<!ENTITY IPO  "<acronym>IPO</acronym>">
+<!ENTITY OGC  "<acronym>OGC</acronym>">
+<!ENTITY ORA  "<acronym>ORA</acronym>">
+<!ENTITY dacssupport '<ulink url="mailto:brachman@dss.ca">mailto:brachman@dss.ca</ulink>'>
+<!ENTITY dacsdocsurl '<ulink url="http://dacs.dss.ca">http://dacs.dss.ca</ulink>'>
+<!ENTITY get '<literal>GET</literal>'>
+<!ENTITY post '<literal>POST</literal>'>
+<!ENTITY htconf  '<filename>httpd.conf</filename>'>

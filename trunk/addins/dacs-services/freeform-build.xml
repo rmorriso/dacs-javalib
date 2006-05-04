@@ -1,0 +1,114 @@
+<?xml version='1.0'?>
+<project name="dacs-services" default="jar" basedir=".">
+
+  <description>Builds, tests, and runs the project dacs-services.</description>
+
+  <!-- set local/global properties for this build -->
+ 
+  <property file="./freeform.properties"/>
+  <property file="../project.properties"/>
+
+  <property name="include" value="${root.dir}/lib"/>
+  <property name="dacs-version" value="1.4.x"/>
+
+  <target name="init">
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build.dir}" />
+    <!-- Create the directory for the jar file -->
+    <mkdir dir="${dist.dir}" />
+    <!-- Create the directory for the java docs -->
+    <mkdir dir="${dist.javadoc.dir}" />
+  </target>
+
+  <target name="compile" depends="init">
+    <!-- copy all .java files from ${src.dir} to ${build.classes.dir}  -->
+    <copy todir="${build.classes.dir}/">
+      <fileset dir="${src.dir}" includes="**/*.java"/>
+    </copy>
+    <!-- run javac to compile the source files -->
+    <javac srcdir="${src.dir}" destdir="${build.classes.dir}">
+      <classpath>
+        <!-- use value of ${javac.classpath} property in the classpath -->
+        <pathelement path="${javac.classpath}"/>
+        <!-- include all jar files  -->
+        <fileset dir="${include}">
+           <include name="**/*.jar"/>
+        </fileset>
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="compile-test" depends="init,compile">
+    <!-- copy all .java files from ${test.src.dir} to ${build.test.classes.dir}  -->
+    <copy todir="${build.test.classes.dir}/">
+      <fileset dir="${test.src.dir}" includes="**/*.java"/>
+    </copy>
+    <!-- run javac to compile the source files -->
+    <javac srcdir="${test.src.dir}" destdir="${build.test.classes.dir}">
+      <classpath>
+        <!-- use value of ${javac.test.classpath} property in the classpath -->
+        <pathelement path="${javac.test.classpath}"/>
+        <!-- include all jar files  -->
+        <fileset dir="${include}">
+           <include name="**/*.jar"/>
+        </fileset>
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="jar" depends="compile">
+    <!-- make a jar file -->
+    <jar jarfile="${dist.jar}" basedir="${build.classes.dir}/"/>
+  </target>
+ 
+  <target name="test" depends="compile-test" >
+    <mkdir dir="${build.test.results.dir}" />
+
+    <junit printsummary="yes" haltonfailure="yes">
+      <classpath>
+        <pathelement location="${build.test.classes.dir}"/>
+        <pathelement path="${javac.test.classpath}"/>
+      </classpath>
+
+      <formatter type="plain"/>
+
+      <batchtest fork="yes" todir="${build.test.results.dir}">
+        <fileset dir="${test.src.dir}">
+          <include name="**/*Test*.java"/>
+          <exclude name="**/AllTests.java"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <target name="javadocs" depends="compile">
+    <!-- create javadocs -->
+    <javadoc destdir="${dist.javadoc.dir}"
+           author="true"
+           version="true"
+           use="true">
+      <classpath>
+        <path path="${javac.classpath}"/>
+      </classpath>
+      <sourcepath>
+        <pathelement location="${src.dir}"/>
+      </sourcepath>
+      <fileset dir="${src.dir}" defaultexcludes="yes">
+        <include name="**/*.java"/>
+      </fileset>
+      <doctitle>
+        <![CDATA[<h1>DACS Java Library ${dacs-javalib-version}: dacs-services</h1>]]>
+      </doctitle>
+      <bottom>
+        <![CDATA[<i>Copyright &#169; 2005-2006 Metalogic Software Corporation All Rights Reserved.</i>]]>
+      </bottom>
+    </javadoc>
+  </target>
+
+  <target name="clean">
+    <!-- Delete the ${build.dir} and ${dist.dir} directory trees -->
+    <delete dir="${build.dir}"/>
+    <delete dir="${dist.dir}"/>
+  </target>
+</project>
+

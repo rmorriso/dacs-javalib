@@ -1,0 +1,146 @@
+<?xml version='1.0'?>
+<project name="dacs-javalib" default="tar" basedir=".">
+
+  <description>Builds the dacs-javalib distribution.</description>
+
+  <!-- set local/global properties for this build -->
+ 
+  <property file="build.properties"/>
+
+  <property name="dacs-version" value="1.4.x"/>
+  <property name="dacs-javalib-version" value="0.56"/>
+
+  <target name="init">
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build.dir}" />
+    <!-- Create the directory for the jar file -->
+    <mkdir dir="${dist.dir}" />
+  </target>
+
+  <target name="copy-resources" depends="init">
+    <!-- copy projects and their addins to staging area -->
+    <copy todir="${build.dir}">
+      <fileset dir="nb-projects" 
+       includes="**/*" 
+       excludes="**/*.svn */${build.dir}/**/* dacs-xmlbeans/dtd-xsd/**/*.dtd" />
+      <fileset dir="addins" includes="**/*" />
+    </copy>
+    <!-- make scripts executable -->
+    <chmod perm="ugo+rx">
+      <fileset dir="${build.dir}">
+        <include name="*.sh"/>
+      </fileset>
+    </chmod>
+    <!-- copy project documentation to staging area -->
+    <copy todir="${build.dir}/docs">
+      <fileset dir="./docs/dacs-javalib-documentation">
+        <include name="dacs-javalib-documentation.html"/>
+      </fileset>
+    </copy>
+    <copy todir="${build.dir}/docs/images">
+      <fileset dir="./docs/images">
+        <include name="**/"/>
+      </fileset>
+      <fileset dir="./docs/dacs-javalib-documentation/images">
+        <include name="**/"/>
+      </fileset>
+    </copy>
+  </target>
+
+<!-- order below is important for inter-project dependencies -->
+
+  <target name="compile" depends="copy-resources">
+    <antcall target="-jar">
+      <param name="project" value="fedutil"/>
+    </antcall>
+    <antcall target="-jar">
+      <param name="project" value="dacs-xmlbeans"/>
+    </antcall>
+    <antcall target="-jar">
+      <param name="project" value="dacs-services"/>
+    </antcall>
+    <antcall target="-jar">
+      <param name="project" value="dacs-client"/>
+    </antcall>
+    <antcall target="-jar">
+      <param name="project" value="dacs-javalib-examples"/>
+    </antcall>
+    <antcall target="-war">
+      <param name="project" value="dacs-web"/>
+    </antcall>
+    <antcall target="-war">
+      <param name="project" value="dacs-ajax"/>
+    </antcall>
+  </target>
+
+  <target name="-jar">
+    <!-- compile individual projects -->
+    <ant antfile="freeform-build.xml"
+         dir="${build.dir}/${project}" target="jar">
+    </ant>
+  </target>
+
+  <target name="-war">
+    <!-- compile individual projects -->
+    <ant antfile="freeform-build.xml"
+         dir="${build.dir}/${project}" target="war">
+    </ant>
+  </target>
+  <target name="javadocs" depends="copy-resources">
+    <antcall target="-javadocs">
+      <param name="project" value="fedutil"/>
+    </antcall>
+    <antcall target="-javadocs">
+      <param name="project" value="dacs-services"/>
+    </antcall>
+    <antcall target="-javadocs">
+      <param name="project" value="dacs-client"/>
+    </antcall>
+    <antcall target="-javadocs">
+      <param name="project" value="dacs-javalib-examples"/>
+    </antcall>
+    <antcall target="-javadocs">
+      <param name="project" value="dacs-xmlbeans"/>
+    </antcall>
+    <antcall target="-javadocs">
+      <param name="project" value="dacs-web"/>
+    </antcall>
+    <antcall target="-javadocs">
+      <param name="project" value="dacs-ajax"/>
+    </antcall>
+  </target>
+
+  <target name="-javadocs">
+    <!-- create individual project javadocs -->
+    <ant antfile="freeform-build.xml"
+         dir="${build.dir}/${project}" target="javadocs">
+      <!-- destination directory for combined javadocs is relative to project directory -->
+      <property name="dist.javadoc.dir" value="../docs/javadocs/${project}"/>
+    </ant>
+  </target>
+
+  <target name="tar" depends="copy-resources,compile,javadocs">
+    <!-- make a tar distribution -->
+    <tar destfile="${dist.dir}/${dist.tar}" longfile="gnu" compression="gzip">
+      <tarfileset dir="${build.dir}" prefix="dacs-javalib/">
+        <include name="**/*"/>
+      </tarfileset>
+    </tar>
+  </target>
+ 
+  <target name="clean">
+    <!-- Delete the ${build.dir} and ${dist.dir} directory trees -->
+    <delete dir="${build.dir}"/>
+    <delete dir="${dist.dir}"/>
+  </target>
+
+  <target name="-init-check">
+    <fail unless="build.dir">Must set build.dir</fail>
+    <fail unless="dist.dir">Must set dist.dir</fail>
+    <fail unless="dist.tar">Must set dist.tar</fail>
+    <fail unless="fedutil.dir">Must set fedutil.dir</fail>
+    <fail unless="dacs-javalib-version">Must set dacs-javalib-version</fail>
+  </target>
+
+</project>
+

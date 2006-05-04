@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dacs_conf_reply xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://fedroot.com/dacs/v1.4 ../dtd-xsd/dacs/dacs_conf_reply.xsd"
+ xmlns="http://fedroot.com/dacs/v1.4"
+ uri="demo.fedroot.com/metalogic">
+<directive name="JURISDICTION_NAME" value="METALOGIC"/>
+<directive name="FEDERATION_DOMAIN" value="demo.fedroot.com"/>
+<directive name="AUTH_ERROR_HANDLER" value="* url /handlers/auth_failed"/>
+<directive name="HTTP_PROG" value="/local/dacs/bin/http"/>
+<directive name="VERIFY_IP" value="no"/>
+<directive name="AUTH_SUCCESS_HANDLER" value="url /handlers/auth_ok.html"/>
+<directive name="AUTH_CREDENTIALS_DEFAULT_LIFETIME_SECS" value="43200"/>
+<directive name="FEDERATION_NAME" value="DEMO"/>
+<directive name="DTD_BASE_URL" value="/dtd-xsd"/>
+<directive name="XSD_BASE_URL" value="/dtd-xsd"/>
+<directive name="PASSWORD_DIGEST" value="SHA1"/>
+<directive name="SSL_PROG" value="/local/dacs/bin/sslclient"/>
+<directive name="SSL_PROG_CA_CRT" value="/local/apache/conf/ssl-demo.fedroot.com/ssl.crt/server.crt"/>
+<directive name="SIGNOUT_HANDLER" value="url /handlers/signout_ok.html"/>
+<directive name="ALLOW_HTTP_COOKIE" value="yes"/>
+
+<directive name="AUTH_FAIL_DELAY_SECS" value="2"/>
+<directive name="ACS_ERROR_HANDLER" value="* /handlers/acs_failed.html"/>
+<directive name="ACS_ERROR_HANDLER" value="ACK_NEEDED https://demo.fedroot.com/fedadmin/dacs/dacs_notices"/>
+<directive name="ACS_ERROR_HANDLER" value="900 http://fedroot.com/access/error_inline.jsp"/>
+<directive name="ACS_ERROR_HANDLER" value="901 http://fedroot.com/access/error_inline.jsp"/>
+<directive name="ACS_ERROR_HANDLER" value="902 https://demo.fedroot.com/fedadmin/utils/login.php"/>
+<directive name="ACS_ERROR_HANDLER" value="903 http://fedroot.com/access/error_inline.jsp"/>
+<directive name="ACS_ERROR_HANDLER" value="* http://fedroot.com/access/error_inline.jsp"/>
+<directive name="SECURE_MODE" value="on"/>
+<directive name="COOKIE_PATH" value="/"/>
+<directive name="LOG_FILE" value="/local/dacs/logs/demo.fedroot.com/METALOGIC-25-Jan-06.log"/>
+<directive name="LOG_FILTER" value="filename exact debug &quot;crypto.c&quot;"/>
+<directive name="LOG_LEVEL" value="trace"/>
+<directive name="LOG_SENSITIVE" value="no"/>
+<directive name="ADMIN_IDENTITY" value="DSS:jones"/>
+<directive name="NOTICES_ACCEPT_HANDLER" value="/handlers/notices_accepted.html"/>
+<directive name="NOTICES_DECLINE_HANDLER" value="/handlers/notices_declined.html"/>
+
+<directive name="NOTICES_ACK_HANDLER" value="https://demo.fedroot.com/fedadmin/dacs/dacs_notices"/>
+<directive name="NOTICES_SECURE_HANDLER" value="no"/>
+<directive name="NOTICES_WORKFLOW_LIFETIME_SECS" value="120"/>
+<directive name="NOTICES_NAT_NAME_PREFIX" value="NAT-DACS"/>
+<directive name="VFS" value="[dtds]dacs-fs:/local/dacs/www/dtd-xsd"/>
+<directive name="VFS" value="[federation_keys]dacs-fs:/local/dacs/federations/demo.fedroot.com/federation_keyfile"/>
+<directive name="VFS" value="[jurisdiction_keys]dacs-fs:/local/dacs/federations/demo.fedroot.com/METALOGIC/jurisdiction_keyfile"/>
+<directive name="VFS" value="[revocations]dacs-fs:/local/dacs/federations/demo.fedroot.com/METALOGIC/acls/revocations"/>
+<directive name="VFS" value="[acls]dacs-fs:/local/dacs/federations/demo.fedroot.com/METALOGIC/acls"/>
+<directive name="VFS" value="[dacs_acls]dacs-fs:/local/dacs/acls"/>
+<directive name="VFS" value="[groups]dacs-fs:/local/dacs/federations/demo.fedroot.com/METALOGIC/groups"/>
+<directive name="VFS" value="[passwds]dacs-kwv-fs:/local/dacs/federations/demo.fedroot.com/METALOGIC/passwd"/>
+<directive name="VFS" value="[roles]dacs-kwv-fs:/local/dacs/federations/demo.fedroot.com/METALOGIC/roles"/>
+<directive name="VFS" value="[default]dacs-fs:"/>
+<directive name="AUTH_AGENT_ALLOW_ADMIN_IDENTITY" value="no"/>
+<Auth id="passwd-unix">
+<directive name="URL" value="https://demo.fedroot.com/metalogic/dacs/local_unix_authenticate"/>
+
+<directive name="STYLE" value="pass"/>
+<directive name="CONTROL" value="sufficient"/>
+</Auth>
+<Auth id="passwd-local">
+<directive name="STYLE" value="pass"/>
+<directive name="CONTROL" value="sufficient"/>
+<directive name="URL*" value="&quot;https://demo.fedroot.com/metalogic/dacs/&quot; . &quot;local_passwd_authenticate&quot;"/>
+</Auth>
+<Roles id="roles">
+<directive name="URL" value="https://demo.fedroot.com/metalogic/dacs/local_roles"/>
+</Roles>
+<Roles id="roles2">
+<directive name="URL" value="https://demo.fedroot.com/metalogic/dacs/local_unix_roles"/>
+</Roles>
+</dacs_conf_reply>
+

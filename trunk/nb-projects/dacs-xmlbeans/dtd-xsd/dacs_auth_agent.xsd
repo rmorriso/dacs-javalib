@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: dacs_auth_reply.dtd 414 2005-08-22 22:13:24Z unauth $ -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://fedroot.com/dacs/v1.4"
+    xmlns:dacs="http://fedroot.com/dacs/v1.4"
+    elementFormDefault="qualified">
+  
+<xs:include schemaLocation="dacs_current_credentials.xsd"/>
+<xs:include schemaLocation="common.xsd"/>  
+    
+  <xs:element name="dacs_auth_agent">
+    <xs:complexType>
+      <xs:choice>
+        <xs:element ref="dacs:dacs_current_credentials"/>
+        <xs:element ref="dacs:common_status"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  
+</xs:schema>

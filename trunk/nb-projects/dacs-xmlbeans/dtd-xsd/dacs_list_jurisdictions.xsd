@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id$ -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://fedroot.com/dacs/v1.4"
+  xmlns:dacs="http://fedroot.com/dacs/v1.4"
+  elementFormDefault="qualified">
+  
+  <xs:include schemaLocation="common.xsd"/>  
+  
+  <xs:element name="dacs_list_jurisdictions">
+    <xs:complexType>
+      <xs:choice>
+        <xs:element minOccurs="0" maxOccurs="unbounded" name = "jurisdiction" type="dacs:dacsJurisdiction"/>
+        <xs:element ref="dacs:common_status"/>
+      </xs:choice>
+      <xs:attribute name="federation" use="required" type="xs:string"/>
+      <xs:attribute name="domain" use="required" type="xs:string"/>
+      <xs:attribute name="fed_id" use="required" type="xs:string"/>
+      <xs:attribute name="public_key" use="required" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+  
+    <xs:complexType name="dacsJurisdiction">
+      <xs:attribute name="name" use="required" type="xs:string"/>
+      <xs:attribute name="alt_name" use="required" type="xs:string"/>
+      <xs:attribute name="dacs_url" use="required" type="xs:string"/>
+      <xs:attribute name="authenticates" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="yes"/>
+            <xs:enumeration value="no"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="prompts" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="yes"/>
+            <xs:enumeration value="no"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="auxiliary" type="xs:string"/>
+    </xs:complexType>
+  
+</xs:schema>

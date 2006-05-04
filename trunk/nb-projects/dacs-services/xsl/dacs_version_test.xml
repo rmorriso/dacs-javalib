@@ -1,0 +1,12 @@
+<dacs_version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://fedroot.com/dacs/v1.4 ../dtd-xsd/dacs/dacs_version.xsd"
+   xmlns="http://fedroot.com/dacs/v1.4"
+   number="1.4" 
+   release="1.4.10c" 
+   date="Release date 18-Feb-06 06:44:51" 
+   revid="$Id: dacs-stamp-h 919 2006-02-18 14:45:17Z brachman $" 
+   other="Expat 2.0.0, OpenSSL 0.9.8a 11 Oct 2005, Apache 2.0.55">
+      <file revid="$Id: dacs-stamp-h 919 2006-02-18 14:45:17Z brachman $"/>
+      <file revid="$Id: version.c 901 2006-02-13 11:50:32Z brachman $"/>
+</dacs_version>
+
