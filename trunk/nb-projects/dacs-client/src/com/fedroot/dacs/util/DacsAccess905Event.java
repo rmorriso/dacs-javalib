@@ -31,7 +31,7 @@ public class DacsAccess905Event extends DacsAccessEvent{
     private String hmac;
     
     /**
-     * Creates a new instance of Dacs902Event
+     * Creates a new instance of Dacs905Event
      */
     public DacsAccess905Event(String fed_domain, String jur_dacsuri, Event905Document.Event905 event) {
         super();
