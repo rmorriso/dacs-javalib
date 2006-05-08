@@ -137,6 +137,10 @@ public class DacsAjaxApp extends ApplicationInstance {
     }
     
     public String[] jurisdictionList() {
-        return FEDERATION.getAuthenticatingJurisdictionNames().toArray(new String[0]);
+        String [] jurisdictions = null;
+        if (FEDERATION != null) {
+          jurisdictions = FEDERATION.getAuthenticatingJurisdictionNames().toArray(new String[0]);
+        }
+        return jurisdictions;
     }
 }
