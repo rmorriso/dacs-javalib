@@ -125,42 +125,7 @@ public class DacsContext {
     throws IOException, HttpException {
         return this.httpclient.executeMethod(dacsget);
     }
-    
-    /**
-     * check GET method in the current DacsContext context as
-     * instantiated in httpclient (parameter settings, cookies, etc)
-     * @param dacsget DacsGetMethod to be executed
-     * @return HTTP Status Code returned by dacsget
-     * @throws java.io.IOException TODO
-     * @throws org.apache.commons.httpclient.HttpException TODO
-     */
-    public int executeMethod(DacsGetMethod dacsget, DACS.AcsCheck check_type, DACS.ReplyFormat reply_type)
-    throws DacsException {
-        dacsget.setDacsAcs(check_type, reply_type);
-        try {
-            int httpstatus = httpclient.executeMethod(dacsget);
-            if (httpstatus == HttpStatus.SC_OK) { // check mode succeeded
-                int dacsstatus = dacsget.getDacsStatusCode();
-                if (check_type == DACS.AcsCheck.check_only) {
-                    return dacsstatus;
-                } else if (check_type == DACS.AcsCheck.check_fail) {
-                    if (dacsstatus == DacsStatus.SC_DACS_ACCESS_DENIED) {
-                        // parse XML reply, calling event handlers if appropriate
-                        return handleDacsAccessDenied(dacsget);
-                    } else {
-                        return dacsstatus;
-                    }
-                } else { // method is type-safe - shouldn't happen
-                    throw new RuntimeException("executeMethod invalid check_type");
-                }
-            } else { // check mode failed
-                throw new DacsException("executeMethod in check mode failed with HTTP status: " + httpstatus);
-            }
-        } catch (IOException ex) {
-            throw new DacsException("IOException thrown executing dacsget: " + dacsget.toString());
-        } 
-    }
-    
+       
     /**
      * check DacsGetmethod (DACS_ACS=-check_only) in the current DacsContext context as
      * instantiated in httpclient (parameter settings, cookies, etc);
@@ -224,7 +189,7 @@ public class DacsContext {
             }
         } catch (IOException ex) {
             throw new DacsException("IOException thrown executing dacsget: " + dacsget.toString());
-        }
+        } 
     }
     
     /**
@@ -349,6 +314,7 @@ public class DacsContext {
             if (eventhandler != null) {
                 return eventhandler;
             } else {
+                LOG.info("using event902defaulthandler");
                 return this.event902defaulthandler;
             }
         } catch (Exception e) {
@@ -363,6 +329,7 @@ public class DacsContext {
             if (eventhandler != null) {
                 return eventhandler;
             } else {
+                LOG.info("using event905defaulthandler");
                 return this.event905defaulthandler;
             }
         } catch (Exception e) {
@@ -396,7 +363,7 @@ public class DacsContext {
             throw new DacsException("XmlException thrown parsing response from dacsget:" + dacsget.toString());
         }
         // Check that it is an instance of the DacsAcsDocument
-        System.out.println(expectedXmlObject.getClass().getName());
+        LOG.info("document type: " + expectedXmlObject.getClass().getName());
         if(expectedXmlObject instanceof DacsAcsDocument) {
             DacsAcsDocument doc = (DacsAcsDocument)expectedXmlObject;
             if (doc.validate()) { // valid DacsAcsDocument from check_only or check_fail
