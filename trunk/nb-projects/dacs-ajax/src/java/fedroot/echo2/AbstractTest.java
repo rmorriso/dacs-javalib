@@ -40,9 +40,12 @@ import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.Insets;
+import nextapp.echo2.app.Label;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
+import nextapp.echo2.extras.app.TabPane;
+import nextapp.echo2.extras.app.layout.TabPaneLayoutData;
 
 public class AbstractTest extends SplitPane {
 
@@ -60,6 +63,39 @@ public class AbstractTest extends SplitPane {
         
         testControlsPane = new TestControlPane(testName, icon);
         add(testControlsPane);
+        
+        final TabPane tabPane = new TabPane();
+        add(tabPane);
+        
+        setTestComponent(this, tabPane);
+        
+        Label label = new Label("Overview");
+        label.setBackground(StyleUtil.randomBrightColor());
+        TabPaneLayoutData layoutData = new TabPaneLayoutData();
+        layoutData.setTitle("Overview");
+        label.setLayoutData(layoutData);
+        tabPane.add(label, 0);
+        
+        label = new Label("Jurisdictions");
+        label.setBackground(StyleUtil.randomBrightColor());
+        layoutData = new TabPaneLayoutData();
+        layoutData.setTitle("Jurisdictions");
+        label.setLayoutData(layoutData);
+        tabPane.add(label, 1);
+        
+        label = new Label("Events");
+        label.setBackground(StyleUtil.randomBrightColor());
+        layoutData = new TabPaneLayoutData();
+        layoutData.setTitle("Events");
+        label.setLayoutData(layoutData);
+        tabPane.add(label, 2);
+        
+        label = new Label("Logs");
+        label.setBackground(StyleUtil.randomBrightColor());
+        layoutData = new TabPaneLayoutData();
+        layoutData.setTitle("Logs");
+        label.setLayoutData(layoutData);
+        tabPane.add(label, 3);
     }
     
     protected void setTestComponent(Component testComponentParent, Component testComponent) {

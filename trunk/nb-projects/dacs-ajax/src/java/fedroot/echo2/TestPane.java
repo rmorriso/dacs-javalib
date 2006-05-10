@@ -30,6 +30,7 @@
 package fedroot.echo2;
 
 import fedroot.echo2.dacs.DacsLoginWindow;
+import fedroot.echo2.demo.TabPaneTest;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
@@ -39,11 +40,12 @@ import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.MenuBarPane;
+import nextapp.echo2.extras.app.TabPane;
+import nextapp.echo2.extras.app.layout.TabPaneLayoutData;
 import nextapp.echo2.extras.app.menu.AbstractMenuStateModel;
 import nextapp.echo2.extras.app.menu.DefaultMenuModel;
 import nextapp.echo2.extras.app.menu.DefaultOptionModel;
 import nextapp.echo2.extras.app.menu.DefaultRadioOptionModel;
-import nextapp.echo2.extras.app.menu.DefaultToggleOptionModel;
 import nextapp.echo2.extras.app.menu.MenuStateModel;
 import nextapp.echo2.extras.app.menu.SeparatorModel;
 
@@ -59,34 +61,17 @@ public class TestPane extends ContentPane {
          * @see nextapp.echo2.app.event.ActionListener#actionPerformed(nextapp.echo2.app.event.ActionEvent)
          */
         public void actionPerformed(ActionEvent e) {
-            try {
-                if (e.getActionCommand() == null) {
-                    DacsAjaxApp.getApp().displayWelcomePane();
-                } else if (e.getActionCommand().startsWith("Launch_")) {
-                    String screenClassName = "fedroot.echo2.demo."
-                            + e.getActionCommand().substring("Launch ".length());
-                    Class screenClass = Class.forName(screenClassName);
-                    Component content = (Component) screenClass.newInstance();
-                    if (menuVerticalPane.getComponentCount() > 1) {
-                        menuVerticalPane.remove(1);
-                    }
-                    menuVerticalPane.add(content);
-                } else if (e.getActionCommand().equals("DacsLogin")) {
-                    DacsLoginWindow loginWindow = new DacsLoginWindow();
-                    DacsAjaxApp.getApp().getDefaultWindow().getContent().add(loginWindow);
-                } else if (e.getActionCommand().equals("OpenConsole")) {
-                    DacsAjaxApp.getApp().consoleWrite(null);
-                } else if (e.getActionCommand().equals("Reset")) {
-                    DacsAjaxApp.getApp().displayTestPane();
-                } else if (e.getActionCommand().equals("Exit")) {
-                    DacsAjaxApp.getApp().displayWelcomePane();
-                }
-            } catch (ClassNotFoundException ex) {
-                throw new RuntimeException(ex.toString());
-            } catch (InstantiationException ex) {
-                throw new RuntimeException(ex.toString());
-            } catch (IllegalAccessException ex) {
-                throw new RuntimeException(ex.toString());
+            if (e.getActionCommand() == null) {
+                DacsAjaxApp.getApp().displayWelcomePane();
+            } else if (e.getActionCommand().equals("DacsLogin")) {
+                DacsLoginWindow loginWindow = new DacsLoginWindow();
+                DacsAjaxApp.getApp().getDefaultWindow().getContent().add(loginWindow);
+            } else if (e.getActionCommand().equals("OpenConsole")) {
+                DacsAjaxApp.getApp().consoleWrite(null);
+            } else if (e.getActionCommand().equals("Reset")) {
+                DacsAjaxApp.getApp().displayTestPane();
+            } else if (e.getActionCommand().equals("Exit")) {
+                DacsAjaxApp.getApp().displayWelcomePane();
             }
         }
     };
@@ -95,28 +80,25 @@ public class TestPane extends ContentPane {
     
     public TestPane() {
         super();
-            
+        
         setBackgroundImage(Styles.FILL_IMAGE_LIGHT_BLUE_LINE);
         
         DefaultMenuModel menuBarMenu = new DefaultMenuModel();
         
-        DefaultMenuModel testsMenu = new DefaultMenuModel(null, "Test");
-        testsMenu.addItem(new DefaultOptionModel(
-                "Launch_AccordionPaneTest", "Accordion Pane", Styles.ICON_16_ACCORDION_PANE));
-        testsMenu.addItem(new DefaultOptionModel(
-                "Launch_BorderPaneTest", "Border Pane", Styles.ICON_16_BORDER_PANE));
-        testsMenu.addItem(new DefaultOptionModel(
-                "Launch_CalendarSelectTest", "Calendar Select", Styles.ICON_16_CALENDAR_SELECT));
-        testsMenu.addItem(new DefaultOptionModel(
-                "Launch_ColorSelectTest", "Color Select", Styles.ICON_16_COLOR_SELECT));
-        testsMenu.addItem(new DefaultOptionModel(
-                "Launch_MenuBarPaneTest", "Menu Bar Pane", Styles.ICON_16_MENU_BAR_PANE));
-        testsMenu.addItem(new DefaultOptionModel(
-                "Launch_TabPaneTest", "Tab Pane", Styles.ICON_16_TAB_PANE));
-        testsMenu.addItem(new SeparatorModel());
-        testsMenu.addItem(new DefaultOptionModel("Reset", "Reset", null));
-        testsMenu.addItem(new DefaultOptionModel("Exit", "Exit", null));
-        menuBarMenu.addItem(testsMenu);
+        DefaultMenuModel fileMenu = new DefaultMenuModel(null, "File");
+        fileMenu.addItem(new DefaultOptionModel("OpenConsole", "Open Console", null));
+        fileMenu.addItem(new DefaultOptionModel("DacsLogin", "DACS Login", null));
+        fileMenu.addItem(new SeparatorModel());
+        fileMenu.addItem(new DefaultOptionModel("Reset", "Reset", null));
+        fileMenu.addItem(new DefaultOptionModel("Exit", "Exit", null));
+        menuBarMenu.addItem(fileMenu);
+        
+        DefaultMenuModel editMenu = new DefaultMenuModel(null, "Edit");
+        editMenu.addItem(new DefaultOptionModel("Cut", "Cut", null));
+        editMenu.addItem(new DefaultOptionModel("Copy", "Copy", null));
+        editMenu.addItem(new DefaultOptionModel("Paste", "Paste", null));
+        editMenu.addItem(new DefaultOptionModel("Find", "Find", null));
+        menuBarMenu.addItem(editMenu);
         
         DefaultMenuModel backgroundsMenu = new DefaultMenuModel("Backgrounds", "Backgrounds");
         backgroundsMenu.addItem(new DefaultRadioOptionModel("BackgroundDefault", "Backgrounds", "Default"));
@@ -124,13 +106,10 @@ public class TestPane extends ContentPane {
         backgroundsMenu.addItem(new DefaultRadioOptionModel("BackgroundSilver", "Backgrounds", "Silver"));
         backgroundsMenu.addItem(new DefaultRadioOptionModel("BackgroundBlue", "Backgrounds", "Blue"));
         
-        DefaultMenuModel optionsMenu = new DefaultMenuModel(null, "Options");
-        optionsMenu.addItem(new DefaultOptionModel("OpenConsole", "Open Console", null));
-        optionsMenu.addItem(new DefaultOptionModel("DacsLogin", "DACS Login", null));
-        optionsMenu.addItem(new SeparatorModel());
-        optionsMenu.addItem(new DefaultToggleOptionModel("ShowBackground", "Show Background"));
-        optionsMenu.addItem(backgroundsMenu);
-        menuBarMenu.addItem(optionsMenu);
+        DefaultMenuModel helpMenu = new DefaultMenuModel(null, "Help");
+        helpMenu.addItem(new DefaultOptionModel("About DacsAjax", "About DacsAjax", null));
+        helpMenu.addItem(new DefaultOptionModel("Echo Documentation", "Echo2 Documentation", null));
+        menuBarMenu.addItem(helpMenu);
         
         SplitPane titleVerticalPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL);
         titleVerticalPane.setStyleName("TestPane");
@@ -207,6 +186,10 @@ public class TestPane extends ContentPane {
         menu.setStyleName("Default");
         menu.addActionListener(commandActionListener);
         menuVerticalPane.add(menu);
+        
+        Component content = (Component) new AbstractTest("TabPane", Styles.ICON_16_TAB_PANE);
+        
+        menuVerticalPane.add(content);
         
     }
 }
