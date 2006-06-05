@@ -5,7 +5,6 @@
  *
  * Copyright (c) 2006 Metalogic Software Corporation.
  * All rights reserved. See http://fedroot.com/licenses/metalogic.txt for redistribution information.
- 
  */
 
 package com.fedroot.util;
