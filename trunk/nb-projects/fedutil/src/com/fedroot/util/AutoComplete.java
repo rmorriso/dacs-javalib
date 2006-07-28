@@ -162,38 +162,38 @@ public class AutoComplete {
         }
         return target;
     }
-// ======================================================
-    // search a vector of auto data for an address given a name
-    public static DealerData findAddress( Vector data, String key ) {
-        if( data.size() > 0 ) {
-            // check first element for proper data type
-            // what about the rest?
-            if( !(data.elementAt( 0 ) instanceof AutoElementData) )
-                return null;
-        } else
-            return null;
-        if( key == null )
-            return null;
-        
-        for( int i = 0; i < key.length(); i++ ) // linear search
-        { // version 2.0 will have a binary search method
-            String tmp = key.substring(0,key.length()-i);
-            
-            for( int j = 0; j <  data.size(); j++ ) {
-                String sold_name = ((AutoElementData)data.elementAt( j )).getSoldData().getName();
-                String purchase_name = ((AutoElementData)data.elementAt( j )).getPurchaseData().getName();
-                if( sold_name != null && tmp.length() <= sold_name.length()  ) {
-                    String name = sold_name.substring(0,key.length()-i);
-                    if( tmp.compareToIgnoreCase( name ) == 0 )
-                        return ((AutoElementData)data.elementAt( j )).getSoldData();
-                }
-                if( purchase_name != null && tmp.length() <= purchase_name.length()  ) {
-                    String name = purchase_name.substring(0,key.length()-i);
-                    if( tmp.compareToIgnoreCase( name ) == 0 )
-                        return ((AutoElementData)data.elementAt( j )).getPurchaseData();
-                }
-            }
-        }
-        return null;
-    }
+//// ======================================================
+//    // search a vector of auto data for an address given a name
+//    public static DealerData findAddress( Vector data, String key ) {
+//        if( data.size() > 0 ) {
+//            // check first element for proper data type
+//            // what about the rest?
+//            if( !(data.elementAt( 0 ) instanceof AutoElementData) )
+//                return null;
+//        } else
+//            return null;
+//        if( key == null )
+//            return null;
+//        
+//        for( int i = 0; i < key.length(); i++ ) // linear search
+//        { // version 2.0 will have a binary search method
+//            String tmp = key.substring(0,key.length()-i);
+//            
+//            for( int j = 0; j <  data.size(); j++ ) {
+//                String sold_name = ((AutoElementData)data.elementAt( j )).getSoldData().getName();
+//                String purchase_name = ((AutoElementData)data.elementAt( j )).getPurchaseData().getName();
+//                if( sold_name != null && tmp.length() <= sold_name.length()  ) {
+//                    String name = sold_name.substring(0,key.length()-i);
+//                    if( tmp.compareToIgnoreCase( name ) == 0 )
+//                        return ((AutoElementData)data.elementAt( j )).getSoldData();
+//                }
+//                if( purchase_name != null && tmp.length() <= purchase_name.length()  ) {
+//                    String name = purchase_name.substring(0,key.length()-i);
+//                    if( tmp.compareToIgnoreCase( name ) == 0 )
+//                        return ((AutoElementData)data.elementAt( j )).getPurchaseData();
+//                }
+//            }
+//        }
+//        return null;
+//    }
 }
