@@ -41,7 +41,7 @@ import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.extras.app.CalendarSelect;
 import nextapp.echo2.extras.app.AccordionPane;
 import nextapp.echo2.extras.app.layout.AccordionPaneLayoutData;
-import fedroot.echo2.AbstractTest;
+import fedroot.echo2.TabSplitPane;
 import fedroot.echo2.ButtonColumn;
 import fedroot.echo2.StyleUtil;
 import fedroot.echo2.Styles;
@@ -51,7 +51,7 @@ import nextapp.echo2.extras.webcontainer.AccordionPanePeer;
 /**
  * Interactive test module for <code>AccordionPane</code>s.
  */
-public class AccordionPaneTest extends AbstractTest {
+public class AccordionPaneTest extends TabSplitPane {
         
     private int tabNumber;
 

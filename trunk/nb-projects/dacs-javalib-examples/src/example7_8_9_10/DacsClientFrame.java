@@ -10,6 +10,7 @@
 
 package example7_8_9_10;
 
+import com.fedroot.dacs.DacsContext;
 import com.fedroot.dacs.Federation;
 import com.fedroot.dacs.UserContext;
 import com.fedroot.dacs.http.DacsGetMethod;
@@ -40,6 +41,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.html.HTMLDocument;
 import org.apache.commons.httpclient.Header;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * main JFrame from which DACS example operations are launched
@@ -57,6 +60,9 @@ public class DacsClientFrame extends JFrame {
     private JTextArea taOtherText;
     private JEditorPane htmlPane;
     private JCheckBox jcbDacsCheckonly, jcbEnableEventHandling;
+    
+    /** Log object for this class. */
+    private static final Log LOG = LogFactory.getLog(DacsClientFrame.class);
     
     private static final String[] actions = {
         "List DEMO Jurisdictions",
@@ -86,7 +92,7 @@ public class DacsClientFrame extends JFrame {
      */
     public DacsClientFrame(UserContext usercontext, Federation federation) 
     throws Exception {
-
+        LOG.info("Federation " + federation.getName());
         this.federation = federation;
         this.usercontext = usercontext;
         this.usercontext.setDacs902EventHandler(federation, new Event902Handler(this));
@@ -202,7 +208,6 @@ public class DacsClientFrame extends JFrame {
                 panAction, panInput_2);
 
         splitInputPane.setOneTouchExpandable(false);
-//        splitInputPane.setResizeWeight(0.15);   
         
         taTextResponse = new JTextArea();
         taTextResponse.setEditable(false);
@@ -260,7 +265,7 @@ public class DacsClientFrame extends JFrame {
      * execute DacsRequest for a URL, handling DACS response status
      * @param url
      */
-    private void followUrl(final String url) {
+    private synchronized void followUrl(final String url) {
         final StringBuffer sb = new StringBuffer();
         final BufferedInputStream responsestream; 
         DacsGetMethod dacsget = new DacsGetMethod(url);
@@ -271,7 +276,6 @@ public class DacsClientFrame extends JFrame {
         try {
             int dacsstatus;
             if (jcbDacsCheckonly.isSelected()) {
-//                dacsstatus = usercontext.executeMethod(dacsget, DACS.AcsCheck.check_only, DACS.ReplyFormat.XMLSCHEMA);
                 dacsstatus = usercontext.executeCheckOnlyMethod(dacsget);
             } else if (jcbEnableEventHandling.isSelected()) {
                 dacsstatus = usercontext.executeCheckFailMethod(dacsget);
@@ -286,16 +290,15 @@ public class DacsClientFrame extends JFrame {
                     loadPage(contenttype, dacsget.getResponseBodyAsStream());
                     break;
                 case DacsStatus.SC_DACS_ACCESS_DENIED: // check mode
-                    System.out.println(DacsStatus.getStatusText(dacsstatus));
-                    String foo = dacsget.getResponseBodyAsString();
+                    LOG.info(DacsStatus.getStatusText(dacsstatus));
                     contenttype = dacsget.getResponseHeader("Content-Type").getValue();
                     loadPage(contenttype, dacsget.getResponseBodyAsStream());
                     break;
                 case DacsStatus.SC_DACS_ACCESS_ERROR: // check mode
-                    System.out.println(DacsStatus.getStatusText(dacsstatus));
+                    LOG.info(DacsStatus.getStatusText(dacsstatus));
                     break;
                 default:
-                    System.out.println("DacsGet returned status: " + DacsStatus.getStatusText(dacsstatus));
+                    LOG.info("DacsGet returned status: " + DacsStatus.getStatusText(dacsstatus));
                     break;
             }
         }  catch (Exception e) {
@@ -320,7 +323,7 @@ public class DacsClientFrame extends JFrame {
                     while ((c = r.read()) != -1) {
                         sb.append((char)c);
                     }
-                    is.close();
+                   is.close();
                     if (is != null) {
                         // set the HTML on the UI thread
                         SwingUtilities.invokeLater(
@@ -331,8 +334,11 @@ public class DacsClientFrame extends JFrame {
                         }
                         );
                     }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+                } catch (IOException ex) {
+                   DacsClientFrame.LOG.warn(ex.getMessage());
+                   //  ex.printStackTrace();
+                } finally {
+                    setDocumentContent(contenttype, sb.toString());
                 }
             }
         }.start();

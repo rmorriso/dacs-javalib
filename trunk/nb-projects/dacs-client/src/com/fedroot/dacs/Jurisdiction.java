@@ -339,8 +339,10 @@ public class Jurisdiction {
                 throw new DacsException("Jurisdiction loadConfiguration: invalid DacsConfConfReply");
             }
         } else if (dacsstatus == DacsStatus.SC_DACS_ACCESS_DENIED) {
+            dacsget.releaseConnection();
             throw new DacsException("loadConfiguration: access denied");
         } else {
+            dacsget.releaseConnection();
             throw new DacsException("loadConfiguration: returned DACS status " + dacsstatus);
         }
     }

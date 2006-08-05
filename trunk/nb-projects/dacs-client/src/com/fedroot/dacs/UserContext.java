@@ -106,7 +106,7 @@ public class UserContext extends DacsContext {
         DacsAuthAgentService dacsservice =
                 new DacsAuthAgentService(jurisdiction.dacsuri, jurisdiction.name, username);
         DacsGetMethod dacsget = dacsservice.getDacsGetMethod();
-        int dacsstatus = this.executeCheckFailMethod(dacsget, DACS.ReplyFormat.XMLSCHEMA);
+        int dacsstatus = this.executeCheckFailMethod(dacsget); //, DACS.ReplyFormat.XMLSCHEMA);
         switch (dacsstatus) {
             case DacsStatus.SC_DACS_ACCESS_GRANTED: //check mode
             case DacsStatus.SC_OK: // normal mode

@@ -30,7 +30,6 @@
 package fedroot.echo2;
 
 import fedroot.echo2.dacs.DacsLoginWindow;
-import fedroot.echo2.demo.TabPaneTest;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
@@ -41,7 +40,6 @@ import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.MenuBarPane;
 import nextapp.echo2.extras.app.TabPane;
-import nextapp.echo2.extras.app.layout.TabPaneLayoutData;
 import nextapp.echo2.extras.app.menu.AbstractMenuStateModel;
 import nextapp.echo2.extras.app.menu.DefaultMenuModel;
 import nextapp.echo2.extras.app.menu.DefaultOptionModel;
@@ -86,7 +84,6 @@ public class TestPane extends ContentPane {
         DefaultMenuModel menuBarMenu = new DefaultMenuModel();
         
         DefaultMenuModel fileMenu = new DefaultMenuModel(null, "File");
-        fileMenu.addItem(new DefaultOptionModel("OpenConsole", "Open Console", null));
         fileMenu.addItem(new DefaultOptionModel("DacsLogin", "DACS Login", null));
         fileMenu.addItem(new SeparatorModel());
         fileMenu.addItem(new DefaultOptionModel("Reset", "Reset", null));
@@ -106,9 +103,14 @@ public class TestPane extends ContentPane {
         backgroundsMenu.addItem(new DefaultRadioOptionModel("BackgroundSilver", "Backgrounds", "Silver"));
         backgroundsMenu.addItem(new DefaultRadioOptionModel("BackgroundBlue", "Backgrounds", "Blue"));
         
+        DefaultMenuModel toolsMenu = new DefaultMenuModel(null, "Tools");
+        toolsMenu.addItem(new DefaultOptionModel("OpenConsole", "Open Console", null));
+        toolsMenu.addItem(new DefaultOptionModel("editprefs", "Edit Preferences", null));
+        menuBarMenu.addItem(toolsMenu);
+        
         DefaultMenuModel helpMenu = new DefaultMenuModel(null, "Help");
-        helpMenu.addItem(new DefaultOptionModel("About DacsAjax", "About DacsAjax", null));
-        helpMenu.addItem(new DefaultOptionModel("Echo Documentation", "Echo2 Documentation", null));
+        helpMenu.addItem(new DefaultOptionModel("about", "About DacsAjax", null));
+        helpMenu.addItem(new DefaultOptionModel("manual", "FedAdmin User Manual", null));
         menuBarMenu.addItem(helpMenu);
         
         SplitPane titleVerticalPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL);
@@ -187,7 +189,7 @@ public class TestPane extends ContentPane {
         menu.addActionListener(commandActionListener);
         menuVerticalPane.add(menu);
         
-        Component content = (Component) new AbstractTest("TabPane", Styles.ICON_16_TAB_PANE);
+        Component content = (Component) new TabSplitPane("Federations", Styles.ICON_16_TAB_PANE);
         
         menuVerticalPane.add(content);
         

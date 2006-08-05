@@ -36,7 +36,7 @@ import nextapp.echo2.app.Label;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.BorderPane;
-import fedroot.echo2.AbstractTest;
+import fedroot.echo2.TabSplitPane;
 import fedroot.echo2.StyleUtil;
 import fedroot.echo2.Styles;
 import fedroot.echo2.TestControlPane;
@@ -44,7 +44,7 @@ import fedroot.echo2.TestControlPane;
 /**
  * Interactive test module for <code>BorderPane</code>s.
  */
-public class BorderPaneTest extends AbstractTest {
+public class BorderPaneTest extends TabSplitPane {
 
     public BorderPaneTest() {
         super("BorderPane", Styles.ICON_16_BORDER_PANE);

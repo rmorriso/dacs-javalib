@@ -18,6 +18,8 @@ import com.fedroot.dacs.swingutil.DacsNoticePresentationDialog;
 import com.fedroot.dacs.util.Dacs905EventHandler;
 import com.fedroot.dacs.util.DacsAccess905Event;
 import java.awt.Frame;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  *
@@ -25,7 +27,10 @@ import java.awt.Frame;
  */
 public class Event905Handler implements Dacs905EventHandler{
     Frame parent;
-    /** Creates a new instance of Event902Handler */
+    
+    private static final Log LOG = LogFactory.getLog(DacsClientFrame.class);
+    
+    /** Creates a new instance of Event905Handler */
     public Event905Handler(Frame parent) {
         this.parent = parent;
     }
@@ -39,17 +44,19 @@ public class Event905Handler implements Dacs905EventHandler{
             if(dialog.showDialog()){ // user clicked ACCEPT                
                 // send user accept response via DacsNoticeAckService
                 if (notices.acceptNotices(dacscontext)) {
-                    dialog.dispose();
+                    // dialog.dispose();
+                    dialog.setVisible(false);
                     // return the result of executing dacsget again in the modified context
                     return dacscontext.executeCheckFailMethod(dacsget);
                 } else {
                     // TODO: these messages should be reported in GUI
-                    System.out.println("Notice acknowledgement failed");
+                    LOG.info("Notice acknowledgement failed");
                     return DacsStatus.SC_DACS_ACCESS_DENIED;
                 }
             } else {
-                System.out.println("User declined or closed dialog without accepting notices.");
-                dialog.dispose();
+                LOG.info("User declined or closed dialog without accepting notices.");
+                // dialog.dispose();
+                dialog.setVisible(false);
                 return DacsStatus.SC_DACS_ACCESS_DENIED;
             }
         } catch (Exception e) {

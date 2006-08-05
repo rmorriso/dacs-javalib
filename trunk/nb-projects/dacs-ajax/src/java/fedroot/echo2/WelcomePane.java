@@ -29,6 +29,7 @@
 
 package fedroot.echo2;
 
+import nextapp.echo2.app.Alignment;
 import nextapp.echo2.app.Button;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
@@ -41,6 +42,8 @@ import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
+import nextapp.echo2.app.layout.ColumnLayoutData;
+import nextapp.echo2.app.layout.SplitPaneLayoutData;
 
 /**
  * <code>ContentPane</code> which displays a welcome/instruction message to 
@@ -95,6 +98,7 @@ public class WelcomePane extends ContentPane {
         Column infoColumn = new Column();
         infoColumn.setInsets(new Insets(20, 5));
         infoColumn.setCellSpacing(new Extent(10));
+        
         splitPane.add(infoColumn);
         
         label = new Label("About this application:");
@@ -127,5 +131,16 @@ public class WelcomePane extends ContentPane {
         infoRow.add(label);
         
         infoColumn.add(infoRow);
+
+        // insert spacing
+        label = new Label();
+        infoColumn.add(label);
+        label = new Label();
+        infoColumn.add(label);
+        
+        label = new Label("This application has been tested only under Mozilla Firefox 1.5+ " +
+                          "and IE 6.0+ ... Earlier versions and other browsers have known issues.");
+        label.setFont(new Font(null, Font.BOLD, null));
+        infoColumn.add(label);
     }
 }

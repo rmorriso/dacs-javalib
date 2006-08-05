@@ -39,7 +39,7 @@ import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.CalendarSelect;
-import fedroot.echo2.AbstractTest;
+import fedroot.echo2.TabSplitPane;
 import fedroot.echo2.DacsAjaxApp;
 import fedroot.echo2.StyleUtil;
 import fedroot.echo2.Styles;
@@ -48,7 +48,7 @@ import fedroot.echo2.TestControlPane;
 /**
  * Interactive test module for <code>CalendarSelect</code>s.
  */
-public class CalendarSelectTest extends AbstractTest {
+public class CalendarSelectTest extends TabSplitPane {
 
     public CalendarSelectTest() {
         super("CalendarSelect", Styles.ICON_16_CALENDAR_SELECT);

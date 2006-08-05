@@ -78,7 +78,11 @@ public class JurisdictionTest extends TestCase {
             // authenticate as dssaccountname_1
             assertTrue(dssaccount.authenticate(dacscontext, TestConstants.dsspassword_1));
             credsResult = dssjur.currentCredentials(dacscontext);
+            for (Credentials c : credsResult) {
+                System.out.println(c.toString());
+            }
             assertEquals(2, credsResult.size());
+
             assertEquals(2,dacscontext.getDacsCookies().size());
             dacscontext.dumpDacsCookies(System.out);
         } catch (Exception e) {
@@ -182,7 +186,7 @@ public class JurisdictionTest extends TestCase {
             testjur.loadRevocations(dacscontext);
             assertEquals(TestConstants.numTESTrevocations, testjur.sizeOfRevocations());
         } catch (Exception e) {
-            fail("exception thrown");
+            fail("exception thrown: " + e.getMessage());
         }
     }
     

@@ -19,9 +19,10 @@ import com.fedroot.dacs.xmlbeans.AckReplyDocument;
 import com.fedroot.dacs.xmlbeans.DacsNoticesDocument;
 import com.fedroot.dacs.xmlbeans.NoticeDocument;
 import com.fedroot.dacs.xmlbeans.PresentationReplyDocument;
-import com.fedroot.util.httpclient.NameValueSet;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.xmlbeans.XmlObject;
 
 /**
@@ -37,6 +38,9 @@ public class DacsNotices {
     String ackhandler;
     DacsGetMethod acceptmethod, declinemethod;
     List<Notice> notices;
+    
+   /** Log object for this class. */
+    private static final Log LOG = LogFactory.getLog(DacsNotices.class);
     
     
     /**
@@ -54,7 +58,7 @@ public class DacsNotices {
                 // parse XML and call event handlers if appropriate
                 XmlObject expectedXmlObject = XmlObject.Factory.parse(dacsget.getResponseBodyAsStream());
                 // Check that it is an instance of the DacsAcsDocument
-                System.out.println(expectedXmlObject.getClass().getName());
+                LOG.info(expectedXmlObject.getClass().getName());
                 if(expectedXmlObject instanceof DacsNoticesDocument) {
                     DacsNoticesDocument doc = (DacsNoticesDocument) expectedXmlObject;
                     DacsNoticesDocument.DacsNotices notices = doc.getDacsNotices();
@@ -74,6 +78,8 @@ public class DacsNotices {
             }
         } catch (Exception x) {
             throw new RuntimeException("failed to load notices");
+        } finally {
+            dacsget.releaseConnection();
         }
     }
     
@@ -112,7 +118,7 @@ public class DacsNotices {
                 // parse XML and call event handlers if appropriate
                 XmlObject expectedXmlObject = XmlObject.Factory.parse(this.acceptmethod.getResponseBodyAsStream());
                 // Check that it is an instance of the DacsAcsDocument
-                System.out.println(expectedXmlObject.getClass().getName());
+                LOG.debug(expectedXmlObject.getClass().getName());
                 if(expectedXmlObject instanceof DacsNoticesDocument) {
                     DacsNoticesDocument doc = (DacsNoticesDocument) expectedXmlObject;
                     DacsNoticesDocument.DacsNotices noticedoc = doc.getDacsNotices();

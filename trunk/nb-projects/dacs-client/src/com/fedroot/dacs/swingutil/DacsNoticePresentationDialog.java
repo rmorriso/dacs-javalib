@@ -146,6 +146,7 @@ public class DacsNoticePresentationDialog extends JDialog {
         setDocumentContent("text/html", notices.getHtml());
         validate();
         // super calls dialogInit, so we don't need to do it again.
+        this.dialogInit();
     }
 
     /**
@@ -212,11 +213,6 @@ public class DacsNoticePresentationDialog extends JDialog {
         // not set when called from super() setDocumentContent(this.content);
         JScrollPane presentation = new JScrollPane(htmlpane);
         
-
-        // call super.dialogInit() to set the content pane
-        // NO! super already calls dialogInit() :  
-        // super.dialogInit() ;
-        
         JPanel pane = new JPanel();
         pane.setLayout(new BorderLayout());
         pane.add(presentation, BorderLayout.CENTER);
@@ -226,7 +222,6 @@ public class DacsNoticePresentationDialog extends JDialog {
         container.add(pane);
         container.setSize(600,400);
         pack();
-
     }
 
     /**

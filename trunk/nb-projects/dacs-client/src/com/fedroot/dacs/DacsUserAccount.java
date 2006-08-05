@@ -229,7 +229,6 @@ public class DacsUserAccount {
                 DacsCurrentCredentialsDocument dacsdoc = (DacsCurrentCredentialsDocument)expectedXmlObject;
                 DacsCurrentCredentialsDocument.DacsCurrentCredentials dacscurrentcreds =
                             dacsdoc.getDacsCurrentCredentials();
-                // return dacscurrentcreds.sizeOfCredentialsArray();
                 return true;
             } else {
                 throw new Exception("Error in DacsCurrentCredentialsDocument");

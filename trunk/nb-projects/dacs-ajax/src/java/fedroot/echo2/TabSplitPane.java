@@ -29,6 +29,9 @@
 
 package fedroot.echo2;
 
+import fedroot.echo2.dacs.ConfigurationPane;
+import fedroot.echo2.dacs.ContextPane;
+import fedroot.echo2.dacs.CredentialsPane;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -47,17 +50,17 @@ import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.TabPane;
 import nextapp.echo2.extras.app.layout.TabPaneLayoutData;
 
-public class AbstractTest extends SplitPane {
+public class TabSplitPane extends SplitPane {
 
     private Component testComponentParent;
     private Component testComponent;
     protected TestControlPane testControlsPane;
     
-    public AbstractTest(String testName) {
+    public TabSplitPane(String testName) {
         this(testName, null);
     }
     
-    public AbstractTest(String testName, ImageReference icon) {
+    public TabSplitPane(String testName, ImageReference icon) {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(300, Extent.PX));
         setStyleName("DefaultResizable");
         
@@ -83,19 +86,23 @@ public class AbstractTest extends SplitPane {
         label.setLayoutData(layoutData);
         tabPane.add(label, 1);
         
-        label = new Label("Events");
-        label.setBackground(StyleUtil.randomBrightColor());
         layoutData = new TabPaneLayoutData();
-        layoutData.setTitle("Events");
-        label.setLayoutData(layoutData);
-        tabPane.add(label, 2);
+        layoutData.setTitle("Credentials");
+        CredentialsPane t = new CredentialsPane();
+        t.setLayoutData(layoutData);
+        tabPane.add(t, 2);
         
-        label = new Label("Logs");
-        label.setBackground(StyleUtil.randomBrightColor());
         layoutData = new TabPaneLayoutData();
-        layoutData.setTitle("Logs");
-        label.setLayoutData(layoutData);
-        tabPane.add(label, 3);
+        layoutData.setTitle("Configuration");
+        ConfigurationPane cont = new ConfigurationPane();
+        cont.setLayoutData(layoutData);
+        tabPane.add(cont, 3);
+        
+        layoutData = new TabPaneLayoutData();
+        layoutData.setTitle("Container Context");
+        ContextPane cp = new ContextPane();
+        cp.setLayoutData(layoutData);
+        tabPane.add(cp);
     }
     
     protected void setTestComponent(Component testComponentParent, Component testComponent) {

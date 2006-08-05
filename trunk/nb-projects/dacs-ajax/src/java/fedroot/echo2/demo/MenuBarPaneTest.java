@@ -46,7 +46,7 @@ import nextapp.echo2.extras.app.menu.DefaultToggleOptionModel;
 import nextapp.echo2.extras.app.menu.MenuModel;
 import nextapp.echo2.extras.app.menu.MenuStateModel;
 import nextapp.echo2.extras.app.menu.SeparatorModel;
-import fedroot.echo2.AbstractTest;
+import fedroot.echo2.TabSplitPane;
 import fedroot.echo2.DacsAjaxApp;
 import fedroot.echo2.StyleUtil;
 import fedroot.echo2.Styles;
@@ -55,7 +55,7 @@ import fedroot.echo2.TestControlPane;
 /**
  * Interactive test module for <code>MenuBarPane</code>s.
  */
-public class MenuBarPaneTest extends AbstractTest {
+public class MenuBarPaneTest extends TabSplitPane {
     
     private static final Extent DEFAULT_MENU_HEIGHT = new Extent(26);
     private static final FillImage[] TEST_FILL_IMAGES = new FillImage[] { null, 

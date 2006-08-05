@@ -45,7 +45,7 @@ public class DacsAjaxApp extends ApplicationInstance {
 
     public static final String DACS_BASEURI, FEDERATION_DOMAIN;
     public static final UserContext USERCONTEXT = UserContext.getInstance("foo");
-    public static final Federation FEDERATION;
+    public static final Federation FEDERATION; 
     static {
         // Static initializer to retrieve information from configuration properties file.
         ResourceBundle config = ResourceBundle.getBundle("/fedroot/echo2/demo/Configuration");

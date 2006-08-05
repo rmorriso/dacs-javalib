@@ -159,4 +159,8 @@ public class Credentials {
     public Roles getRoles() {
         return roles;
     }
+    
+    public String toString() {
+        return this.getFederation() + "::" + this.getJurisdiction() + ":" + this.getName();
+    }
 }

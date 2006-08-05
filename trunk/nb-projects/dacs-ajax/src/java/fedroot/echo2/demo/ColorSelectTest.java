@@ -36,7 +36,7 @@ import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.ColorSelect;
-import fedroot.echo2.AbstractTest;
+import fedroot.echo2.TabSplitPane;
 import fedroot.echo2.DacsAjaxApp;
 import fedroot.echo2.StyleUtil;
 import fedroot.echo2.Styles;
@@ -45,7 +45,7 @@ import fedroot.echo2.TestControlPane;
 /**
  * Interactive test module for <code>ColorSelect</code>s.
  */
-public class ColorSelectTest extends AbstractTest {
+public class ColorSelectTest extends TabSplitPane {
     
     private static final Extent[] EXTENT_VALUES = new Extent[]{null, new Extent(16), new Extent(32), new Extent(64), 
             new Extent(128), new Extent(256), new Extent(512)};

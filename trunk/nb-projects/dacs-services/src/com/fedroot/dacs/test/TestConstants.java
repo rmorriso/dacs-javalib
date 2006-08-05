@@ -55,7 +55,7 @@ public class TestConstants {
     // the number of local users in TEST jurisdiction
     public static final int numTESTusers = 7;
     // the number of ACL file in TEST jurisdiction
-    public static final int numTESTacls = 10;
+    public static final int numTESTacls = 14;
     // the number of revoked users in TEST jurisdiction
     public static final int numTESTrevocations = 1;
 
