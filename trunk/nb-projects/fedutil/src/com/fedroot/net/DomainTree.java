@@ -46,6 +46,9 @@ public class DomainTree {
      */
     public void insert(String domainname, String property, Object value) {
         // store domainname in reverse order by domain components
+        // eg demo.fedroot.com => com
+        //                         |-----> fedroot
+        //                                    |------> demo + <property, value>
         insert(reverse(domainname), property, value);
     }
     

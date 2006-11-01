@@ -29,10 +29,11 @@
 
 package fedroot.echo2.dacs;
 
+import com.fedroot.dacs.Credentials;
+import fedroot.echo2.DacsAjaxApp;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Extent;
-import nextapp.echo2.app.Font;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Column;
 import nextapp.echo2.app.Label;
@@ -69,12 +70,16 @@ public class CredentialsPane extends SplitPane {
         textArea.setBorder(new Border(1, Color.BLUE, Border.STYLE_SOLID));
         testColumn.add(textArea);
         
-        controlsColumn.addButton("Select All", new ActionListener() {
+        controlsColumn.addButton("Show Credentials", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
                     Thread.sleep(3);
                 } catch (InterruptedException ex) { }
-                textArea.getDocument().setText("This will select all credentials.");
+                StringBuffer strbuf = new StringBuffer("");
+                for (Credentials cred : DacsAjaxApp.USERCONTEXT.getDacsCredentials()) {
+                    strbuf.append(cred.toString());
+                }
+                textArea.getDocument().setText(strbuf.toString());
             }
         });
         

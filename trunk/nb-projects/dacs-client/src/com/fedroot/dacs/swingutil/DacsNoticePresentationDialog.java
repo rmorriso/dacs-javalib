@@ -44,7 +44,8 @@ import javax.swing.text.html.HTMLDocument;
 import org.apache.commons.httpclient.Header;
 
 /**
- * A modal dialog that asks the user for a DACS jurisdiction, username and password.
+ * A modal dialog that asks a user to acknowledge a notice or notices by clicking
+ * Accept or Decline buttons.
  * Adapted from com.Ostermiller.util.PasswordDialog.java.
  * More information about this class is available from <a target="_top" href=
  * "http://ostermiller.org/utils/PasswordDialog.html">ostermiller.org</a>.
@@ -142,11 +143,11 @@ public class DacsNoticePresentationDialog extends JDialog {
         if (parent != null){
             setLocationRelativeTo(parent);
         }
-        
+        System.out.println(notices.getHtml());
         setDocumentContent("text/html", notices.getHtml());
         validate();
         // super calls dialogInit, so we don't need to do it again.
-        this.dialogInit();
+//        this.dialogInit();
     }
 
     /**

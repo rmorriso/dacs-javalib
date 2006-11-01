@@ -89,9 +89,9 @@ public class UserTest extends TestCase {
             assertTrue(testuser.authenticate(dssaccount, TestConstants.dsspassword_1));
             int n = testuser.getDacsCredentials().size();
             assertEquals(3, n);
-            // signing out of dssjur should remove exactly one credential
+            // signing out of mljur should remove two credentials
             int n1 = testuser.signout(mljur);
-//            assertEquals(1, n1);
+            assertEquals("number of credentials signed out", 2, n1);
             int n2 = testuser.getDacsCredentials().size();
             assertEquals("signout failed to decrement credentials", 1, n2);
         } catch (Exception e) {
