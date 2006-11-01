@@ -1,42 +1,24 @@
 /* 
- * This file is part of the Echo2 Extras Project.
- * Copyright (C) 2005-2006 NextApp, Inc.
+ * Created on April 26, 2006, 8:30 PM
  *
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either the GNU General Public License Version 2 or later (the "GPL"), or
- * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
+ * Copyright (c) 2005 Metalogic Software Corporation.
+ * All rights reserved. See http://fedroot.com/licenses/metalogic.txt for redistribution information.
  */
 
 package fedroot.echo2;
 
+import com.fedroot.dacs.Credentials;
+import com.fedroot.dacs.DacsContext;
 import com.fedroot.dacs.DacsUserAccount;
 import com.fedroot.dacs.Federation;
 import com.fedroot.dacs.Jurisdiction;
 import com.fedroot.dacs.UserContext;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.Window;
+import nextapp.echo2.webcontainer.ContainerContext;
 
 /**
  * DACS Ajax Demonstration Application
@@ -44,8 +26,9 @@ import nextapp.echo2.app.Window;
 public class DacsAjaxApp extends ApplicationInstance {
 
     public static final String DACS_BASEURI, FEDERATION_DOMAIN;
-    public static final UserContext USERCONTEXT = UserContext.getInstance("foo");
+    public static final DacsContext APPCONTEXT = new DacsContext();
     public static final Federation FEDERATION; 
+    public static final Jurisdiction JURISDICTION;
     static {
         // Static initializer to retrieve information from configuration properties file.
         ResourceBundle config = ResourceBundle.getBundle("/fedroot/echo2/demo/Configuration");
@@ -53,13 +36,24 @@ public class DacsAjaxApp extends ApplicationInstance {
         DACS_BASEURI = config.getString("dacs_baseuri");
         Federation federation;
         try {
-            federation = Federation.getInstance(USERCONTEXT, DACS_BASEURI);
+            federation = Federation.getInstance(APPCONTEXT, DACS_BASEURI);
         } catch (Exception ex) {
             federation = null;
         }
         FEDERATION = federation;
+        JURISDICTION = new Jurisdiction(DACS_BASEURI);
     }
 
+    private Window mainWindow;
+    private ConsoleWindowPane console;
+    private UserContext userContext;
+    
+    public DacsAjaxApp() {
+        super();
+        String username = getUsername();
+        userContext = UserContext.getInstance(username);
+    }
+    
     public ConsoleWindowPane getConsole() {
         return console;
     }
@@ -75,8 +69,6 @@ public class DacsAjaxApp extends ApplicationInstance {
         return (DacsAjaxApp) ApplicationInstance.getActive();
     }
 
-    private Window mainWindow;
-    private ConsoleWindowPane console;
     
     /**
      * Writes a message to a pop-up debugging console.
@@ -133,7 +125,8 @@ public class DacsAjaxApp extends ApplicationInstance {
     throws Exception {
         Jurisdiction jur = FEDERATION.getJurisdictionByName(jurisdiction);
         DacsUserAccount acc = new DacsUserAccount(FEDERATION,jur,username);
-        return USERCONTEXT.authenticate(acc,password);
+        userContext = UserContext.getInstance(username);
+        return userContext.authenticate(acc,password);
     }
     
     public String[] jurisdictionList() {
@@ -142,5 +135,54 @@ public class DacsAjaxApp extends ApplicationInstance {
           jurisdictions = FEDERATION.getAuthenticatingJurisdictionNames().toArray(new String[0]);
         }
         return jurisdictions;
+    }
+    
+    /**
+     * extracts <code>username</code> from HTTP Basic Auth authorization header
+     */
+    protected String getUsername() {
+        String username = null;
+        ContainerContext cc = (ContainerContext) getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);
+        if (cc != null) {
+            javax.servlet.http.Cookie[] jcookies = cc.getCookies();
+            if (jcookies != null) {
+                for (javax.servlet.http.Cookie jcookie : jcookies) {
+                    APPCONTEXT.addDacsCookie(jcookie);
+                }
+            }
+            try {
+                List<Credentials> credentials = JURISDICTION.currentCredentials(APPCONTEXT);
+                if (credentials.size() < 1) {
+                    throw new RuntimeException("application configuration error: no valid user found in request. Report to application administrator.");
+                }
+                username = credentials.get(0).getName();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        if (username == null) {
+            return "dcaughra";
+        } else {
+            return username;
+        }
+    }
+    
+    public List<Credentials> getCredentials() {
+        List <Credentials> credentials = new ArrayList<Credentials>();
+        ContainerContext cc = (ContainerContext) getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);
+        if (cc != null) {
+            javax.servlet.http.Cookie[] jcookies = cc.getCookies();
+            if (jcookies != null) {
+                for (javax.servlet.http.Cookie jcookie : jcookies) {
+                    userContext.addDacsCookie(jcookie);
+                }
+            }
+        }
+        try {
+            credentials = JURISDICTION.currentCredentials(userContext);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return credentials;
     }
 }

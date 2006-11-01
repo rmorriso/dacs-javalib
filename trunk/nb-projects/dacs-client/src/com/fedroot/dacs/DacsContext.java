@@ -8,8 +8,10 @@
  */
 
 package com.fedroot.dacs;
+import com.fedroot.dacs.http.DacsCookie;
 import com.fedroot.dacs.http.DacsDeleteMethod;
 import com.fedroot.dacs.exceptions.DacsException;
+import com.fedroot.dacs.exceptions.DacsRuntimeException;
 import com.fedroot.dacs.http.DacsGetMethod;
 import com.fedroot.dacs.http.DacsHeadMethod;
 import com.fedroot.dacs.http.DacsPostMethod;
@@ -781,6 +783,35 @@ public class DacsContext {
             }
         }
         return cookienames;
+    }
+    
+    /**
+     * if jcookie is a DACS or NAT cookie add it to httpclient state, 
+     * otherwise do nothing
+     * @param jcookie a Sun javax cookie
+     */
+    public void addDacsCookie(javax.servlet.http.Cookie jcookie) {
+        if (DacsCookie.isDacsCookie(jcookie)) {
+            // look for matching cookie in DacsContext
+            Cookie thiscookie = getCookieByName(jcookie.getName());
+            if (thiscookie != null) {
+                // do nothing if identical cookie is present in DacsContext
+                if (thiscookie.getValue().equals(jcookie.getValue())) {
+                    return;
+                }
+                // cookie with same name but different value present in DacsContext
+                //    -- nuke it and add the new one --
+                // this is relevant when the browser has obtained credentials
+                // outside of FedAdmin app; we assume the browser holds the
+                // definitive version of state
+                if (thiscookie.getDomain().equals(jcookie.getDomain())) {
+                    thiscookie.setExpiryDate(new Date(0));
+                    httpclient.getState().purgeExpiredCookies();
+                }
+            }
+            Cookie cookie = new Cookie(jcookie.getDomain(), jcookie.getName(), jcookie.getValue(), "/", jcookie.getMaxAge(), jcookie.getSecure());
+            httpclient.getState().addCookie(cookie);
+        }
     }
     
     /**
