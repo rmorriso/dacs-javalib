@@ -24,9 +24,4 @@ public class DacsAjaxServlet extends WebContainerServlet {
     public ApplicationInstance newApplicationInstance() {
         return new DacsAjaxApp();
     }
-    
-    public String getDacsCookies() {
-        Cookie[] cookie = super.getActiveConnection().getRequest().getCookies();
-        return null;
-    }
 }

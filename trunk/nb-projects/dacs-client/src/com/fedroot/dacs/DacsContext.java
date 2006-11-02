@@ -790,7 +790,7 @@ public class DacsContext {
      * otherwise do nothing
      * @param jcookie a Sun javax cookie
      */
-    public void addDacsCookie(javax.servlet.http.Cookie jcookie) {
+    public void addDacsCookie(javax.servlet.http.Cookie jcookie, String domain, String path) {
         if (DacsCookie.isDacsCookie(jcookie)) {
             // look for matching cookie in DacsContext
             Cookie thiscookie = getCookieByName(jcookie.getName());
@@ -809,7 +809,8 @@ public class DacsContext {
                     httpclient.getState().purgeExpiredCookies();
                 }
             }
-            Cookie cookie = new Cookie(jcookie.getDomain(), jcookie.getName(), jcookie.getValue(), "/", jcookie.getMaxAge(), jcookie.getSecure());
+            Cookie cookie = new Cookie(domain, jcookie.getName(), jcookie.getValue(), path, jcookie.getMaxAge(), jcookie.getSecure());
+            System.out.println("Cookie is expired: " + cookie.isExpired());
             httpclient.getState().addCookie(cookie);
         }
     }

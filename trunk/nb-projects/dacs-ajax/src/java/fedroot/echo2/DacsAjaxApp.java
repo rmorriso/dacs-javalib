@@ -19,6 +19,7 @@ import java.util.ResourceBundle;
 import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.Window;
 import nextapp.echo2.webcontainer.ContainerContext;
+import org.apache.log4j.Logger;
 
 /**
  * DACS Ajax Demonstration Application
@@ -47,11 +48,13 @@ public class DacsAjaxApp extends ApplicationInstance {
     private Window mainWindow;
     private ConsoleWindowPane console;
     private UserContext userContext;
+    private Logger logger;
     
     public DacsAjaxApp() {
         super();
         String username = getUsername();
         userContext = UserContext.getInstance(username);
+        logger = Logger.getLogger("fedroot.echo2");
     }
     
     public ConsoleWindowPane getConsole() {
@@ -147,7 +150,7 @@ public class DacsAjaxApp extends ApplicationInstance {
             javax.servlet.http.Cookie[] jcookies = cc.getCookies();
             if (jcookies != null) {
                 for (javax.servlet.http.Cookie jcookie : jcookies) {
-                    APPCONTEXT.addDacsCookie(jcookie);
+                    APPCONTEXT.addDacsCookie(jcookie, FEDERATION_DOMAIN, "/");
                 }
             }
             try {
@@ -174,12 +177,16 @@ public class DacsAjaxApp extends ApplicationInstance {
             javax.servlet.http.Cookie[] jcookies = cc.getCookies();
             if (jcookies != null) {
                 for (javax.servlet.http.Cookie jcookie : jcookies) {
-                    userContext.addDacsCookie(jcookie);
+                    userContext.addDacsCookie(jcookie, "." + FEDERATION_DOMAIN, "/");
+                    logger.debug("adding Java Cookie to userContext: " 
+                            + jcookie.getName() + "=" + jcookie.getValue());
                 }
             }
         }
+        userContext.dumpDacsCookies(System.out);
         try {
-            credentials = JURISDICTION.currentCredentials(userContext);
+//            credentials = JURISDICTION.currentCredentials(userContext);
+            credentials = userContext.getDacsCredentials(FEDERATION);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
