@@ -9,6 +9,7 @@
 
 package com.fedroot.dacs;
 import com.fedroot.dacs.exceptions.DacsException;
+import com.fedroot.dacs.http.DacsCookie;
 import com.fedroot.dacs.http.DacsGetMethod;
 import com.fedroot.dacs.http.DacsStatus;
 import com.fedroot.dacs.services.DacsAdminService;
@@ -132,6 +133,66 @@ public class Jurisdiction {
                 }
             }  else {
                 throw new Exception("Jurisdiction currentCredentials: returned HTTP status " + httpstatus);
+            }
+        } catch (IOException e){
+            System.out.println("IOException : " + e.getLocalizedMessage());
+            throw e;
+        } catch (XmlException e){
+            System.out.println("XmlException: " + e.getMessage());
+            throw e;
+        }
+    }
+    
+    /**
+     * use this jurisdiction to resolve the Username in a given DACS cookie
+     * @param jcookie a Sun javax.servlet.http.Cookie extracted from the HTTP request
+     * @return DACS username defined in jcookie
+     * @throws java.lang.Exception TODO
+     */
+    public String resolveUsername(javax.servlet.http.Cookie jcookie)
+    throws DacsException, Exception {
+        if (! DacsCookie.isDacsCookie(jcookie)) return null;
+        DacsCurrentCredentialsDocument dacsCurrentCredentialsDocument = null;
+        int httpstatus;
+        List<Credentials> credentials = new ArrayList<Credentials>();
+        // get an empty DacsContext
+        DacsContext dacscontext = new DacsContext();
+        dacscontext.addDacsCookie(this.getFederation(), jcookie);
+        try {
+            DacsCurrentCredentialsService dacsservice =
+                    new DacsCurrentCredentialsService(this.dacsuri);
+            DacsGetMethod dacsget = dacsservice.getDacsGetMethod();
+            httpstatus = dacscontext.executeMethod(dacsget);
+            if (httpstatus == HttpStatus.SC_OK) {
+                XmlObject expectedXmlObject = XmlObject.Factory.parse(dacsget.getResponseBodyAsStream());
+                dacsget.releaseConnection();
+                // Check that it is an instance of the DacsCurrentCredentialsDocument
+                if(expectedXmlObject instanceof DacsCurrentCredentialsDocument){
+                    // DacsCurrentCredentialsDocument dacscredsdoc = DacsCurrentCredentialsDocument.Factory.parse(xmlstring);
+                    dacsCurrentCredentialsDocument =
+                            (DacsCurrentCredentialsDocument)expectedXmlObject;
+                    List <DacsCurrentCredentialsDocument.DacsCurrentCredentials.Credentials> dacscredsList =
+                            dacsCurrentCredentialsDocument.getDacsCurrentCredentials().getCredentialsList();
+                    for(DacsCurrentCredentialsDocument.DacsCurrentCredentials.Credentials dacscreds : dacscredsList) {
+                        Credentials creds =
+                                new Credentials(
+                                this.federation,
+                                this.federation.getJurisdictionByName(dacscreds.getJurisdiction().toString()),
+                                dacscreds);
+                        credentials.add(creds);
+                    }
+                    if (credentials.size() == 1) {
+                        Credentials cred = credentials.get(0);
+                        return cred.getName();
+                    } else {
+                        return null;
+                    }
+                    
+                } else {
+                    throw new DacsException("Jurisdiction currentCredentials: invalid DacsCurrentCredentialsDocument");
+                }
+            }  else {
+                throw new DacsException("Jurisdiction currentCredentials: returned HTTP status " + httpstatus);
             }
         } catch (IOException e){
             System.out.println("IOException : " + e.getLocalizedMessage());

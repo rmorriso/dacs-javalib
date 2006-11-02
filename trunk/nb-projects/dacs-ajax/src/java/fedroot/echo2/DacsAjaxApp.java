@@ -1,4 +1,4 @@
-/* 
+/*
  * Created on April 26, 2006, 8:30 PM
  *
  * Copyright (c) 2005 Metalogic Software Corporation.
@@ -13,6 +13,8 @@ import com.fedroot.dacs.DacsUserAccount;
 import com.fedroot.dacs.Federation;
 import com.fedroot.dacs.Jurisdiction;
 import com.fedroot.dacs.UserContext;
+import com.fedroot.dacs.exceptions.DacsException;
+import com.fedroot.dacs.http.DacsCookie;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -25,10 +27,10 @@ import org.apache.log4j.Logger;
  * DACS Ajax Demonstration Application
  */
 public class DacsAjaxApp extends ApplicationInstance {
-
+    public static final String DEFAULT_USER = "ricmorri";
     public static final String DACS_BASEURI, FEDERATION_DOMAIN;
     public static final DacsContext APPCONTEXT = new DacsContext();
-    public static final Federation FEDERATION; 
+    public static final Federation FEDERATION;
     public static final Jurisdiction JURISDICTION;
     static {
         // Static initializer to retrieve information from configuration properties file.
@@ -44,7 +46,7 @@ public class DacsAjaxApp extends ApplicationInstance {
         FEDERATION = federation;
         JURISDICTION = new Jurisdiction(DACS_BASEURI);
     }
-
+    
     private Window mainWindow;
     private ConsoleWindowPane console;
     private UserContext userContext;
@@ -53,31 +55,31 @@ public class DacsAjaxApp extends ApplicationInstance {
     public DacsAjaxApp() {
         super();
         String username = getUsername();
-        userContext = UserContext.getInstance(username);
+        this.userContext = UserContext.getInstance(username);
         logger = Logger.getLogger("fedroot.echo2");
     }
     
     public ConsoleWindowPane getConsole() {
         return console;
     }
-   
+    
     /**
-     * Convenience method to return the <code>ThreadLocal</code> instance 
+     * Convenience method to return the <code>ThreadLocal</code> instance
      * precast to the appropriate type.
-     * 
+     *
      * @return the active <code>DacsAjaxApp</code>
      * @see #getActive()
      */
     public static DacsAjaxApp getApp() {
         return (DacsAjaxApp) ApplicationInstance.getActive();
     }
-
+    
     
     /**
      * Writes a message to a pop-up debugging console.
      * The console is used for displaying information such as
      * fired events.
-     * 
+     *
      * @param message the message to write to the console
      *        (if null, console will be raised but not content
      *        will be written to it)
@@ -111,7 +113,7 @@ public class DacsAjaxApp extends ApplicationInstance {
         mainWindow.setContent(new WelcomePane());
         console = null;
     }
-
+    
     /**
      * @see nextapp.echo2.app.ApplicationInstance#init()
      */
@@ -124,7 +126,7 @@ public class DacsAjaxApp extends ApplicationInstance {
         return mainWindow;
     }
     
-    public boolean login(String jurisdiction, String username, String password) 
+    public boolean login(String jurisdiction, String username, String password)
     throws Exception {
         Jurisdiction jur = FEDERATION.getJurisdictionByName(jurisdiction);
         DacsUserAccount acc = new DacsUserAccount(FEDERATION,jur,username);
@@ -135,7 +137,7 @@ public class DacsAjaxApp extends ApplicationInstance {
     public String[] jurisdictionList() {
         String [] jurisdictions = null;
         if (FEDERATION != null) {
-          jurisdictions = FEDERATION.getAuthenticatingJurisdictionNames().toArray(new String[0]);
+            jurisdictions = FEDERATION.getAuthenticatingJurisdictionNames().toArray(new String[0]);
         }
         return jurisdictions;
     }
@@ -143,14 +145,14 @@ public class DacsAjaxApp extends ApplicationInstance {
     /**
      * extracts <code>username</code> from HTTP Basic Auth authorization header
      */
-    protected String getUsername() {
+    protected String getUsernameOld() {
         String username = null;
         ContainerContext cc = (ContainerContext) getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);
         if (cc != null) {
             javax.servlet.http.Cookie[] jcookies = cc.getCookies();
             if (jcookies != null) {
                 for (javax.servlet.http.Cookie jcookie : jcookies) {
-                    APPCONTEXT.addDacsCookie(jcookie, FEDERATION_DOMAIN, "/");
+                    APPCONTEXT.addDacsCookie(FEDERATION, jcookie);
                 }
             }
             try {
@@ -164,10 +166,42 @@ public class DacsAjaxApp extends ApplicationInstance {
             }
         }
         if (username == null) {
-            return "dcaughra";
+            return DEFAULT_USER;
         } else {
             return username;
         }
+    }
+    
+    /**
+     * extracts <code>username</code> from DACS credential cookie in HTTP request
+     */
+    protected String getUsername() {
+        List <Credentials> credentials = new ArrayList<Credentials>();
+        ContainerContext cc = (ContainerContext) getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);
+        if (cc != null) {
+            javax.servlet.http.Cookie[] jcookies = cc.getCookies();
+            if (jcookies != null) {
+                for (javax.servlet.http.Cookie jcookie : jcookies) {
+                    if (DacsCookie.isDacsCookie(jcookie)) {
+                        try {
+                            String username = JURISDICTION.resolveUsername(jcookie);
+                            if (username != null) { // found username
+                                logger.debug("resolved username " + username);
+                                logger.debug("adding Java Cookie to userContext: "
+                                        + jcookie.getName() + "=" + jcookie.getValue());
+                                return username;
+                            }
+                        } catch (DacsException ex) {
+                            ex.printStackTrace();
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+        // username not found in HTTP request return default username
+        return DEFAULT_USER;
     }
     
     public List<Credentials> getCredentials() {
@@ -177,8 +211,8 @@ public class DacsAjaxApp extends ApplicationInstance {
             javax.servlet.http.Cookie[] jcookies = cc.getCookies();
             if (jcookies != null) {
                 for (javax.servlet.http.Cookie jcookie : jcookies) {
-                    userContext.addDacsCookie(jcookie, "." + FEDERATION_DOMAIN, "/");
-                    logger.debug("adding Java Cookie to userContext: " 
+                    userContext.addDacsCookie(FEDERATION, jcookie);
+                    logger.debug("adding Java Cookie to userContext: "
                             + jcookie.getName() + "=" + jcookie.getValue());
                 }
             }

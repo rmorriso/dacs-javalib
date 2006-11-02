@@ -19,9 +19,9 @@ import org.apache.commons.httpclient.Cookie;
  */
 public class DacsCookie extends Cookie {
     
-    /** Creates a new instance of DacsCookie */
-    public DacsCookie(javax.servlet.http.Cookie jcookie) throws DacsRuntimeException {
-        super(jcookie.getDomain(), jcookie.getName(),jcookie.getValue(),"/", jcookie.getMaxAge(),jcookie.getSecure());
+    /** Creates a new instance of DacsCookie from a javax.servlet.http.netCookie*/
+    public DacsCookie(String federationDomain, javax.servlet.http.Cookie jcookie) throws DacsRuntimeException {
+        super(federationDomain, jcookie.getName(),jcookie.getValue(),"/", jcookie.getMaxAge(),jcookie.getSecure());
         if(! isDacsCookie(jcookie)) {
             throw new DacsRuntimeException("invalid DACS cookie: " + jcookie.getName());
         }
@@ -30,4 +30,5 @@ public class DacsCookie extends Cookie {
     public static boolean isDacsCookie(javax.servlet.http.Cookie jcookie) {
         return jcookie.getName().startsWith("DACS:");
     }
+
 }

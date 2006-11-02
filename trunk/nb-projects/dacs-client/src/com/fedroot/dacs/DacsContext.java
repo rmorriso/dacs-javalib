@@ -786,11 +786,14 @@ public class DacsContext {
     }
     
     /**
-     * if jcookie is a DACS or NAT cookie add it to httpclient state, 
-     * otherwise do nothing
+     * add a jcookie from HTTP request;
+     * if jcookie is a DACS or NAT cookie add it to httpclient state, otherwise do nothing
+     * Note that cookies sent in the HTTP request header do not carry domain information
      * @param jcookie a Sun javax cookie
      */
-    public void addDacsCookie(javax.servlet.http.Cookie jcookie, String domain, String path) {
+    public void addDacsCookie(Federation federation, javax.servlet.http.Cookie jcookie) {
+        String domain = federation.getDomain();
+        String path = "/"; // replace by federation.getPath? jurisdiction.getPath?
         if (DacsCookie.isDacsCookie(jcookie)) {
             // look for matching cookie in DacsContext
             Cookie thiscookie = getCookieByName(jcookie.getName());
@@ -804,7 +807,7 @@ public class DacsContext {
                 // this is relevant when the browser has obtained credentials
                 // outside of FedAdmin app; we assume the browser holds the
                 // definitive version of state
-                if (thiscookie.getDomain().equals(jcookie.getDomain())) {
+                if (thiscookie.getDomain().equals(domain)) {
                     thiscookie.setExpiryDate(new Date(0));
                     httpclient.getState().purgeExpiredCookies();
                 }
