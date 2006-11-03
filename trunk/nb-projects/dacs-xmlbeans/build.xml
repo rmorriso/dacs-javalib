@@ -74,7 +74,7 @@
         <mkdir dir="${libsrc.dir}" />
         <taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean"
                  classpath="${javac.classpath}"/>
-        <xmlbean schema="dtd-xsd" destfile="lib/dacs-xmlbeans.jar" 
+        <xmlbean schema="dtd-xsd" destfile="lib/dacs-xmlbeans-base.jar" 
                  classpath="${javac.classpath}"
                  javasource="1.5" srcgendir="${libsrc.dir}" failonerror="true"/>
     </target>
@@ -85,9 +85,9 @@
     </target>
 
     <target name="-post-clean">
-      <!-- Delete the ${libsrc.dir} and dacs-xmlbeans.jar -->
+      <!-- Delete the ${libsrc.dir} and dacs-xmlbeans-base.jar -->
       <delete dir="${libsrc.dir}"/>
-      <delete file="lib/dacs-xmlbeans.jar"/>
+      <delete file="lib/dacs-xmlbeans-base.jar"/>
     </target>
 
 </project>
