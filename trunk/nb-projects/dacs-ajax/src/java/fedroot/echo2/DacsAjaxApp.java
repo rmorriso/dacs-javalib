@@ -21,20 +21,20 @@ import java.util.ResourceBundle;
 import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.Window;
 import nextapp.echo2.webcontainer.ContainerContext;
+import nextapp.echo2.webrender.Connection;
 import org.apache.log4j.Logger;
 
 /**
  * DACS Ajax Demonstration Application
  */
 public class DacsAjaxApp extends ApplicationInstance {
-    public static final String DEFAULT_USER = "ricmorri";
     public static final String DACS_BASEURI, FEDERATION_DOMAIN;
     public static final DacsContext APPCONTEXT = new DacsContext();
     public static final Federation FEDERATION;
     public static final Jurisdiction JURISDICTION;
     static {
         // Static initializer to retrieve information from configuration properties file.
-        ResourceBundle config = ResourceBundle.getBundle("/fedroot/echo2/demo/Configuration");
+        ResourceBundle config = ResourceBundle.getBundle("fedroot.echo2.demo.Configuration");
         FEDERATION_DOMAIN = config.getString("federation_domain");
         DACS_BASEURI = config.getString("dacs_baseuri");
         Federation federation;
@@ -44,19 +44,22 @@ public class DacsAjaxApp extends ApplicationInstance {
             federation = null;
         }
         FEDERATION = federation;
-        JURISDICTION = new Jurisdiction(DACS_BASEURI);
+        JURISDICTION = FEDERATION.getJurisdictionByName("FEDHOME");
     }
-    
+    private static final String DEFAULT_USER = "ricmorri";
+    private static DacsAjaxServlet dacsServlet;
     private Window mainWindow;
     private ConsoleWindowPane console;
     private UserContext userContext;
-    private Logger logger;
+    private Logger logger = Logger.getLogger("fedroot.echo2");
+    private String systemID;
     
-    public DacsAjaxApp() {
+    public DacsAjaxApp(DacsAjaxServlet dacsServlet) {
         super();
+        this.dacsServlet = dacsServlet;
+        this.systemID = super.generateSystemId();
+        this.userContext = UserContext.getInstance(systemID);
         String username = getUsername();
-        this.userContext = UserContext.getInstance(username);
-        logger = Logger.getLogger("fedroot.echo2");
     }
     
     public ConsoleWindowPane getConsole() {
@@ -141,45 +144,16 @@ public class DacsAjaxApp extends ApplicationInstance {
         }
         return jurisdictions;
     }
-    
-    /**
-     * extracts <code>username</code> from HTTP Basic Auth authorization header
-     */
-    protected String getUsernameOld() {
-        String username = null;
-        ContainerContext cc = (ContainerContext) getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);
-        if (cc != null) {
-            javax.servlet.http.Cookie[] jcookies = cc.getCookies();
-            if (jcookies != null) {
-                for (javax.servlet.http.Cookie jcookie : jcookies) {
-                    APPCONTEXT.addDacsCookie(FEDERATION, jcookie);
-                }
-            }
-            try {
-                List<Credentials> credentials = JURISDICTION.currentCredentials(APPCONTEXT);
-                if (credentials.size() < 1) {
-                    throw new RuntimeException("application configuration error: no valid user found in request. Report to application administrator.");
-                }
-                username = credentials.get(0).getName();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-        if (username == null) {
-            return DEFAULT_USER;
-        } else {
-            return username;
-        }
-    }
-    
+   
     /**
      * extracts <code>username</code> from DACS credential cookie in HTTP request
      */
     protected String getUsername() {
+        Connection activeConnection = this.dacsServlet.getActiveConnection();
         List <Credentials> credentials = new ArrayList<Credentials>();
-        ContainerContext cc = (ContainerContext) getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);
-        if (cc != null) {
-            javax.servlet.http.Cookie[] jcookies = cc.getCookies();
+        // ContainerContext cc = (ContainerContext) getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);
+        if (activeConnection != null) {
+            javax.servlet.http.Cookie[] jcookies = activeConnection.getRequest().getCookies();
             if (jcookies != null) {
                 for (javax.servlet.http.Cookie jcookie : jcookies) {
                     if (DacsCookie.isDacsCookie(jcookie)) {
@@ -204,6 +178,13 @@ public class DacsAjaxApp extends ApplicationInstance {
         return DEFAULT_USER;
     }
     
+    /**
+     * return the DACS UserContext associated with this user/ApplicationInstance
+     */
+    public UserContext getUserContext() {
+        return this.userContext;
+    }
+
     public List<Credentials> getCredentials() {
         List <Credentials> credentials = new ArrayList<Credentials>();
         ContainerContext cc = (ContainerContext) getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);

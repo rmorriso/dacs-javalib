@@ -8,8 +8,6 @@
  */
 
 package fedroot.echo2;
-import java.util.List;
-import javax.servlet.http.Cookie;
 import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.webcontainer.WebContainerServlet;
 
@@ -22,6 +20,6 @@ public class DacsAjaxServlet extends WebContainerServlet {
      * @see nextapp.echo2.webcontainer.WebContainerServlet#newApplicationInstance()
      */
     public ApplicationInstance newApplicationInstance() {
-        return new DacsAjaxApp();
+        return new DacsAjaxApp(this);
     }
 }
