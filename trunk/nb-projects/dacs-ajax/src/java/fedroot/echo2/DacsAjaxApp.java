@@ -46,7 +46,7 @@ public class DacsAjaxApp extends ApplicationInstance {
         FEDERATION = federation;
         FEDHOME = FEDERATION.getJurisdictionByName("FEDHOME");
     }
-    private static final String DEFAULT_USER = "ricmorri";
+    private static final String DEFAULT_USER = "guest";
     private static DacsAjaxServlet dacsServlet;
     private Window mainWindow;
     private ConsoleWindowPane console;
