@@ -8,7 +8,7 @@
  */
 
 
-package com.fedroot.xml;
+package fedroot.xml;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;

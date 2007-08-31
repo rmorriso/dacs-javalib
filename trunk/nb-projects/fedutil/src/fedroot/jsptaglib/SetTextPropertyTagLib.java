@@ -1,4 +1,4 @@
-package com.fedroot.jsptaglib;
+package fedroot.jsptaglib;
 
 import java.util.Properties;
 
@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import com.fedroot.web.ProfileCookie;
+import fedroot.web.ProfileCookie;
 
 /**
  * If the request includes a {@link Constants#LANGUAGE} parameter,

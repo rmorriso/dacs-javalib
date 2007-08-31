@@ -6,12 +6,12 @@
  * Copyright (c) 2005 Metalogic Software Corporation.
  * All rights reserved. See http://fedroot.com/licenses/metalogic.txt for redistribution information.
  */
-package com.fedroot.web;
+package fedroot.web;
 
 
 import javax.servlet.http.Cookie;
 
-import com.fedroot.util.StringUtility;
+import fedroot.util.StringUtility;
 import java.util.List;
 
 

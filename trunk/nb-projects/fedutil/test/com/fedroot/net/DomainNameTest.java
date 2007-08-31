@@ -7,6 +7,7 @@
 
 package com.fedroot.net;
 
+import fedroot.net.DomainName;
 import junit.framework.*;
 
 /**

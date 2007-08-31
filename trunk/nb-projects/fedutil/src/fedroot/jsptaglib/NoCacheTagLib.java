@@ -1,4 +1,4 @@
-package com.fedroot.jsptaglib;
+package fedroot.jsptaglib;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

@@ -1,4 +1,4 @@
-package com.fedroot.jsptaglib;
+package fedroot.jsptaglib;
 
 /**
  * This class holds Constants that are used in the Registration project.

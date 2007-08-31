@@ -1,4 +1,4 @@
-package com.fedroot.util;
+package fedroot.util;
 
 import java.util.ArrayList;
 import java.util.List;

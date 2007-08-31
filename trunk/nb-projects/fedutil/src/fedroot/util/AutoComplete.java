@@ -7,7 +7,7 @@
  * All rights reserved. See http://fedroot.com/licenses/metalogic.txt for redistribution information.
  */
 
-package com.fedroot.util;
+package fedroot.util;
 
 import java.util.Vector;
 

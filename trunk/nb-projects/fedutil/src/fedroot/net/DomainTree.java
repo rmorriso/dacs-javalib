@@ -8,7 +8,7 @@
  */
 
 
-package com.fedroot.net;
+package fedroot.net;
 
 import java.util.HashMap;
 

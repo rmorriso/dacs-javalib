@@ -7,7 +7,7 @@
  * All rights reserved. See http://fedroot.com/licenses/metalogic.txt for redistribution information.
  */
 
-package com.fedroot.util.httpclient;
+package fedroot.util.httpclient;
 
 import java.util.ArrayList;
 import java.util.HashMap;

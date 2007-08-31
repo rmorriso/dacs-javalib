@@ -7,6 +7,7 @@ package com.fedroot.util.httpclient;
  * Copyright (c) 2005 Metalogic Software Corporation.
  * All rights reserved. See http://fedroot.com/licenses/metalogic.txt for redistribution information.
  */
+import fedroot.util.httpclient.NameValueSet;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Set;

@@ -7,6 +7,7 @@
 
 package com.fedroot.net;
 
+import fedroot.net.DomainTree;
 import junit.framework.*;
 import java.util.HashMap;
 

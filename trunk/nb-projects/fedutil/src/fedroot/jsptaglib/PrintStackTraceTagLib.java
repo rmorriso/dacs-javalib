@@ -1,4 +1,4 @@
-package com.fedroot.jsptaglib;
+package fedroot.jsptaglib;
 
 import java.io.IOException;
 import java.io.PrintWriter;
