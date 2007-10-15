@@ -9,7 +9,7 @@
 
 package com.fedroot.dacs.services;
 
-import com.fedroot.util.httpclient.NameValueSet;
+import fedroot.util.httpclient.NameValueSet;
 import java.util.EnumSet;
 import java.util.Set;
 import org.apache.commons.httpclient.NameValuePair;

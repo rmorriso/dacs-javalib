@@ -13,7 +13,7 @@ package com.fedroot.dacs;
 import com.fedroot.dacs.http.DacsGetMethod;
 import com.fedroot.dacs.http.DacsStatus;
 import com.fedroot.dacs.services.DacsNoticeAckService;
-import com.fedroot.xml.XmlUtil;
+import fedroot.xml.XmlUtil;
 import com.fedroot.dacs.util.DacsAccess905Event;
 import com.fedroot.dacs.xmlbeans.AckReplyDocument;
 import com.fedroot.dacs.xmlbeans.DacsNoticesDocument;

@@ -45,7 +45,7 @@ public class Federation {
     throws Exception {
         this.name = dacsListJurisdictionsDocument.getDacsListJurisdictions().getFederation();
         this.domain = dacsListJurisdictionsDocument.getDacsListJurisdictions().getDomain();
-        this.public_key = dacsListJurisdictionsDocument.getDacsListJurisdictions().getPublicKey();
+        this.public_key = dacsListJurisdictionsDocument.getDacsListJurisdictions().getFedPublicKey();
         // Add the jurisdictions from dacsListJurisdiction to the Jurisdictions list
         this.jurisdictions = new ArrayList<Jurisdiction>();
         DacsJurisdiction[] jurisdictionList = dacsListJurisdictionsDocument.getDacsListJurisdictions().getJurisdictionArray();
@@ -80,24 +80,24 @@ public class Federation {
         DacsGetMethod dacsget = dacsservice.getDacsGetMethod();
         
         int httpstatus = dacscontext.executeMethod(dacsget);
-        String foo = dacsget.getResponseBodyAsString();
         if (httpstatus == HttpStatus.SC_OK) {
-            XmlObject expectedXmlObject = XmlObject.Factory.parse(dacsget.getResponseBodyAsStream());
+//            XmlObject expectedXmlObject = XmlObject.Factory.parse(dacsget.getResponseBodyAsStream());
+            DacsListJurisdictionsDocument dacsListJurisdictionsDocument = DacsListJurisdictionsDocument.Factory.parse(dacsget.getResponseBodyAsStream());
             dacsget.releaseConnection();
             
             // Check that it is an instance of the DacsListJurisdictionsDocument
-            if(expectedXmlObject instanceof DacsListJurisdictionsDocument){
-                DacsListJurisdictionsDocument dacsListJurisdictionsDocument =
-                        (DacsListJurisdictionsDocument)expectedXmlObject;
+//            if(expectedXmlObject instanceof DacsListJurisdictionsDocument){
+//                DacsListJurisdictionsDocument dacsListJurisdictionsDocument =
+//                        (DacsListJurisdictionsDocument)expectedXmlObject;
                 String domain = dacsListJurisdictionsDocument.getDacsListJurisdictions().getDomain();
                 federation = feddb.get(domain);
                 if (federation == null) {
                     federation = new Federation(dacscontext, dacsListJurisdictionsDocument);
                     feddb.put(federation.getDomain(), federation);
                 }
-            } else {
-                throw new Exception("Federation listJurisdictions: unknown XML reply");
-            }
+//            } else {
+//                throw new Exception("Federation listJurisdictions: unknown XML reply");
+//            }
         } else {
             throw new Exception("Federation listJurisdictions: returned HTTP status " + httpstatus);
         }

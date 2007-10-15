@@ -48,6 +48,7 @@ import org.apache.xmlbeans.XmlObject;
 public class Jurisdiction {
     Federation federation;
     String name;
+    String fullName;
     public String altname; // as defined in dacs_list_jurisdictions
     String dacsuri;
     public boolean authenticates;
@@ -80,7 +81,8 @@ public class Jurisdiction {
      * @param dacsjur the DacsJurisdiction XmlBean unmarshalled from the DACS dacs_list_jurisdictions service
      */
     public Jurisdiction(DacsJurisdiction dacsjur) {
-        name = dacsjur.getName();
+        name = dacsjur.getJname();
+        fullName = dacsjur.getName();
         setAltname(dacsjur.getAltName());
         dacsuri = dacsjur.getDacsUrl();
         setAuthenticates((dacsjur.getAuthenticates() == DacsJurisdiction.Authenticates.YES ? true : false));

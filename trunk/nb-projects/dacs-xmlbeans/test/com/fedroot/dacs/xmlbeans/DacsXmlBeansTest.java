@@ -37,7 +37,7 @@ public class DacsXmlBeansTest extends TestCase {
         super(testName);
         httpclient = new HttpClient(new MultiThreadedHttpConnectionManager());
         httpclient.getHttpConnectionManager().getParams().setConnectionTimeout(15000);
-        httpget = new GetMethod("https://demo.fedroot.com/dacs/dacs_list_jurisdictions?FORMAT=XMLSCHEMA");
+        httpget = new GetMethod("https://fedroot.com/dacs/dacs_list_jurisdictions?FORMAT=XMLSCHEMA");
     }
     
     public void testListJurisdictionsXml()
@@ -54,9 +54,9 @@ public class DacsXmlBeansTest extends TestCase {
             if(expectedXmlObject instanceof DacsListJurisdictionsDocument) {
                 DacsListJurisdictionsDocument doc =
                         (DacsListJurisdictionsDocument)expectedXmlObject;
-                assertTrue("invalid DacsAcsDocument", doc.validate());
+                assertTrue("invalid DacsListJurisdictionsDocument", doc.validate());
                 DacsListJurisdictionsDocument.DacsListJurisdictions jurs = doc.getDacsListJurisdictions();
-                assertEquals(9, jurs.getJurisdictionList().size());
+                assertEquals(14, jurs.getJurisdictionList().size());
             } else {
                 fail("incorrect XML document type");
             }

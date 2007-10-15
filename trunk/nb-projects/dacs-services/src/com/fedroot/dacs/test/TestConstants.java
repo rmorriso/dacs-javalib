@@ -31,7 +31,7 @@ public class TestConstants {
     public static final String cwnotice_uris = "http://demo.fedroot.com/notices/geobase-license-agreement.html http://demo.fedroot.com/notices/usgs-disclaimer.html";
     public static final String cwsecureresource_uris = "https://cubewerx.demo.fedroot.com/demo/cubeserv/cubeserv.cgi";
     // Metalogic jurisdiction
-    public static final String mlbaseuri = "https://demo.fedroot.com/metalogic/dacs";
+    public static final String mlbaseuri = "https://fedroot.com/metalogic/dacs";
     public static final String mljurisdiction = "METALOGIC";
     public static final String testprenvuri = "https://demo.fedroot.com/test/dacs/prenv";
     // test user/password in METALOGIC jurisdiction
@@ -44,14 +44,14 @@ public class TestConstants {
     public static final String badusername_1 = "smythe";
     public static final String badpassword_1 = "boozle";    
     // DSS jurisdiction
-    public static final String dssbaseuri = "https://dss.demo.fedroot.com/cgi-bin/dacs";
+    public static final String dssbaseuri = "https://dss.fedroot.com/cgi-bin/dacs";
     public static final String dssjurisdiction = "DSS";
     // test user/password in DSS jurisdiction
     public static final String dssusername_1 = "jones";
     public static final String dsspassword_1 = "foozle";
     public static final String testbaseuri = "https://demo.fedroot.com/test/dacs";
     public static final String testaltbaseuri = "https://demo.fedroot.com/testalt/dacs";
-    public static final String dacsnoticesuri = "https://demo.fedroot.com/fedadmin/dacs/dacs_notices";
+    public static final String dacsnoticesuri = "https://fedroot.com/fedadmin/dacs/dacs_notices";
     // the number of local users in TEST jurisdiction
     public static final int numTESTusers = 7;
     // the number of ACL file in TEST jurisdiction

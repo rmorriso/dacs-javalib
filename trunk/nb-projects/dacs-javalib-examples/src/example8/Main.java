@@ -28,7 +28,7 @@ public class Main {
      */
     public static void main(String args[]) {
         try {
-            String dacsbaseuri = "https://demo.fedroot.com/fedadmin/dacs";
+            String dacsbaseuri = "https://fedroot.com/fedadmin/dacs";
             DacsContext dacscontext = new DacsContext();
             // instantiate federation and jurisdiction objects
             Federation demoFed = Federation.getInstance(dacscontext, dacsbaseuri);
@@ -40,8 +40,8 @@ public class Main {
             // authenticate user smith with respect to account
             smith.authenticate(mlaccount, "foozle");
             smith.authenticate(dssaccount, "foozle");
-            // replce with something else: smith.getContext().dumpDacsCookies(System.out);
-            
+            // replace with something else: smith.getContext().dumpDacsCookies(System.out);
+            smith.dumpDacsCookies(System.out);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (Exception e) {

@@ -32,7 +32,7 @@ public class Main {
      */
     public static void main(String args[]) {
         try {
-            String dacsbaseuri = "https://demo.fedroot.com/fedadmin/dacs";
+            String dacsbaseuri = "https://fedroot.com/fedadmin/dacs";
             UserContext smith = UserContext.getInstance("john.smith");
             // instantiate federation and jurisdiction objects
             Federation demoFed = Federation.getInstance(smith, dacsbaseuri);

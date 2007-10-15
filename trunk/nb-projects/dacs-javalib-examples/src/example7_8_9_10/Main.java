@@ -22,7 +22,7 @@ public class Main {
     
     private static UserContext usercontext = UserContext.getInstance("DacsClient Demo");
 
-    private static String feduri = "https://demo.fedroot.com/fedadmin/dacs";
+    private static String feduri = "https://fedroot.com/fedadmin/dacs";
     
     /**
      * 

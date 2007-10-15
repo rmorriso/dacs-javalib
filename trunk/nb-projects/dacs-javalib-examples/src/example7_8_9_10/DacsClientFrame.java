@@ -75,12 +75,12 @@ public class DacsClientFrame extends JFrame {
     };
        
     private static final String[] actionUrls = {
-        "https://demo.fedroot.com/fedadmin/dacs/dacs_list_jurisdictions",
+        "https://fedroot.com/fedadmin/dacs/dacs_list_jurisdictions",
         "https://demo.fedroot.com/test/dacs-wrapped/auth-required.html",
         "https://demo.fedroot.com/test/dacs-wrapped/notice-required.html",
         "https://demo.fedroot.com/testalt/dacs-wrapped/secure-notice-required.html", 
         "https://demo.fedroot.com/test/dacs-wrapped/auth-and-notice-required.html",
-        "https://demo.fedroot.com/metalogic/dacs/dacs_signout",
+        "https://fedroot.com/metalogic/dacs/dacs_signout",
         "https://demo.fedroot.com/test/dacs/prenv"
     };
     

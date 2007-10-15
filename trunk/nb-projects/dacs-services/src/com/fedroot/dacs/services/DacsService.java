@@ -10,7 +10,7 @@
 package com.fedroot.dacs.services;
 import com.fedroot.dacs.http.DacsGetMethod;
 import com.fedroot.dacs.http.DacsPostMethod;
-import com.fedroot.util.httpclient.NameValueSet;
+import fedroot.util.httpclient.NameValueSet;
 import com.fedroot.dacs.services.DACS.ServiceName;
 import org.apache.commons.httpclient.NameValuePair;
 

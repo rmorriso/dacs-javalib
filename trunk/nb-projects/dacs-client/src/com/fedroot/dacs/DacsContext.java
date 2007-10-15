@@ -11,7 +11,6 @@ package com.fedroot.dacs;
 import com.fedroot.dacs.http.DacsCookie;
 import com.fedroot.dacs.http.DacsDeleteMethod;
 import com.fedroot.dacs.exceptions.DacsException;
-import com.fedroot.dacs.exceptions.DacsRuntimeException;
 import com.fedroot.dacs.http.DacsGetMethod;
 import com.fedroot.dacs.http.DacsHeadMethod;
 import com.fedroot.dacs.http.DacsPostMethod;
@@ -36,12 +35,13 @@ import com.fedroot.dacs.xmlbeans.Event903Document;
 import com.fedroot.dacs.xmlbeans.Event904Document;
 import com.fedroot.dacs.xmlbeans.Event905Document;
 import com.fedroot.dacs.xmlbeans.Event998Document;
-import com.fedroot.net.DomainTree;
+import fedroot.net.DomainTree;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
@@ -50,7 +50,6 @@ import org.apache.commons.httpclient.params.HttpClientParams;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.Map;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
@@ -127,7 +126,7 @@ public class DacsContext {
     throws IOException, HttpException {
         return this.httpclient.executeMethod(dacsget);
     }
-       
+    
     /**
      * check DacsGetmethod (DACS_ACS=-check_only) in the current DacsContext context as
      * instantiated in httpclient (parameter settings, cookies, etc);
@@ -150,7 +149,7 @@ public class DacsContext {
             }
         } catch (IOException ex) {
             throw new DacsException("IOException thrown executing dacsget: " + dacsget.toString());
-        } 
+        }
     }
     
     /**
@@ -191,7 +190,7 @@ public class DacsContext {
             }
         } catch (IOException ex) {
             throw new DacsException("IOException thrown executing dacsget: " + dacsget.toString());
-        } 
+        }
     }
     
     /**
@@ -463,12 +462,12 @@ public class DacsContext {
             response.addCookie(jcookie);
         }
     }
-
+    
     /**
      * signout credentials in federation from user context;
      * @param fed delete cookies for this DACS federation;
      */
-
+    
     public void signoutFederation(Federation fed) {
         removeMatchingCookie("DACS:" + fed.getName());
     }
@@ -480,7 +479,7 @@ public class DacsContext {
     public void signoutJurisdiction(Jurisdiction jur) {
         removeMatchingCookie("DACS:" + jur.getFederation().getName() + "::" + jur.getName());
     }
-
+    
     /**
      * clear cookies
      */
@@ -529,7 +528,7 @@ public class DacsContext {
         }
         httpclient.getState().purgeExpiredCookies();
     }
-        
+    
     /**
      * remove (invalidate) NAT;
      * Note: this simply removes the associated cookie from this user's DacsContext
@@ -553,10 +552,10 @@ public class DacsContext {
         }
         return (Cookie) null;
     }
-
-        
-
-        
+    
+    
+    
+    
     /**
      * externalize and dump DACS credential cookies present
      * in dacscontext to PrintStream @param out
@@ -672,6 +671,25 @@ public class DacsContext {
         }
         return cookienames;
     }
+    
+    /**
+     * get list of cookies set in HttpServletRequest
+     * @return list of DacsCookies
+     */
+    public List<String> getCookies(javax.servlet.http.HttpServletRequest request) {
+        // Get all the DACS credential cookies
+        List<String> dacscookies = new ArrayList<String>();
+        javax.servlet.http.Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (javax.servlet.http.Cookie jcookie : cookies) {
+                if (jcookie.getName().startsWith("DACS:") || jcookie.getName().startsWith("NAT-")) {
+                    dacscookies.add(jcookie.getName());
+                }
+            }
+        }
+        return dacscookies;
+    }
+    
     
     /**
      * filtered getter (Federation) for DACS usernames in dacscontext;
@@ -836,9 +854,9 @@ public class DacsContext {
                 return;
             }
             // cookie with same name but different value present in DacsContext
-            //    -- nuke it and add the new one -- 
-            // this is relevant when the browser has obtained credentials 
-            // outside of FedAdmin app; we assume the browser holds the 
+            //    -- nuke it and add the new one --
+            // this is relevant when the browser has obtained credentials
+            // outside of FedAdmin app; we assume the browser holds the
             // definitive version of state
             if (thiscookie.getDomain().equals(domain)) {
                 thiscookie.setExpiryDate(new Date(0));
@@ -879,7 +897,7 @@ public class DacsContext {
     
     /**
      * set DACS cookies in dacscontext in HttpServletResponse;
-     * note that cookies set in HttpServletResponse are of type 
+     * note that cookies set in HttpServletResponse are of type
      * javax.servlet.http.Cookie which we create by converting dacscontext
      * cookies of type org.apache.commons.httpclient.Cookie by addDacsCookie()
      *

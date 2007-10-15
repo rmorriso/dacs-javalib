@@ -19,7 +19,7 @@ public class DacsVerifiedIdentityHandler implements VerifiedIdentityHandler {
             try {
                 HttpSession session = servletRequest.getSession();
                 UserContext usercontext = (UserContext)session.getAttribute("user");
-                Federation fed = Federation.getInstance(usercontext, "https://demo.fedroot.com/dacs");
+                Federation fed = Federation.getInstance(usercontext, "https://fedroot.com/dacs");
                 Jurisdiction openid = fed.getJurisdictionByName("OPENID");
                 String identityurl = response.getIdentityURL();
                 URL u = new URL(identityurl);

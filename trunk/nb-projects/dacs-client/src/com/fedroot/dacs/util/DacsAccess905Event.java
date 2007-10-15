@@ -15,7 +15,7 @@ import com.fedroot.dacs.services.DacsNoticeAckService;
 import com.fedroot.dacs.services.DacsNoticeAckService.ResponseValue;
 import com.fedroot.dacs.services.DacsNoticePresentationService;
 import com.fedroot.dacs.xmlbeans.Event905Document;
-import com.fedroot.util.httpclient.NameValueSet;
+import fedroot.util.httpclient.NameValueSet;
 import java.math.BigInteger;
 
 /**

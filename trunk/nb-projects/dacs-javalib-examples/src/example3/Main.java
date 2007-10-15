@@ -32,7 +32,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        String baseuri = "https://demo.fedroot.com/metalogic/dacs";
+        String baseuri = "https://fedroot.com/metalogic/dacs";
         String jurisdiction = "METALOGIC";
         String username = "smith";
         String password = "foozle";

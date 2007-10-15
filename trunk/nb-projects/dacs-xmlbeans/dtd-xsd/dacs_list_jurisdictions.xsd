@@ -16,11 +16,12 @@
       <xs:attribute name="federation" use="required" type="xs:string"/>
       <xs:attribute name="domain" use="required" type="xs:string"/>
       <xs:attribute name="fed_id" use="required" type="xs:string"/>
-      <xs:attribute name="public_key" use="required" type="xs:string"/>
+      <xs:attribute name="fed_public_key" use="required" type="xs:string"/>
     </xs:complexType>
   </xs:element>
   
     <xs:complexType name="dacsJurisdiction">
+      <xs:attribute name="jname" use="required" type="xs:string"/>
       <xs:attribute name="name" use="required" type="xs:string"/>
       <xs:attribute name="alt_name" use="required" type="xs:string"/>
       <xs:attribute name="dacs_url" use="required" type="xs:string"/>
@@ -41,6 +42,7 @@
         </xs:simpleType>
       </xs:attribute>
       <xs:attribute name="auxiliary" type="xs:string"/>
+      <xs:attribute name="public_key" type="xs:string"/>
     </xs:complexType>
   
 </xs:schema>

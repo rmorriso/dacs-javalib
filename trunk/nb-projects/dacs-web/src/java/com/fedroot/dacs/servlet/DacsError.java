@@ -10,7 +10,7 @@
 package com.fedroot.dacs.servlet;
 
 import com.fedroot.dacs.http.DacsStatus;
-import com.fedroot.jsptaglib.Constants;
+import fedroot.jsptaglib.Constants;
 import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
