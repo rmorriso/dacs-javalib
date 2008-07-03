@@ -12,7 +12,6 @@ package com.fedroot.dacs;
 import com.fedroot.dacs.exceptions.DacsException;
 import com.fedroot.dacs.http.DacsGetMethod;
 import com.fedroot.dacs.services.DacsSignoutService;
-import com.fedroot.dacs.xmlbeans.CredentialsDocument;
 import com.fedroot.dacs.xmlbeans.DacsCurrentCredentialsDocument;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpStatus;

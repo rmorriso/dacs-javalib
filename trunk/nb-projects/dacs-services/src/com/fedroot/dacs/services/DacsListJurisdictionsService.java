@@ -11,9 +11,7 @@ package com.fedroot.dacs.services;
 
 import fedroot.util.httpclient.NameValueSet;
 import com.fedroot.dacs.services.DACS.ServiceName;
-import java.util.EnumSet;
 import java.util.Set;
-import org.apache.commons.httpclient.NameValuePair;
 
 /**
  * wrapper class for DACS dacs_list_jurisdictions service;

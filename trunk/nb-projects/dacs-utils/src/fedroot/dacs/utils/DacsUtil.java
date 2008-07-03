@@ -10,14 +10,15 @@
 
 package fedroot.dacs.utils;
 
-import com.fedroot.dacs.Credentials;
 import com.fedroot.dacs.DacsContext;
 import com.fedroot.dacs.Federation;
 import com.fedroot.dacs.Jurisdiction;
 import com.fedroot.dacs.exceptions.DacsException;
 import com.fedroot.dacs.http.DacsCookie;
-import java.util.ArrayList;
-import java.util.List;
+import com.fedroot.dacs.http.DacsGetMethod;
+import com.fedroot.dacs.http.DacsPostMethod;
+import com.fedroot.dacs.services.DacsAuthenticateService;
+import com.fedroot.dacs.services.DacsCurrentCredentialsService;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
@@ -41,31 +42,27 @@ public class DacsUtil {
         try {
             federation = Federation.getInstance(appContext, dacsURI);
             fedHome = federation.getJurisdictionByName(authJurisdiction);
-            List <Credentials> credentials = new ArrayList<Credentials>();
             if (request != null) {
                 javax.servlet.http.Cookie[] jcookies = request.getCookies();
                 if (jcookies != null) {
                     for (javax.servlet.http.Cookie jcookie : jcookies) {
                         if (DacsCookie.isDacsCookie(jcookie)) {
-                            try {
-                                userName = fedHome.resolveUsername(jcookie);
-                                if (userName != null) { // found username
-                                    logger.debug("resolved username " + userName);
-                                    logger.debug("adding Java Cookie to userContext: "
-                                            + jcookie.getName() + "=" + jcookie.getValue());
-                                    return userName;
-                                }
-                            } catch (DacsException ex) {
-                                ex.printStackTrace();
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
+                            userName = fedHome.resolveUsername(jcookie);
+                            if (userName != null) { // found username
+                                logger.debug("resolved username " + userName);
+                                logger.debug("adding Java Cookie to userContext: " + jcookie.getName() + "=" + jcookie.getValue());
+                                return userName;
                             }
                         }
                     }
                 }
             }
-        } catch (Exception ex) {
+        } catch (DacsException ex) {
+            ex.printStackTrace();
             throw new DacsException("failed to instantiate DACS Federation from " + dacsURI);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new DacsException(ex.toString());
         }
         return userName;
     }
@@ -101,5 +98,52 @@ public class DacsUtil {
             return null;
         }
         return userName;
+    }
+    
+    public static String processRequest(String dacsURI, HttpServletRequest request) throws DacsException {
+        DacsContext appContext = new DacsContext();
+        Federation federation;
+        try {
+            federation = Federation.getInstance(appContext, dacsURI);
+            if (request != null) {
+                javax.servlet.http.Cookie[] jcookies = request.getCookies();
+                if (jcookies != null) {
+                    for (javax.servlet.http.Cookie jcookie : jcookies) {
+                        if (DacsCookie.isDacsCookie(jcookie)) {
+                            logger.debug("adding Java Cookie to context: " + jcookie.getName() + "=" + jcookie.getValue());
+                            appContext.addDacsCookie(federation, jcookie);
+                            DacsCurrentCredentialsService dacsCurrentCredentialsService = new DacsCurrentCredentialsService(dacsURI);
+                            DacsGetMethod dacsGetMethod = dacsCurrentCredentialsService.getDacsGetMethod();
+                            int status = appContext.executeMethod(dacsGetMethod);
+                            logger.debug("DacsGetMethod http://gotprod.cisco.com/dacs/dacs_current_credentials returned status: " + String.valueOf(status));
+                            return dacsGetMethod.getResponseBodyAsString();
+                        }
+                    }
+                }
+            }
+            return "service failure";
+        } catch (DacsException ex) {
+            ex.printStackTrace();
+            throw new DacsException("failed to instantiate DACS Federation from " + dacsURI);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new DacsException(ex.toString());
+        }
+    }
+    
+    public static String processRequest(String requestURL, String dacsURI, String authJurisdiction, String username, String password) throws DacsException {
+        DacsContext appContext = new DacsContext();
+        try {
+            DacsAuthenticateService dacsAuthenticateService = new DacsAuthenticateService(dacsURI, authJurisdiction, username, password);
+            DacsPostMethod dacsPostMethod = dacsAuthenticateService.getDacsPostMethod();
+            int status = appContext.executeMethod(dacsPostMethod);
+            DacsGetMethod dacsGetMethod = new DacsGetMethod(requestURL);
+            status = appContext.executeMethod(dacsGetMethod);
+            logger.debug("DacsGetMethod http://gotprod.cisco.com/dacs/dacs_current_credentials returned status: " + String.valueOf(status));
+            return dacsGetMethod.getResponseBodyAsString();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new DacsException("xxx " + dacsURI);
+        } 
     }
 }
