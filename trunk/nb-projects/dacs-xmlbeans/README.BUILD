@@ -1,4 +1,4 @@
-This project is a native NetBeans 4.1 project.
+This project is a native NetBeans project.
 
 The file build.xml overrides two targets:
 
