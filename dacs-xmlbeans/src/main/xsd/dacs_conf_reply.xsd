@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: dacs_conf_reply.dtd 16 2005-02-13 22:31:20Z unauth $ -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://fedroot.com/dacs"
+  xmlns:dacs="http://fedroot.com/dacs" 
+  elementFormDefault="qualified">
+  
+  <xs:include schemaLocation="common.xsd"/>
+
+  <xs:element name="dacs_conf_reply">
+    <xs:complexType>
+      <xs:choice>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="dacs:directive"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element ref="dacs:Auth"/>
+          <xs:element ref="dacs:Roles"/>
+        </xs:choice>
+      </xs:sequence>
+        <xs:element ref="dacs:common_status"/>
+      </xs:choice>
+      <xs:attribute name="uri" use="required" type="xs:string"/>
+      <xs:attribute name="uri_expr" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+    
+  <xs:element name="directive">
+    <xs:complexType>
+      <xs:attribute name="name" use="required" type="xs:string"/>
+      <xs:attribute name="value" use="required" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="Auth">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="dacs:directive"/>
+      </xs:sequence>
+      <xs:attribute name="id" use="required" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="Roles">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="dacs:directive"/>
+      </xs:sequence>
+      <xs:attribute name="id" use="required" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+  
+</xs:schema>
