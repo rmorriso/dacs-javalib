@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: acl.dtd 581 2005-10-14 23:43:40Z brachman $ -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://fedroot.com/dacs/v1.4"
+  xmlns:dacs="http://fedroot.com/dacs/v1.4"
+  elementFormDefault="qualified">
+  
+  <xs:annotation>
+    <xs:documentation xml:lang="en">
+      DACS service schema for acl_rule
+    </xs:documentation> 
+  </xs:annotation>
+  
+  <xs:element name="acl_rule">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="dacs:services"/>
+        <xs:element maxOccurs="unbounded" ref="dacs:rule"/>
+      </xs:sequence>
+      <xs:attribute name="constraint" type="xs:string"/>
+      <xs:attribute name="permit_chaining">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="yes"/>
+            <xs:enumeration value="no"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="pass_credentials">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="none"/>
+            <xs:enumeration value="matched"/>
+            <xs:enumeration value="all"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="pass_http_cookie">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="yes"/>
+            <xs:enumeration value="no"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="permit_caching">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="yes"/>
+            <xs:enumeration value="no"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="services">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element ref="dacs:service"/>
+        <xs:element ref="dacs:delegate"/>
+      </xs:choice>
+      <xs:attribute name="shared">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="yes"/>
+            <xs:enumeration value="no"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="service">
+    <xs:complexType>
+      <xs:attribute name="url_pattern" type="xs:anyURI"/>
+      <xs:attribute name="url_expr" type="xs:anyURI"/>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="delegate">
+    <xs:complexType>
+      <xs:attribute name="url_pattern" type="xs:anyURI"/>
+      <xs:attribute name="url_expr" type="xs:anyURI"/>
+      <xs:attribute name="rule_uri" use="required" type="xs:anyURI"/>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="rule">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" ref="dacs:precondition"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element ref="dacs:allow"/>
+          <xs:element ref="dacs:deny"/>
+        </xs:choice>
+      </xs:sequence>
+      <xs:attribute name="order" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="allow,deny"/>
+            <xs:enumeration value="deny,allow"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="constraint" type="xs:string"/>
+      <xs:attribute name="permit_chaining">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="yes"/>
+            <xs:enumeration value="no"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="pass_credentials">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="none"/>
+            <xs:enumeration value="matched"/>
+            <xs:enumeration value="all"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="pass_http_cookie">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="yes"/>
+            <xs:enumeration value="no"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="permit_caching">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="yes"/>
+            <xs:enumeration value="no"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+ 
+  <xs:element name="precondition">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" ref="dacs:user_list"/>
+        <xs:element minOccurs="0" ref="dacs:predicate"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="user_list">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="dacs:user"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="user">
+    <xs:complexType>
+      <xs:attribute name="name" use="required" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="predicate" type="xs:string"/>
+  
+  <xs:element name="allow">
+    <xs:complexType mixed="true">
+      <xs:attribute name="constraint" type="xs:string"/>
+      <xs:attribute name="permit_chaining">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="yes"/>
+            <xs:enumeration value="no"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="pass_credentials">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="none"/>
+            <xs:enumeration value="matched"/>
+            <xs:enumeration value="all"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="pass_http_cookie">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="yes"/>
+            <xs:enumeration value="no"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="permit_caching">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="yes"/>
+            <xs:enumeration value="no"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="deny" type="xs:string"/>
+</xs:schema>

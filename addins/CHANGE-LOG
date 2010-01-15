@@ -1,0 +1,5 @@
+Added since 0.5:
+o  cookie coordination of dumb-browser and DacsContext (eg, in middleware
+   when a cookie is deleted its browser equivalent must also be deleted)
+o  beginning of support for the new dacs_auth_transfer service for federation
+   peering

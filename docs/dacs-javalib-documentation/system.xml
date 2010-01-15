@@ -1,0 +1,158 @@
+<sect1 id="sysdoc-sect-3">
+<title>System Overview</title>
+<remark><emphasis>$Id: system.xml 26 2005-10-17 16:43:43Z rmorriso $</emphasis></remark>
+<para>
+The DJL provides methods for user-agents and middleware to authenticate
+with DACS, obtaining DACS credentials on behalf of a user
+which may be used for subsequent
+access to
+<firstterm><glossterm linkend="dacs-wrapped">
+DACS-wrapped
+</glossterm></firstterm>
+resources.
+Methods are also provided for obtaining
+<ulink url="http://dacs.dss.ca/man/dacs.nat.5.html">
+DACS Notice Acknowledgment Tokens
+</ulink>
+(NATs).
+DACS NATs are (presently) implemented as cookies that represent a user's
+acknowledgement of a notice or notices
+that DACS has been configured to require before allowing access to a resource.
+The state arising from a sequence of interactions with DACS servers and services
+is recorded in client-side context objects that are manageable through DJL operations.
+</para>
+
+<para>
+DJL comprises a set of Java class libraries:
+</para>
+<variablelist>
+
+<varlistentry>
+<term><property>dacs-client:</property></term>
+<listitem>
+<para>
+implements a
+&javalib.DacsContext;
+class
+representing the current state arising from a sequence of
+client interactions with DACS services (e.g., user authentication,
+selection of active credentials, signout, notice acknowledgment).
+Also implements Java abstractions of DACS entities for
+Federation, Jurisdiction, Access Control List (ACL), user account, etc.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><property>dacs-services:</property></term>
+<listitem>
+<para>
+wrapper classes for
+DACS-enhanced HTTP request/response handling,
+and native DACS web services.
+Extends each of the HttpClient methods (GetMethod, PostMethod, etc)
+with custom DACS header and query string processing.
+dacs-services relies on the dacs-xmlbeans DJL component for
+marshalling and unmarshalling XML to Java.
+</para>
+
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><property>dacs-xmlbeans:</property></term>
+<listitem>
+<para>
+leverages the Apache project
+<ulink url="http://xmlbeans.apache.org">
+XMLBeans</ulink> to bind XML document replies from DACS services to
+<ulink url="&url.dacs-xmlbeans;">
+Java types.
+</ulink>
+XMLBeans generates a Java class hierarchy derived from a collection
+of provided W3C XML schema descriptions.
+
+The XML schema used in the DJL are generated from source DTD documents
+included in the DACS distribution.
+<footnote>
+<para>
+Only minor effort has been made to tighten data types during conversion.
+Clearly, should a discrepancy arise between DJL XSD and DACS DTD,
+the DTD shall be taken as correct.
+</para>
+</footnote>
+</para>
+<para>
+The DJL includes
+<ulink url="&url.dacs-xmlbeans;">
+XMLBean Java classes
+</ulink>
+for each DACS Web service document reply that a client application may need to parse.
+The complete set of DACS DTDs and their XML schema translations is
+available at
+<ulink url="http://dacs.fedroot.com/dtd-xsd">
+http://dacs.fedroot.com/dtd-xsd
+</ulink>
+dacs-xmlbeans contains a copy of the XSDs that are needed
+for compilation of the XMLBeans.
+</para>
+</listitem>
+</varlistentry>
+
+
+<varlistentry>
+<term><property>dacs-javalib-examples:</property></term>
+<listitem>
+<para>
+Java source code for the examples in this document.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><property>dacs-web:</property></term>
+<listitem>
+<para>
+the source code for an example Web application using DJL.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><property>fedutil:</property></term>
+<listitem>
+<para>
+miscellaneous FedRoot utilities used in the DJL
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+<para>
+<xref linkend="sysdoc-fig-3"/>
+provides a conceptual overview of the DJL, its components
+and their interactions with DACS services. 
+In the figure, DJL wrapper classes
+&javalib.Federation;,
+&javalib.Jurisdiction;,
+&javalib.Acl;,
+et al are shown accessing DACS Web services via the
+&javalib.DacsServices;
+facade.
+Requests for DACS services are executed with respect to a given DacsContext
+containing credentials and NATs obtained in previous interactions.
+XMLBeans are used in marshalling and unmarshalling XML from DACS web service
+requests.
+</para>
+
+<figure id="sysdoc-fig-3">
+<title>System Components</title>
+  <mediaobject>
+    <imageobject>
+      <imagedata  fileref="images/system-components.png" format="PNG"/>
+    </imageobject>
+  </mediaobject>
+</figure>
+  
+</sect1>
+
+

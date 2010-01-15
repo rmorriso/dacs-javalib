@@ -1,0 +1,17 @@
+$Id: ACKNOWLEDGEMENTS 16 2005-02-13 22:31:20Z rmorriso $
+
+We gratefully acknowledge contributions included in this release from:
+
+o DSS Distributed Systems Software Inc. for DACS documentation excerpts
+  reproduced in the documentation.
+
+o Stephen Ostermiller for OstermillerUtils Java utilities
+  (http://ostermiller.org/utils) used in dacs-javalib-examples/example7_8_9_10.
+
+o Ian F. Darwin (http://www.darwinsys.com) for concepts and code borrowed from 
+  his excellent Java Cookbook (O'Reilly, 2004).
+
+Note that OstermillerUtils is licensed under the GPL which is more restrictive
+than the BSD License under which the DJL has been released. Attribution
+to Stephen has been retained as applicable in the code of example7_8_9_10.
+

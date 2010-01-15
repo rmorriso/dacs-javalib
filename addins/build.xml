@@ -1,0 +1,165 @@
+<?xml version='1.0'?>
+<project name="dacs-javalib" default="build-all" basedir=".">
+
+  <description>Builds, tests, and runs the project dacs-services.</description>
+
+  <!-- set local/global properties for this build -->
+ 
+  <property file="./build.properties"/>
+
+  <property name="include" value="${root.dir}/lib"/>
+  <property name="dacs-version" value="1.4.x"/>
+
+  <target name="init">
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build.dir}" />
+    <!-- Create the directory for the jar file -->
+    <mkdir dir="${dist.dir}" />
+    <!-- Create the directory for the java docs -->
+    <mkdir dir="${dist.javadoc.dir}" />
+  </target>
+
+  <target name="run-example-1">
+    <java classname="example1.Main">
+      <classpath>
+         <pathelement location="dacs-javalib-examples/dist/dacs-javalib-examples.jar"/>
+         <pathelement path="${run.classpath}"/>
+      </classpath>
+    </java>
+  </target>
+
+  <target name="run-example-2">
+    <java classname="example2.Main">
+      <classpath>
+         <pathelement location="dacs-javalib-examples/dist/dacs-javalib-examples.jar"/>
+         <pathelement path="${run.classpath}"/>
+      </classpath>
+    </java>
+  </target>
+
+  <target name="run-example-3">
+    <java classname="example3.Main">
+      <classpath>
+         <pathelement location="dacs-javalib-examples/dist/dacs-javalib-examples.jar"/>
+         <pathelement path="${run.classpath}"/>
+      </classpath>
+    </java>
+  </target>
+
+  <target name="run-example-4_5_6">
+    <java classname="example4_5_6.Main">
+      <classpath>
+         <pathelement location="dacs-javalib-examples/dist/dacs-javalib-examples.jar"/>
+         <pathelement path="${run.classpath}"/>
+      </classpath>
+    </java>
+  </target>
+
+  <target name="run-example-7_8_9_10">
+    <java classname="example7_8_9_10.Main">
+      <classpath>
+         <pathelement location="dacs-javalib-examples/dist/dacs-javalib-examples.jar"/>
+         <pathelement path="${run.classpath}"/>
+      </classpath>
+    </java>
+  </target>
+
+  <target name="build-all">
+    <antcall target="-build">
+      <param name="project" value="fedutil"/>
+    </antcall>
+    <antcall target="-build">
+      <param name="project" value="dacs-xmlbeans"/>
+    </antcall>
+    <antcall target="-build">
+      <param name="project" value="dacs-services"/>
+    </antcall>
+    <antcall target="-build">
+      <param name="project" value="dacs-client"/>
+    </antcall>
+    <antcall target="-build">
+      <param name="project" value="dacs-javalib-examples"/>
+    </antcall>
+    <antcall target="-build-war">
+      <param name="project" value="dacs-web"/>
+    </antcall>
+    <antcall target="-build-war">
+      <param name="project" value="dacs-ajax"/>
+    </antcall>
+  </target>
+
+  <target name="test-all">
+    <antcall target="-test">
+      <param name="project" value="fedutil"/>
+    </antcall>
+    <antcall target="-test">
+      <param name="project" value="dacs-services"/>
+    </antcall>
+    <antcall target="-test">
+      <param name="project" value="dacs-client"/>
+    </antcall>
+    <antcall target="-test">
+      <param name="project" value="dacs-javalib-examples"/>
+    </antcall>
+    <antcall target="-test">
+      <param name="project" value="dacs-web"/>
+    </antcall>
+    <antcall target="-test">
+      <param name="project" value="dacs-ajax"/>
+    </antcall>
+  </target>
+
+  <target name="clean-all">
+    <antcall target="-clean">
+      <param name="project" value="fedutil"/>
+    </antcall>
+    <antcall target="-clean">
+      <param name="project" value="dacs-xmlbeans"/>
+    </antcall>
+    <antcall target="-clean">
+      <param name="project" value="dacs-services"/>
+    </antcall>
+    <antcall target="-clean">
+      <param name="project" value="dacs-client"/>
+    </antcall>
+    <antcall target="-clean">
+      <param name="project" value="dacs-javalib-examples"/>
+    </antcall>
+    <antcall target="-clean">
+      <param name="project" value="dacs-web"/>
+    </antcall>
+    <antcall target="-clean">
+      <param name="project" value="dacs-ajax"/>
+    </antcall>
+  </target>
+
+  <target name="-build">
+    <!-- compile and jar individual projects -->
+    <ant antfile="freeform-build.xml"
+         dir="${project}" target="jar">
+    </ant>
+  </target>
+
+  <target name="-build-war">
+    <!-- compile and jar individual projects -->
+    <ant antfile="freeform-build.xml"
+         dir="${project}" target="war">
+    </ant>
+  </target>
+
+  <target name="-test">
+    <!-- test individual projects -->
+    <ant antfile="freeform-build.xml"
+         dir="${project}" target="test">
+    </ant>
+  </target>
+
+  <target name="-clean">
+    <!-- clean individual projects -->
+    <ant antfile="freeform-build.xml"
+         dir="${project}" target="clean">
+    </ant>
+  </target>
+
+</project>
+

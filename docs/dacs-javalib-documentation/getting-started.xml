@@ -1,0 +1,162 @@
+<sect1 id="sysdoc-sect-2">
+<title>Getting Started with the DACS Java Library</title>
+<remark><emphasis>$Id: getting-started.xml 26 2005-10-17 16:43:43Z rmorriso $</emphasis></remark>
+ 
+<simplesect>
+<title>Prerequisites</title>
+<para>
+Before building the DJL, JDK 1.5 and Ant 1.6 must be installed.
+In addition, the (optional) sample Web application requires
+a servlet container such as Apache Tomcat.
+Once you have those, continue with the steps below.
+</para>
+</simplesect>
+
+<simplesect>
+<title>Download Distribution</title>
+<para>
+Download the DJL distribution from SourceForge at
+</para>
+<para>
+<ulink url="http://sourceforge.net/projects/dacs-contrib">
+http://sourceforge.net/projects/dacs-contrib
+</ulink>
+</para>
+<para>
+Untar the distribution to your build area.
+The resulting dacs-javalib directory contains ant build scripts, required
+third-party libraries, and documentation for the following 5 component projects:
+<itemizedlist>
+<listitem>
+<para>&dacs-client;</para>
+</listitem>
+<listitem>
+<para>&dacs-javalib-examples;</para>
+</listitem>
+<listitem>
+<para>&dacs-services;</para>
+</listitem>
+<listitem>
+<para>&dacs-xmlbeans;</para>
+</listitem>
+<listitem>
+<para>&dacs-web;</para>
+</listitem>
+<listitem>
+<para>&fedutil;</para>
+</listitem>
+</itemizedlist>
+</para>
+<para>
+The <filename>docs</filename> directory
+contains complete Java docs and a current version of this document.
+The <filename>lib</filename> directory
+contains third party software including the following two key libraries
+which do the heavy lifting in dacs-javalib:
+
+<variablelist>
+
+<varlistentry>
+<term>
+<ulink url="http://jakarta.apache.org/commons/httpclient">
+Jakarta Commons HttpClient Version 3.0
+</ulink>
+</term>
+<listitem>
+<para>
+HttpClient provides "an efficient, up-to-date, and feature-rich package
+implementing the client side of the most recent HTTP
+standards and recommendations."
+HttpClient provides greater flexibility and control than native java.net.
+</para>
+<para>
+The DJL extends HttpClient to provide client support for interaction
+with DACS-enabled HTTP servers.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<ulink url="http://xmlbeans.apache.org">
+Apache XMLBeans Version 2.1
+</ulink>
+</term>
+<listitem>
+<para>
+XMLBeans is a technology for accessing XML by binding it to Java types. 
+The DJL uses XMLBeans capability for compilation of XML schema to Java types.
+In this way DACS Web service XML document replies can be accessed via
+JavaBeans-style accessors after the fashion of "getFoo" and "setFoo".
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</para>
+</simplesect>
+
+<simplesect>
+<title>Build &amp; Test</title>
+<para>
+Each of the component projects has been developed in NetBeans 5.0 IDE
+and has been packaged with its NetBeans project structure intact.
+If you are comfortable in NetBeans, simply open the projects
+and you're off to the races.
+</para>
+<para>
+If NetBeans isn't your cup of tea, you can use the provided freeform ant 
+scripts instead.
+Executing the following from the dacs-javalib directory
+cleans, builds and tests all component projects:
+<programlisting>
+<![CDATA[
+   ant clean-all
+   ant build-all
+   ant test-all
+]]>
+</programlisting>
+Note that some tests of Java Swing components will not succeed on a headless
+host.
+For details of failed tests, check the contents of the 
+<filename>build/test/results</filename>
+directory in the respective subproject.
+</para>
+<para>
+To run a freeform ant script on an individual subproject, cd into the
+subproject directory and run:
+<programlisting>
+<![CDATA[
+   ant -f freeform-build.xml <target>
+]]>
+</programlisting>
+Use the jar target to compile and jar a J2SE subproject to its dist directory.
+Use the war target for dacs-web, which is a J2EE project.
+</para>
+<para>
+Ant targets are also provided to clean the project,
+to run project JUnit tests and to generate JavaDocs.
+Consult freeform-build.xml and freeform.properties in subproject directories
+for details.
+</para>
+</simplesect>
+
+<simplesect>
+<title>Running the Examples</title>
+<para>
+The dacs-javalib-examples subproject includes several very simple examples
+corresponding to recipes described in 
+<xref linkend="sysdoc-sect-4"/>.
+Assuming a successful build, you can run them from the dacs-javalib directory
+as follows:
+<programlisting>
+<![CDATA[
+   ant run-example-1
+   ant run-example-2
+   ant run-example-4_5_6
+   ant run-example-7_8_9_10
+]]>
+</programlisting>
+Some of the examples rely on Java Swing and will not run on a headless host.
+</para>
+</simplesect>
+</sect1>
+

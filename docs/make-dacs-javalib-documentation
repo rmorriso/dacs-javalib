@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# $Id: make-dacs-javalib-documentation 20 2004-09-15 22:14:50Z brachman $
+
+BOOK_DIR=dacs-javalib-documentation
+BOOK_NAME=dacs-javalib-documentation
+INSTALL_DIR=${DACS_HOME}/www/docs
+
+make \
+	BOOK_DIR=$BOOK_DIR \
+	BOOK_NAME=$BOOK_NAME \
+	INSTALL_DIR=$INSTALL_DIR \
+	all-html

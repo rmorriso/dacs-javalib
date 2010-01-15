@@ -1,0 +1,15 @@
+<xb:config xmlns:dacs="http://fedroot.com/dacs/v1.4" 
+    xmlns:xb="http://www.bea.com/2002/09/xbean/config">
+
+    <!-- Use the "namespace" element to map a namespace to the Java package
+        name that should be generated. -->
+        
+    <xb:namespace uri="http://fedroot.com/dacs/v1.4">
+        <xb:package>com.fedroot.dacs.xmlbeans</xb:package>
+    </xb:namespace>
+
+    <xb:namespace uri="http://fedroot.com/dacs">
+        <xb:package>com.fedroot.dacs.xmlbeans</xb:package>
+    </xb:namespace>
+    
+</xb:config>

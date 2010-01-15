@@ -1,0 +1,120 @@
+<!ENTITY url.dacs-xmlbeans
+'http://dacs.fedroot.com/docs/javalib/dacs-xmlbeans/com/fedroot/dacs/xmlbeans/package-summary.html'
+>
+
+<!ENTITY dacs-client
+'<ulink url="http://dacs.fedroot.com/docs/javalib/dacs-client/">
+dacs-client
+</ulink>'
+>
+
+<!ENTITY dacs-services
+'<ulink url="http://dacs.fedroot.com/docs/javalib/dacs-services/">
+dacs-services
+</ulink>'
+>
+
+<!ENTITY dacs-xmlbeans
+'<ulink url="http://dacs.fedroot.com/docs/javalib/dacs-xmlbeans/">
+dacs-xmlbeans
+</ulink>'
+>
+
+<!ENTITY dacs-web
+'<ulink url="http://dacs.fedroot.com/docs/javalib/dacs-web/">
+dacs-web
+</ulink>'
+>
+
+<!ENTITY dacs-javalib-examples
+'<ulink url="http://dacs.fedroot.com/docs/javalib/dacs-javalib-examples/">
+dacs-javalib-examples
+</ulink>'
+>
+
+<!ENTITY fedutil
+'<ulink url="http://dacs.fedroot.com/docs/javalib/fedutil/">
+fedutil
+</ulink>'
+>
+
+<!ENTITY javalib.Acl
+'<ulink url="http://dacs.fedroot.com/docs/javalib/dacs-client/com/fedroot/dacs/Acl.html">
+Acl
+</ulink>'
+>
+
+<!ENTITY javalib.DacsAuthenticateService
+'<ulink url="http://dacs.fedroot.com/docs/javalib/dacs-services/com/fedroot/dacs/services/DacsAuthenticateService.html">
+DacsAuthenticateService
+</ulink>'
+>
+
+<!ENTITY javalib.DacsContext 
+'<ulink url="http://dacs.fedroot.com/docs/javalib/dacs-client/com/fedroot/dacs/DacsContext.html">
+DacsContext
+</ulink>'
+>
+
+<!ENTITY javalib.Dacs902EventHandler
+'<ulink url="http://dacs.fedroot.com/docs/javalib/dacs-client/com/fedroot/dacs/util/Dacs902EventHandler.html">
+Dacs902EventHandler
+</ulink>'
+>
+
+<!ENTITY javalib.Dacs905EventHandler
+'<ulink url="http://dacs.fedroot.com/docs/javalib/dacs-client/com/fedroot/dacs/util/Dacs905EventHandler.html">
+Dacs905EventHandler
+</ulink>'
+>
+
+<!ENTITY javalib.DacsGetMethod
+'<ulink url="http://dacs.fedroot.com/docs/javalib/dacs-services/com/fedroot/dacs/http/DacsGetMethod.html">
+DacsGetMethod
+</ulink>'
+>
+
+<!ENTITY javalib.DacsUserAccount
+'<ulink url="http://dacs.fedroot.com/docs/javalib/dacs-client/com/fedroot/dacs/DacsUserAccount.html">
+DacsUserAccount
+</ulink>'
+>
+<!ENTITY javalib.DacsListJurisdictionsService
+'<ulink url="http://dacs.fedroot.com/docs/javalib/dacs-services/com/fedroot/dacs/services/DacsListJurisdictionsService.html">
+DacsListJurisdictions
+</ulink>'
+>
+
+<!ENTITY javalib.DacsServices
+'<ulink url="http://dacs.fedroot.com/docs/javalib/dacs-services/index.html">
+DacsServices
+</ulink>'
+>
+
+<!ENTITY javalib.Federation 
+'<ulink url="http://dacs.fedroot.com/docs/javalib/dacs-client/com/fedroot/dacs/Federation.html">
+Federation
+</ulink>'
+>
+<!ENTITY javalib.Federation.getInstance
+'<ulink url="http://dacs.fedroot.com/docs/javalib/dacs-client/com/fedroot/dacs/Federation.html#getInstance(com.fedroot.dacs.DacsContext, java.lang.String)">
+Federation.getInstance()
+</ulink>'
+>
+<!ENTITY javalib.Federation.getJurisdictionByName
+'<ulink url="http://dacs.fedroot.com/docs/javalib/dacs-client/com/fedroot/dacs/Federation.html#getJurisdictionByName(java.lang.String)">
+getJurisdictionByName()
+</ulink>'
+>
+<!ENTITY javalib.Jurisdiction
+'<ulink url="http://dacs.fedroot.com/docs/javalib/dacs-client/com/fedroot/dacs/Jurisdiction.html">
+Jurisdiction
+</ulink>'
+>
+<!ENTITY javalib.UserContext 
+'<ulink url="http://dacs.fedroot.com/docs/javalib/dacs-client/com/fedroot/dacs/UserContext.html">
+UserContext
+</ulink>'
+>
+
+

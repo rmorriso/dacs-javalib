@@ -1,0 +1,27 @@
+README for the DACS Java Library Version 0.55
+=============================================
+
+The DACS Java Library (DJL) is companion software to DACS - 
+the Distributed Access Control System (http://sourceforge.net/projects/dacs).
+
+The DACS Java Library implements Java wrapper
+classes for selected DACS services, and provides an HTTP client through
+which DACS services may be accessed and DACS credentials obtained and managed.
+
+The DJL is being developed to support the use of DACS in Java client
+applications. Support is provided in several key areas:
+
+  *  establishing the necessary preconditions for access
+
+  *  hiding implementation details of DACS Web services
+     (HTTP request signatures, XML reply parsing, etc)
+
+  *  specialization of the excellent Jakarta Commons
+     HttpClient library for DACS request processing 
+
+The DJL may be used in the development of Java applications deployed in
+thick-client (typically Java Swing) and middleware configurations
+
+The DJL subproject dacs-services includes XML schema translations of the
+DACS Web service DTDs.
+

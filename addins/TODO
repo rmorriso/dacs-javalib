@@ -1,0 +1,22 @@
+TODO (this is version 0.55 - LOTS!)
+
+The DACS Java Library is a tidy up and packaging of a collection
+of Java libraries that I have used in the past to support the integration
+of third-party Java applications with DACS-enabled Web servers.
+Some parts are well-exercised - others not.
+
+Here are some of the things that need more work or have yet to be started:
+
+o  DACS configuration: CRUD for DACS entities: user, role, group, acl ...
+o  middleware support: event-handling, completion of dacs-web example ...
+o  integration support for DACS <-> HTTP Basic and Digest authentication
+o  add authentication by mechanisms other than simple username/password,
+   starting with X.509 certificate support
+o  actually *design* the DacsException hierarchy
+o  attention to thread safety issues - becomes important with addition of 
+   support for create/update of DACS configuration
+o  code cleanup:
+     - remove embedded strings to properties files
+     - JavaDocs - more, better
+     - misc refactoring
+

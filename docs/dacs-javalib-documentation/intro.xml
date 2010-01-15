@@ -1,0 +1,103 @@
+<sect1 id="sysdoc-sect-1">
+<title>About DACS and the DACS Java Library</title>
+<remark><emphasis>$Id: intro.xml 26 2005-10-17 16:43:43Z rmorriso $</emphasis></remark>
+  
+<para>
+<firstterm><glossterm linkend="dacs">DACS</glossterm></firstterm>
+is a collection of software components that manages
+identities throughout a federation of distributed systems and enforces
+<firstterm><glossterm linkend="role-based-access-control">role-based access
+control</glossterm></firstterm>, providing
+<firstterm><glossterm linkend="single-sign-on">single sign-on</glossterm>
+</firstterm> functionality.
+</para>
+
+<para>
+DACS is designed to be a general-purpose authentication and access control
+framework, suitable for a wide variety of environments and applications.
+DACS is commonly used in the context of web services, and in
+conjunction with the Apache web server, where web services are typically
+invoked by people using off-the-shelf web browsers as their
+<firstterm><glossterm linkend="user-agent">user agent.</glossterm></firstterm>
+DACS may be used to secure a single web server or as a full-fledged 
+single sign-on and federated identity solution. 
+</para>
+
+<para>
+The &DJL; (DJL) is being developed to support the use of DACS in Java client applications. 
+Support is provided in several key areas:
+<itemizedlist>
+<listitem>
+<para>
+establishing the necessary preconditions for access 
+</para>
+</listitem>
+<listitem>
+<para>
+hiding implementation details of DACS Web services (HTTP request
+signatures, XML reply parsing, etc)
+</para>
+</listitem>
+<listitem>
+<para>
+specialization of the excellent
+<ulink url="http://jakarta.apache.org/commons/httpclient">
+Jakarta Commons HttpClient
+</ulink>
+library for DACS request processing
+</para>
+</listitem>
+</itemizedlist>
+</para>
+
+
+<para>
+The DJL may be used in the development of Java applications deployed in
+thick-client (typically Java Swing) and
+<firstterm><glossterm linkend="middleware">
+middleware
+</glossterm></firstterm>
+configurations as illustrated in 
+<xref linkend="sysdoc-fig-1"/>
+and <xref linkend="sysdoc-fig-2"/>
+below.
+</para>
+
+<figure id="sysdoc-fig-1">
+<title>User Agent Configuration</title>
+  <mediaobject>
+    <imageobject>
+      <imagedata  fileref="images/user-agent-config.png" format="PNG"/>
+    </imageobject>
+  </mediaobject>
+</figure>
+
+<figure id="sysdoc-fig-2">
+<title>Middleware Configuration</title>
+  <mediaobject>
+    <imageobject>
+      <imagedata  fileref="images/middleware-config.png" format="PNG"/>
+    </imageobject>
+  </mediaobject>
+</figure>
+<para>
+An example application of DJL in a user agent configuration is
+the User-friendly Desktop Internet GIS application, 
+<ulink url="http://udig.refractions.net">uDig,</ulink> which uses
+the DJL to
+incorporate DACS authentication and notice acknowledgement
+that has been configured in front of 
+<ulink url="http://opengeospatial.org">
+Open Geospatial Consortium
+</ulink>
+Web map servers.  
+The DACS Federation Administration Web application, FedAdmin (also released
+on the SourceForge dacs-contrib project),
+is an example middleware application which uses the DJL not only for 
+authentication but to invoke DACS web services
+for the administration of one or more DACS federations and their member 
+jurisdictions.
+</para>
+
+</sect1>
+

@@ -1,0 +1,690 @@
+#   Notes to translator
+#
+#   Lines with a #TBT above them are the lines to be translated.  If
+#   you search for #TBT you will find these lines.  The #TBT should be
+#   removed when the line is translated.
+# 
+# Lines to be translated begin with Fr: so we can be sure they are being
+# used.  The Fr: is not part of the text and should be removed as well. 
+#
+#   Every effort has been made to eliminate html tags from this text. However
+#   there are some html tags present.  Anything between < and > must not be 
+#   changed in any way.
+#
+#   There must be no new lines added to this file.  (No additional line wraps.)
+#
+#  If you have problems or questions please call me, Eric Murphy 250-363-6038 
+#  or email, erimurph@pfc.forestry.ca
+#
+#  Thanks!
+
+###########################################################
+# Global properties that appear on multiple pages         #
+###########################################################
+
+# the language of this file
+language=fr
+otherLanguage=en
+last_updated=Dernière mise à jour
+
+# alt messages for the number images
+alt.one_image=number 1.gif (1K)
+alt.two_image=number 2.gif (1K)
+alt.three_image=number 3.gif (1K)
+alt.four_image=number 4.gif (1K)
+alt.five_image=number 5.gif (1K)
+cancel.global=Annuler
+
+###########################################################
+# Global error messages that appear on multiple pages     #
+###########################################################
+
+a_list.error=Une liste de toutes les juridictions ne peut pas être extraite.
+no_command.error=Il n'y a pas d'instruction de programme incluse dans la demande. 
+
+###########################################################
+# Global email content that appears in multiple messages  #
+###########################################################
+
+a.email.error=Un problème est survenu pendant l'entrée de l'adresse À ou De dans le courriel
+an.email.error=Une erreur s'est produite pendant l'envoi du courriel.
+an.email.error.format=Une erreur s'est produite pendant que vous essayiez de formater et d'envoyer le courriel.
+dear.email=Cher 
+first.email.global=Prénom
+last.email.global=Nom
+local.email.global=Local
+phone.email.global=Numéro de téléphone
+postal.email.global=Code postal
+receive.email.global=Courriel entrant
+receive.email.global=Non, merci
+thanks.email=Merci,
+the.email=L'Équipe d'accès SNIF
+
+###########################################################
+# Global Field titles - used in registration_get_profile.jsp and    #
+# modify_profile pages                                    #
+###########################################################
+
+back.global=&lt;&nbsp;Précédent
+email.global=Courriel
+first.global=Prénom
+jurisdiction.global=Juridiction
+last.global=Nom
+local.global=Poste
+local_extension.global=Le numéro de poste téléphonique est facultatif.
+next.global=Suivant&nbsp;&gt;
+n.global=Non
+password.global=Mot&nbsp;de&nbsp;passe
+phone.global=Numéro de téléphone&nbsp;
+postal.global=Code&nbsp;postal
+organization.global=Organisation
+submit.global=Soumettre le profil &gt;
+receive.global=Courriel entrant
+username.global=Nom d'utilisateur
+y.global=Oui
+
+# ACCESS/INCLUDE FILES ########################################################
+
+###########################################################
+#             nfis-header.jsp                             #
+###########################################################
+
+# Logo
+logo.header=images/logo_fr.gif
+alt.logo.header=SNIF - Système national d'information sur les forêts
+
+# Alt for mountain image
+alt.mountain.header=photo
+
+# Page Titles
+title.admin.header=images/title_aa_fr.gif
+title.login.header=images/title_al_fr.gif
+title.logout.header=images/title_alo_fr.gif
+title.exception.header=images/title_ex_fr.gif
+
+alt.title.admin.header=SNIF - Administration des comptes
+alt.title.login.header=Compte SNIF - Ouverture de session
+alt.title.exception.header=SNIF - Exception
+
+# language button strings
+langButtonImage.header=images/lang_button_en.gif
+alt.langButtonImage.header=Change to English
+
+###########################################################
+#               menu.jsp                                  #
+###########################################################
+
+new.menu=Nouveaux utilisateurs
+why.menu=Pourquoi s'inscrire?
+registration.menu=Inscription
+current.menu=Utilisateurs courants
+login.menu=Ouvrir une session
+modify.menu=Modifier le profil
+modify.password.menu=Remplacer le mot de passe
+forgot.menu=Mot de passe oublié
+logout.menu=Fermeture de session
+
+# ACCESS JSP FILES ############################################################
+
+###########################################################
+#             403_error.jsp                               #
+###########################################################
+
+access.403_error=L'utilisateur doit ouvrir une session pour accéder au contenu demandé.
+if.403_error=Si vous n'êtes pas déjà inscrit au SNIF, vous devez vous inscrire avant de pouvoir ouvrir une session.
+login.403_error=Ouvrir une session
+nfis.403_error=SNIF - Comptes des utilisateurs
+members.403_error=Les personnes du public peuvent <a href="registration.jsp">s'inscrire</a> pour obtenir un compte d'utilisateur et créer leur profil personnel.
+employees.403_error=Les employés des juridictions participantes qui ont déployé les services d'authentification SNIF peuvent <a href="login.jsp">ouvrir une session</a> en entrant leur nom d'utilisateur et leur mot de passe. 
+currently.403_error=Actuellement, les juridictions suivantes acceptent l'authentification des utilisateurs habituels :
+employees.of.403_error=Les employés des autres juridictions doivent <a href="registration.jsp">s'inscrire</a> pour obtenir un compte d'accès au SNIF.
+more.403_error=Information supplémentaire :
+why.403_error=Pourquoi s'inscrire?
+
+###########################################################
+#             error_handler.jsp                               #
+###########################################################
+
+401.401_error=Page d'erreur 401
+402.402_error=Page d'erreur 402
+403.403_error=Page d'erreur 403
+404.404_error=Page d'erreur 404
+500.500_error=Page d'erreur 500
+501.501_error=Page d'erreur 501
+502.502_error=Page d'erreur 502
+900.900_error=Page d'erreur 900
+901.901_error=Page d'erreur 901
+902.902_error=Page d'erreur 902
+903.903_error=Page d'erreur 903
+999.999_error=Page d'erreur 999
+#TBT
+-1.-1_error=FR: Unknown Error Code
+
+sorry.401_error=Non autorisé.
+sorry.402_error=Paiement requis.
+sorry.403_error=Interdit.
+sorry.404_error=Désolé, la page que vous avez demandée n'existe pas.
+sorry.500_error=Erreur de serveur.
+sorry.501_error=Non implanté.
+sorry.502_error=Mauvaise passerelle.
+sorry.900_error=Erreur DACS : accès refusé, aucune règle applicable.
+sorry.900_error=Erreur DACS : accès refusé, aucune règle applicable.
+sorry.901_error=Erreur DACS : accès refusé, interdit par une règle.
+sorry.902_error=Erreur DACS : accès refusé, utilisateur non authentifié.
+sorry.903_error=Accès refusé. Vous n’êtes pas autorisé à voir cette ressource.
+sorry.999_error=Erreur DACS : accès refusé, erreur interne.
+sorry.unknown_error=Ceci est un code d’erreur inconnu.
+
+###########################################################
+#             signout.jsp                                 #
+###########################################################
+
+button.yes.signout_page=Oui
+button.no.signout_page=Non
+confirm_signout.confirm_signout=Êtes-vous sûr de vouloir fermer votre session?
+confirmation_of_signout.confirmation_of_signout=Vous avez réussi à fermer votre session.
+logout.logout=Fermeture de session
+
+###########################################################
+#            confirmation_signout.jsp                     #
+###########################################################
+
+confirmation_of_signout.confirmation_of_signout=Vous avez réussi à sortir du système.
+
+###########################################################
+#             email_link_error.jsp                        #
+###########################################################
+
+no.email_link_error=Il n'y a aucun enregistrement.
+your.email_link_error=Le SNIF ne peut pas verifier la demande que vous avez initialisé en activant le lien dans votre courriel, pour l'une des raisons suivantes :
+the.email_link_error=<b>le lien n'était pas activé correctement.</b> Si le lien est affiché en deux lignes dans votre courriel, il fait partie du lien  qui était activé.<i>Comparez le lien afficher en bas de cette page avec celui qui a été envoyé dans votre courriel.  Les lien s devrait  être identique.</i>
+you_have.email_link_error=<b>Vous avez déjà activé le lien accepté ou refusé dans le courriel.<b> Une fois qu'un des lien s dans le courriel est activé et est executé, ces lien s ne fonctionneront plus.
+the_link.email_link_error=<b>le lien que vous essayer d'activer n'est pas valide.</b> le lien que vous essayez d'activer n'est pas reconnu par le système.  S'il vous plaît comparez le lien affiché en bas de cette page pour vous assurer qu'il est identique avec celui de votre courriel.  Après quelques échecs, s'il vous plaît contacter : <a href="mailto:
+nfis.email_link_error=">Soutien SNIF</a>.
+you_activated.email_link_error=Vous avez activé le lien suivant :
+
+###########################################################
+#             error.jsp                                   #
+###########################################################
+
+an.error=Une erreur inattendue s'est produite!
+error.error=Détails sur l'erreur
+more.error=Détails supplémentaires
+if.error=Si cette erreur survient de manière répétitive, communiquez avec :
+support.error=Soutien SNIF
+there.error=Il n'y a pas d'information au sujet de l'erreur en cours
+
+###########################################################
+#             error_init.jsp                              #
+###########################################################
+
+an.error_init=Une erreur s'est produite pendant l'initialisation!
+error.error_init=Détails sur l'erreur
+more.error_init=Détails supplémentaires
+this.error_init=Ce site fait l'objet d'une supervision permanente et sera automatiquement réinitialisé lorsque cette erreur sera corrigée. Vous pouvez également essayer de résoudre le problème manuellement :
+re_initialize.error_init=Réinitialiser MAINTENANT
+if.error_init=Si cette erreur survient de manière répétitive, communiquez avec le :
+nfis.error_init=Soutien SNIF
+there.error_init=Il n'y a pas d'information au sujet de l'erreur en cours.
+
+###########################################################
+#   forgot_password.jsp                                   #
+###########################################################
+
+forgot.forgot_password=Mot de passe oublié
+you.forgot_password=Vous êtes entré en communication dernièrement en tant que  :
+if.forgot_password=Si vous ne savez plus votre mot de passe et que vous voulez le modifier, il faut aller à 
+modify.forgot_password=<a>Modifier le mot de passe</a>.
+if_you.forgot_password=Si vous avez oublié votre mot de passe, remplissez le formulaire ci-dessoous. Cliquez sur le bouton 'Demande de mot de passe' pour recevoir un courriel qui réinitialise votre mot de passe.
+jurisdiction.forgot_password=Juridiction
+username.forgot_password=Nom d'utilisateur
+request.forgot_password=Demande de mot de passe
+
+###########################################################
+#         forgotChangePassword.jsp                        #
+###########################################################
+
+there.forgotChangePassword=Aucune information utilisateur fournie dans la page.
+create.forgotChangePassword=Créer un nouveau mot de passe
+enter.forgotChangePassword=Entrez un nouveau mot de passe pour le compte suivant :
+jurisdiction.forgotChangePassword=Juridiction
+email.forgotChangePassword=Courriel
+password.forgotChangePassword=Mot de passe
+repeat.forgotChangePassword=(encore)
+submit.forgotChangePassword=Soumettre le mot de passe &gt;
+
+###########################################################
+#         forgotChangePasswordSuccess.jsp                 #
+###########################################################
+
+password.forgotChangePasswordSuccess=Mot de passe remplacé!
+you.forgotChangePasswordSuccess=Vous avez changé votre mot de passe avec du succès pour le compte suivant :
+username.forgotChangePasswordSuccess=Nom d'utilisateur:
+jurisdiction.forgotChangePasswordSuccess=Juridiction:
+
+###########################################################
+#        forgotPasswordDecline.jsp                        #
+###########################################################
+
+title.forgotPasswordDecline=Changement de mot de passe rejeté
+you.forgotPasswordDecline=Vous avez décidé de ne pas changer votre mot de passe pour votre compte SNIF.  Les lien s dans le courriel envoyé ne fonctionneront pas. 
+if.forgotPasswordDecline=Si vous avez activé le lien de rejet par erreur, s'il vous plaît allez à
+forgot.forgotPasswordDecline=Mot de passe oublié
+
+###########################################################
+#      forgotPasswordSuccess.jsp                          #
+###########################################################
+
+an.forgotPasswordSuccess=Un courriel a été envoyé 
+nfis.forgotPasswordSuccess=Le SNIF vous a envoyé un courriel. En activant le lien approprié, vous serez capable d'obtenir un nouveau mot de passe pour votre compte.
+
+###########################################################
+#      forgotRemotePassword.jsp                           #
+###########################################################
+
+jurisdictional.forgotRemotePassword=Modifier le mot de passe
+nfis.forgotRemotePassword=Le SNIF ne peut pas extraire le mot de passe pour le compte suivant:
+user.forgotRemotePassword=Nom d'utilisateur:
+jurisdiction.forgotRemotePassword=Juridiction:
+your.forgotRemotePassword=Votre nom d'utilisateur et votre mot de passe sont tenus à jour par votre juridiction. Communiquez avec l'administrateur système de votre juridiction pour faire modifier votre mot de passe.
+
+###########################################################
+#           login.jsp                                     #
+###########################################################
+
+login.login=Ouverture de session
+jurisdiction.login=Juridiction
+username.login=Nom d'utilisateur
+password.login=Mot de passe
+login.button.login=Ouverture de session
+your.login=Votre tentative d'ouverture de session a échoué :
+
+###########################################################
+#         login_success.jsp                               #
+###########################################################
+
+successful.login_success=Ouverture de session réussie
+you.login_success=Vous avez réussi à accéder au SNIF.
+redirect.login_success=Dans deux secondes, vous serez redirigé vers:
+
+###########################################################
+#         modify_profile.jsp                              #
+###########################################################
+
+
+mailing.modify_profile=Liste d'envoi
+make.modify_profile=Apportez les modifications à votre profil
+yes-receive.modify_profile=Recevez des nouvelles
+no-receive.modify_profile=No, merci
+title.modify_profile=Modifiez les informations sur le profil
+you.modify_profile=Vous avez modifié les informations sur le profil pour le compte suivant :
+
+###########################################################
+#         modify_profile_decline.jsp                      #
+###########################################################
+
+title.modify_profile_decline=Modifications sur le profil refusées
+you.modify_profile_decline=Vous avez annulé toutes les modifications en cours de votre profil SNIF. Votre profil SNIF demeure inchangé.
+
+###########################################################
+#         modify_profile_intro.jsp                        #
+###########################################################
+
+
+
+title.modify_profile_intro=Modifiez l'introduction sur le profil
+follow.modify_profile_intro=Voici les étapes à suivre pour modifier votre profil :
+these.modify_profile_intro=Ces quelques étapes modifient les informations sur votre profil SNIF :
+using.modify_profile_intro=Au moyen d'un simple formulaire, apportez les modifications à votre profil.
+review.modify_profile_intro=Révisez les modifications à votre profil pour vous assurez qu'il n'y a pas d'erreur.
+after.modify_profile_intro=Après soumission des modifications à votre profil, le SNIF va vous envoyer un courriel!
+activate.modify_profile_intro=Activez le lien dans ce courriel pour compléter les modifications à votre profil.
+button.modify_profile_intro=Modifier un profil
+ 
+###########################################################
+#             modify_profile_pending.jsp                      #
+###########################################################
+
+
+title.modify_profile_pending=Modification de profil rejetée
+an.modify_profile_pending=Un courriel vous a été envoyé
+stating.modify_profile_pending=vous rappelant que vous avez déjà une modification de profil en cours dans le SNIF.
+you.modify_profile_pending=Vous avez tenté de modifier le compte pour :
+your.modify_profile_pending=Votre modification de profil a été rejetée pour l'une des raisons suivantes :
+email_accept.modify_profile_pending=Le lien d'acceptation ou de rejet dans le courriel n'a pas été activé.
+if.modify_profile_pending=Si vous recevez un courriel du SNIF, activez le lien d'acceptation pour compléter vos modifications.
+nfis.modify_profile_pending=Le SNIF n'a pas votre bonne adresse de courriel.
+our.modify_profile_pending=Nos dossiers indiquent qu'un courriel de confirmation vous a été envoyé à :
+is.modify_profile_pending=Cette adresse est-elle exacte?
+if_this.modify_profile_pending=Si ce n'est pas votre bonne adresse de courriel, recommencez le processus <a href="
+registration.modify_profile_pending="> Modifier un profil</a> mais cette fois-ci avec la bonne adresse
+nfis_does.modify_profile_pending=Le SNIF n'a pas votre bonne adresse de courriel.
+if_nfis.modify_profile_pending=Si le SNIF a la bonne adresse et que vous ne recevez pas un courriel de confirmation, contactez <a href="mailto:
+nfis_support.modify_profile_pending="> Soutien SNIF</a>.
+ 
+###########################################################
+#         modify_profile_review.jsp                       #
+###########################################################
+
+if.modify_profile_review=Si cette information est exacte, entrez votre mot de passe SNIF et cliquez sur 'Suivant'.
+please.modify_profile_review=Veuillez examiner vos informations de profil modifiées
+submit.modify_profile_review=Soumettre les changements de profil&gt;
+the.modify_profile_review=Le mot de passe entré est incorrect.
+title.modify_profile_review=Examinez vos informations de profil
+
+###########################################################
+#         modify_profile_submitted.jsp                    #
+###########################################################
+
+
+title.modify_profile_submitted=On vous a envoyé un courriel
+an.modify_profile_submitted=Le SNIF vous a envoyé un courriel! Votre profil SNIF sera changé dès que vous allez activer le lien 'accepter le changements' de ce courriel.
+
+###########################################################
+#         modify_profile_success.jsp                      #
+###########################################################
+
+
+because.modify_profile_success=Parce que le SNIF utilise votre adresse de courriel comme nom d'utilisateur, ce nom a aussi été changé. Lors de la prochaine connexion, utilisez votre nouveau nom d'utilisateur :
+profile.modify_profile_success=Le profil a été modifié
+you.modify_profile_success=Vous avez changé votre adresse de courriel.
+your.modify_profile_success=Votre profil a été modifié avec succès.
+
+###########################################################
+#      modifyLocalPassword.jsp                            #
+###########################################################
+
+modify.modifyLocalPassword=Modifier le mot de passe
+you.modifyLocalPassword=Vous pouvez modifier le mot de passe rattaché au compte SNIF suivant :
+user.modifyLocalPassword=Nom d'utilisateur :
+jurisdiction.modifyLocalPassword=Juridiction :
+password.modifyLocalPassword=Le mot de passe doit comporter entre 6 et 12 caractères.
+old.modifyLocalPassword=Ancien mot de passe
+new.modifyLocalPassword=Nouveau mot de passe
+re_enter.modifyLocalPassword=Entrer encore une fois le nouveau mot de passe
+submit.modifyLocalPassword=Soumettre le mot de passe
+
+###########################################################
+#      modifyRemotePassword.jsp                           #
+###########################################################
+
+jurisdictional.modifyRemotePassword=Mot de passe de juridiction
+nfis.modifyRemotePassword=Le SNIF ne peut pas modifier le mot de passe du compte suivant :
+user.modifyRemotePassword=Nom d'utilisateur:
+jurisdiction.modifyRemotePassword=Juridiction:
+your.modifyRemotePassword=Votre nom d'utilisateur et votre mot de passe sont tenus à jour par votre juridiction. Communiquez avec l'administrateur système de votre juridiction pour faire modifier votre mot de passe.
+
+###########################################################
+#        no_account.jsp                                   #
+###########################################################
+
+no.no_account=Il n'y a pas de compte dans le SNIF
+nfis.no_account=Le SNIF n'a aucun enregistrement d'un de ses comptes associé avec le nom d'utilisateur et la juridiction
+user.no_account=Nom d'utilisateur:&nbsp; 
+jurisdiction.no_account=Juridiction:&nbsp;
+if.no_account=Si vous avez incorrectement entré votre nom d'utilisateur ou le nom de la juridiction, essayez
+forgot.no_account=<a>Mot de passe oublié</a> encore.
+if_you_would.no_account=Si vous désirez vous inscrire pour obtenir un compte de SNIF, s'il vous plaît allez à
+registration.no_account=<a>Inscription au SNIF</a>.
+
+###########################################################
+#        passwordSuccess.jsp                              #
+###########################################################
+
+password.passwordSuccess=Mot de passe modifié
+you.passwordSuccess=Vous avez réussi à modifier le mot de passe rattaché à votre compte SNIF.
+
+###########################################################
+#             registration.jsp                            #
+###########################################################
+
+title.registration=Inscription
+these.registration=Suivez ces étapes simples pour créer votre <i>compte d'utilisateur</i> dans le Système national d'information sur les forêts (SNIF) :
+begin.registration=Pour vous inscrire, vous devez d’abord choisir la <i>juridiction</i> à laquelle vous appartenez.
+next.registration=Vous devez ensuite entrer votre <i>adresse de courriel</i>.
+fill.registration=Remplissez le formulaire de création de profil. Un courriel vous sera envoyé!
+activate.registration=Activez le lien qui figure dans ce message pour terminer le processus d'inscription.
+if.registration=Si vous ne possédez pas déjà un profil d’utilisateur dans le Système national d’information sur les forêts, vous devez remplir un simple formulaire. Vous recevrez ensuite un message par courriel!
+if.you.registration=Si vous vous inscrivez à titre de simple particulier, choisissez la <i>juridiction</i> « SNIF Public ». Le système vous demandera ensuite de choisir un mot de passe.
+begin_button.registration=Commencer l'inscription &gt;
+
+###########################################################
+#             registration_get_jurisdiction.jsp           #
+###########################################################
+
+title.registration_get_jurisdiction=Commencer l'inscription
+jurisdiction.registration_get_jurisdiction=Juridiction
+if_your.registration_get_jurisdiction=Si votre juridiction ne figure pas dans la liste, ou si vous ne savez pas si vous relevez d'une juridiction, choisissez "SNIF Public".
+setJurList_error.registration_get_jurisdiction=Le système n'a pu trouver la liste des juridictions locales.
+
+###########################################################
+#             registration_remote_login.jsp               #
+###########################################################
+
+as.registration_remote_login=Pour terminer votre inscription, vous devez ouvrir une session dans la juridiction que vous avez choisi.
+
+###########################################################
+#             registration_get_email.jsp                  #
+###########################################################
+
+title.registration_get_email=Courriel
+email.registration_get_email=Courriel
+if_you.registration_get_email=Si vous avez déjà un autre <i>compte d'utilisateur</i> SNIF, indiquez le courriel de ce compte. 
+
+###########################################################
+#             registration_get_profile.jsp                          #
+###########################################################
+
+title.registration_get_profile=Page de profil
+
+###########################################################
+#             registration_already_registered             #
+###########################################################
+
+title.registration_already_registered=Inscription refusée
+you.registration_already_registered=Vous avez probablement déjà un <i>compte d'utilisateur</i> dans cette <i>juridiction</i>.
+you_have.registration_already_registered=Vous avez essayé d'ouvrir un nouveau compte pour :
+jurisdiction.registration_already_registered=Juridiction: 
+email.registration_already_registered=Courriel: 
+your.registration_already_registered=Votre inscription peut avoir été refusée pour l'une des raisons suivantes :
+you_have_forgotten.registration_already_registered=Vous avez oublié votre mot de passe et vous essayez de faire une nouvelle inscription.
+go.registration_already_registered=Allez à la page  
+forgot.registration_already_registered=Mot de passe oublié
+page.registration_already_registered=pour obtenir un nouveau mot de passe.
+you_intended.registration_already_registered=Vous vouliez ouvrir un nouveau compte pour une autre juridiction.
+start.registration_already_registered=Recommencez 
+registration_process.registration_already_registered=<a>le processus d'inscription</a> et entrez une autre juridiction.
+
+###########################################################
+#             registration_pending                        #
+###########################################################
+
+title.registration_pending=Inscription refusée
+an.registration_pending=Un courriel vous a été envoyé le 
+stating.registration_pending=pour vous rappeler que vous avez actuellement une inscription en cours auprès du SNIF.
+you.registration_pending=Vous avez essayé d'inscrire un nouveau compte pour :
+jurisdiction.registration_pending=Juridiction :
+email.registration_pending=Courriel : 
+your.registration_pending=Votre inscription peut avoir été refusée pour l'une des raisons suivantes :
+email_accept.registration_pending=<b>Le lien d'acceptation ou de refus dans le courriel n'a pas été activé.</b><i> Si vous avez reçu un courriel du SNIF, activez le lien d'acceptation pour compléter votre inscription.</i>
+nfis.registration_pending=<b>Le SNIF n'a pas votre bonne adresse de courriel.</b> Nos dossiers indiquent qu'un courriel de confirmation vous a été envoyé à <b> 
+is.registration_pending=</b>. Cette adresse est-elle correcte? <i>Si ce n'est pas votre bon courriel, recommencez le processus <a href="
+registration.registration_pending=">d'inscription</a> et entrez votre bonne adresse de courriel.</i>
+nfis_does.registration_pending=<b>Le SNIF a votre bonne adresse de courriel.</b><i>Si c'est le cas et que vous n'avez toujours pas reçu de courriel de confirmation, communiquez avec le <a href="mailto:
+nfis_support.registration_pending="> Soutien SNIF</a>.</i>
+
+###########################################################
+#             registration_email_sent.jsp                 #
+###########################################################
+
+title.registration_email_sent=Un courriel vous a été envoyé
+an.registration_email_sent=Le Système national d’information sur les forêts vous a envoyé un message par courriel. Cliquez sur le lien que vous y trouverez pour compléter votre inscription.
+if.registration_email_sent=Si vous vous êtes inscrit dans la juridiction SNIF Public, vous devrez choisir un mot de passe.     
+
+###########################################################
+#             registration_complete.jsp                   #
+###########################################################
+
+registration.registration_complete=Confirmation d'inscription
+your.registration_complete=Votre inscription est maintenant achevée. Vous avez inscrit les renseignements de compte suivants :
+user.registration_complete=Nom d'utilisateur
+jurisdiction.registration_complete=Juridiction
+email.registration_complete=Courriel
+first.registration_complete=Prénom
+last.registration_complete=Nom
+postal.registration_complete=Code postal
+organization.registration_complete=Organisation
+phone.registration_complete=Numéro de téléphone
+this.registration_complete=Vous pouvez modifier ces renseignements en utilisant la page
+modify.registration_complete=Modifier le profil
+
+###########################################################
+#             registration_decline.jsp                  #
+###########################################################
+
+title.registration_decline=Inscription refusée
+you.registration_decline=Vous avez choisi de ne pas terminer votre inscription au SNIF. Les liens contenus dans le courriel qui vous a été envoyé ne fonctionnent plus, car tous les détails d'inscription ont été supprimés de notre système. 
+if.registration_decline=Si vous voulez vous inscrire ultérieurement, vous pourrez le faire en utilisant le <a href="
+registration.registration_decline=">processus d'inscription</a>.
+
+###########################################################
+#             registration_get_password.jsp                 #
+###########################################################
+
+title.registration_get_password=Confirmation d'inscription
+thank.registration_get_password=Merci d'avoir confirmé votre inscription. Votre nom d'utilisateur pour ce compte sera votre adresse de courriel.
+please.registration_get_password=Veuillez entrer le mot de passe que vous voulez utiliser pour votre compte :
+jurisdiction.registration_get_password=Juridiction
+email.registration_get_password=Courriel
+password.registration_get_password=Mot de passe
+repeat.registration_get_password=(encore)
+submit.registration_get_password=Soumettre le mot de passe &gt;
+
+###########################################################
+#        why_register.jsp                                 #
+###########################################################
+
+
+title.why_register=Pourquoi s'inscrire?
+some.why_register=Certains services et contenu du SNIF exigent que les utilisateurs se connectent avec un un compte SNIF. Le compte utilisateur désigne exclusivement l'utilisateur dans le réseau SNIF. Après création d'un compte SNIF, les administrateurs peuvent accorder à l'utilisateur l'accès aux services et contenu restreints.
+nfis.why_register=Des applications SNIF exploitent le compte utilisateur pour tenir à jour les informations du profil. Ainsi, un visualisateur de carte SNIF, comme GeoExplore, sur demande sauvegardera les images de carte générées par l'utilisateur. Plus tard, l'utilisateur pourra en lançant GeoExplore d'un autre ordinateur visualiser ses cartes sauvegardées. 
+other.why_register=D'autres applications SNIF limitent l'action de l'utilisateur d'après les privilèges de son compte.
+using.why_register=À partir des informations sur le compte, les administrateurs d'application SNIF peuvent attribuer des privilèges et informer par courriel les utilisateurs enregistrés des mises à jour et des changements touchant l'application.
+two.why_register=Il existe deux types de compte SNFI :
+public.why_register=<i>Compte d'utilisateur public</i> Les personnes qui ne sont pas des employés ou des associées d'une juridiction participante peuvent créer un compte en recourant à <a href="
+online.why_register=">Inscription SNIF.</a> 
+jurisdictional.why_register=<i>Compte d'utilisateur de juridiction.</i> Les employés d'une juridiction participante peuvent se connecter au SNIF avec le nom d'utilisateur et le mot de passe de leur compte de travail. Puis, se créer un profil d'utilisateur.
+currently.why_register=Actuellement, les juridictions suivantes acceptent l'authentification directe d'un utilisateur :
+
+###########################################################
+#             DatabaseInterface.java                    #
+###########################################################
+
+unable.DatabaseInterface=Impossible d'extraire le profil de l'utilisateur de la base de données.
+
+###########################################################
+#           ForgotPasswordBean.java                       #
+###########################################################
+
+jurisdiction.empty.ForgotPasswordBean=Vous devez indiquer la juridiction.
+username.empty.ForgotPasswordBean=Vous devez indiquer le nom d'utilisateur.
+
+###########################################################
+#               LoginBean.java                            #
+###########################################################
+
+jurisdiction.empty.LoginBean=Vous devez indiquer la juridiction.
+username.empty.LoginBean=Vous devez indiquer le nom d'utilisateur.
+password.empty.LoginBean=Vous devez indiquer le mot de passe.
+
+###########################################################
+#             ModifyAccountServlet.java                   #
+###########################################################
+
+a.ModifyAccountServlet=Une demande relative à un mot de passe oublié est déjà lancée. Un courriel a été envoyé avec les lien s que le titulaire du compter peut utiliser pour accepter ou refuser le changement d'un mot de passe. S'il vous plaît, vérifiez votre courriel entrant et dans le message approprié, répondez en cliquant sur une des liens. 
+a.problem.ModifyAccountServlet=Un problème s'est  produit en envoyant la page de rejet.
+a.problem.occured.ModifyAccountServlet=Un problème s'est produit en envoyant
+modify_profile_decline. Le refus a été complété avec succès.
+an.error.occured.ModifyAccountServlet=Une erreur s'est produite au moment de verser l'information dans la base de données.
+an.error.occured.forwarding.ModifyAccountServlet=Une erreur s'est produite pendant la transmission du mauvais lien .
+error.occured.updating.ModifyAccountServlet=Une erreur s'est produite pendant la mise à jour du nom d'utilisateur
+an.error.occured.updating.your.ModifyAccountServlet=Une erreur s'est produite pendant la mise à jour de votre profil. Vos changements ne sont pas en vigueur.
+an.error.occured.while.ModifyAccountServlet=Une erreur s'est produite durant l'extraction ou la mise à jour de l'information sur le mot de passe. (supprimer  tempOubilier mot de passe inscription) de la base de données CID specifié était:&nbsp;
+an.error.occured.while.changing.ModifyAccountServlet=Une erreur s'est produite en changant votre  mot de passe. Il est possible alors que votre mot de passe n'ait pas été changé
+an.ModifyAccountServlet=Un erreur s'est produit durant l'extraction de l'information du mot de passe temporaire de la base de données.
+and.ModifyAccountServlet=" et la juridiction est 
+clicking.the.ModifyAccountServlet=Cliquez sur le lien d'acceptation pour changer les informations de votre profil selon les indications suivantes :
+error.ModifyAccountServlet=Une erreur s'est produite en faisant une recherche dans la base de données.
+error.occured.ModifyAccountServlet=Une erreur s'est produite durant l'envoi du courriel.
+if.ModifyAccountServlet=Si vous n'avez pas demandé un changement de votre mot de passe ou vous ne désirez pas changer votre mot de passe, activez le lien ci-dessous.  Votre mot de passe ne sera pas modifié et les lien s dans ce courriel ne fonctionneront pas.
+if.you.ModifyAccountServlet=Si vous ne demandez pas un changement aux informations de votre profil ou ne désirez pas les changer, cliquez sur le lien suivant. Votre profil n'est pas changé et les liens dans le courriel ne fonctionnent pas.
+is.ModifyAccountServlet=' n'est pas une instruction reconnue.
+missing.ModifyAccountServlet=Il manque la justification d'identité pour changer le mot de passe.
+
+missing.credentials.ModifyAccountServlet=Références manquantes pour modifier un profil.
+nfis.ModifyAccountServlet=Information SNIF sur le mot de passe
+
+nfis.profile.ModifyAccountServlet=Informations sur le profil SNIF
+no.ModifyAccountServlet=Il n'y aucun enregistrement
+
+process.ModifyAccountServlet=processus.
+sending.ModifyAccountServlet=L'application ne pouvait pas traiter l'envoi d'un courriel. S'il vous plaît soumettez votre demande plus tard.
+the.application.ModifyAccountServlet=L'application est incapable de traiter la demande.
+the.attempt.ModifyAccountServlet=La tentative de changement de votre mot de passe n'a pas réussi.
+the.attempt.to.ModifyAccountServlet=La tentative de mise à jour des informations de votre profil n'a pas réussi. Essayez plus tard.
+the.cid.ModifyAccountServlet=L'enregistrement cid n'est pas supprimé.
+the.command.ModifyAccountServlet=La commande '
+the.db.ModifyAccountServlet=La base de données ne pouvait pas mettre à jour le mot de passe.
+the.db.was.ModifyAccountServlet=La base de données ne pouvait pas traiter l'insertion.
+the.email.ModifyAccountServlet=le lien dans le courriel vous avez activé n'était valide que pour 24 heures et a expiré.  Vous devez répéter le processus relatif à un mot de passe oublié.
+the.link.ModifyAccountServlet=Le lien que vous tentez d'activer est expiré.   Vous devez recommencer
+the.ModifyAccountServlet=Le système national d'information sur les forêts (SNIF) vous envoie ce courriel suite à la demande pour un nouveau mot de passe pour votre compte SNIF dont le nom d'utilisateur est "
+the.national.ModifyAccountServlet=Le système national d'information sur les forêts (SNIF) vous envoie ce courriel parce que vous ou une autre personne avez soumis une requête de changement au mot de passe du compte dont le nom d'utilisateur est"
+there.ModifyAccountServlet=Aucun profil SNIF associé à votre compte.
+to.ModifyAccountServlet=Pour entrer un nouveau mot de passe, s'il vous plaît cliquez sur le lien ci-dessous :
+
+to.accept.ModifyAccountServlet=Pour accepter les changements à votre profil, s'il vous plaît, cliquez sur le lien ci-dessous :
+your.ModifyAccountServlet=Votre mot de passe est mis en memoire dans la base de données SNIF en format codé et ne peut pas être extrait.
+
+###########################################################
+#             PasswordBean.java                           #
+###########################################################
+
+password.incorrect.PasswordBean=Le mot de passe est incorrect.
+password.more_than_five.PasswordBean=Le mot de passe doit contenir au moins six caractères
+password.less_than_thirteen.PasswordBean=Le mot de passe ne doit pas contenir plus de douze caractères
+password.identical.PasswordBean=Les deux mots de passe doivent être identiques
+
+###########################################################
+#         RegistrationBean.java                           #
+###########################################################
+
+email.empty.RegistrationBean=Vous devez indiquer le courriel. 
+email.formatting.RegistrationBean=Le format du courriel est incorrect
+jurisdiction.empty.RegistrationBean=Vous devez indiquer la juridiction.
+first.empty.RegistrationBean=Vous devez indiquer le prénom.
+first.more_than_two.RegistrationBean=Le prénom doit contenir plus de deux lettres.
+first.less_than_25.RegistrationBean=Le prénom ne peut pas contenir plus de vingt-cinq lettres
+last.empty.RegistrationBean=Vous devez indiquer le nom.
+last.more_than_two.RegistrationBean=Le nom doit contenir plus de deux lettres
+last.less_than_50.RegistrationBean=Le nom ne peut pas contenir plus de cinquante lettres
+organization.empty.RegistrationBean=Vous devez indiquer une organisation
+organization.more_than_three.RegistrationBean=Le nom de l'organisation doit contenir au moins trois lettres
+p_code.empty.RegistrationBean=Vous devez indiquer le code postal
+p_code.formatting.RegistrationBean=Le format du code postal est incorrect
+ph_num.empty.RegistrationBean=Vous devez indiquer un numéro de téléphone
+ph_num.formatting.RegistrationBean=Le format du numéro de téléphone doit être : (123) 456-7890 ou 123-456-7890
+ph_ext.formatting.RegistrationBean=Le poste téléphonique doit contenir de un à quatre chiffres
+this.email.RegistrationBean=Cette adresse de courriel est déjà associée à un profil d’utilisateur du Système national d’information sur les forêts.
+
+##########################################################
+#             RegistrationServlet.java                    #
+###########################################################
+
+thank.RegistrationServlet=Nous vous remercions d'avoir fait une demande de compte d'utilisateur SNIF.
+you.RegistrationServlet=Vous vous êtes inscrit(e) pour la "
+jurisdiction.RegistrationServlet=" juridiction, 
+and.RegistrationServlet=et votre nom d'utilisateur est "
+to.RegistrationServlet=Pour terminer votre inscription, cliquez sur le lien ci-dessous :
+if.RegistrationServlet=Si vous croyez que vous avez reçu ce courriel par erreur, \net/ou si vous voulez annuler votre inscription, cliquez sur le lien ci-dessous :
+nfis.RegistrationServlet=Inscription d'utilisateur SNIF

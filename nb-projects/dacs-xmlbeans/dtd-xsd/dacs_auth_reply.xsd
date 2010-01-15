@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: dacs_auth_reply.dtd 414 2005-08-22 22:13:24Z unauth $ -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://fedroot.com/dacs/v1.4"
+    xmlns:dacs="http://fedroot.com/dacs/v1.4"
+    elementFormDefault="qualified">
+  
+<xs:include schemaLocation="dacs_current_credentials.xsd"/>
+<xs:include schemaLocation="common.xsd"/>  
+    
+  <xs:element name="dacs_auth_reply">
+    <xs:complexType>
+      <xs:choice>
+        <xs:element ref="dacs:dacs_current_credentials"/>
+        <xs:element ref="dacs:common_status"/>
+        <xs:element ref="dacs:prompts"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="prompts">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="dacs:prompt"/>
+      </xs:sequence>
+      <xs:attribute name="transid" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="prompt">
+    <xs:complexType>
+      <xs:attribute name="type" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="password"/>
+            <xs:enumeration value="text"/>
+            <xs:enumeration value="error"/>
+            <xs:enumeration value="label"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="label"/>
+      <xs:attribute name="varname"/>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

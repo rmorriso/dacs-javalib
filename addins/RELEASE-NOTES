@@ -1,0 +1,15 @@
+Release Notes for dacs-javalib-0.55
+===================================
+Updates in response to the change to syntax of DACS 
+cookie names in DACS 1.4.11 and later:
+   DACS:FOO:BAR:username -> DACS:FOO::BAR:username)
+
+Added since 0.5:
+o  cookie coordination of dumb-browser and DacsContext (eg,
+   in middleware when a cookie is deleted its browser
+   equivalent must also be deleted)
+o  beginning of support for the new dacs_auth_transfer
+   service for federation peering
+
+Changes:
+o  XML Beans are now built in a separate component: dacs-xmlbeans

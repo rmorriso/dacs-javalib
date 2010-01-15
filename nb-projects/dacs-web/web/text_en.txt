@@ -1,0 +1,662 @@
+# Note: those lines marked with a #TBT directly above the line have still to be translated.
+
+###########################################################
+# Global properties that appear on multiple pages         #
+###########################################################
+
+# the language of this file
+language=en
+otherLanguage=fr
+last_updated=Last updated
+
+# alt messages for the number images
+alt.one_image=number 1.gif (1K)
+alt.two_image=number 2.gif (1K)
+alt.three_image=number 3.gif (1K)
+alt.four_image=number 4.gif (1K)
+alt.five_image=number 5.gif (1K)
+cancel.global=Cancel
+
+###########################################################
+# Global error messages that appear on multiple pages     #
+###########################################################
+
+a_list.error=A list of all jurisdictions could not be retrieved.
+no_command.error=There was no command included with the request
+
+###########################################################
+# Global email content that appears in multiple messages  #
+###########################################################
+
+a.email.error=A problem occured setting the To or From address in the Email
+an.email.error=An error occured while sending the email.
+an.email.error.format=An error occured while trying to format and send the email.
+dear.email=Dear 
+first.email.global=First Name
+last.email.global=Last Name
+local.email.global=Local
+phone.email.global=Phone #
+postal.email.global=Postal Code
+receive.email.global=Receive Mail
+thanks.email=Thanks,
+the.email=The User Accounts Team
+
+###########################################################
+# Global Field titles - used in registration_get_profile.jsp and    #
+# modify_profile pages                                    #
+###########################################################
+
+back.global=&lt;&nbsp;Back
+email.global=Email
+first.global=First&nbsp;Name
+jurisdiction.global=Jurisdiction
+last.global=Last&nbsp;Name
+local.global=local
+local_extension.global=Local extension number is optional.
+next.global=Next&nbsp;&gt;
+n.global=No
+password.global=Password
+phone.global=Phone&nbsp;\#
+postal.global=Postal&nbsp;Code
+organization.global=Organization
+submit.global=Submit Profile &gt;
+receive.global=Receive Mail
+username.global=Username
+y.global=Yes
+
+# ACCESS/INCLUDE FILES ########################################################
+
+###########################################################
+#             nfis-header.jsp                             #
+###########################################################
+
+# Logo
+logo.header=images/logo_en.gif
+alt.logo.header=FedRoot
+
+# Alt for mountain image
+alt.mountain.header=photo
+
+# Page Titles
+title.admin.header=images/title_aa_en.gif
+title.login.header=images/title_al_en.gif
+title.logout.header=images/title_alo_en.gif
+title.exception.header=images/title_ex_en.gif
+
+alt.title.admin.header=User Account Administration
+alt.title.login.header=User Account Login
+alt.title.exception.header=User Account Exception
+alt.title.logout.header=User Account Logout
+# language button strings
+langButtonImage.header=images/lang_button_fr.gif
+alt.langButtonImage.header=Passer au français
+
+###########################################################
+#               menu.jsp                                  #
+###########################################################
+
+new.menu=New Users
+why.menu=Why Register?
+registration.menu=Registration
+current.menu=Current Users
+login.menu=Login
+modify.menu=Modify Profile
+modify.password.menu=Modify Password
+forgot.menu=Forgot Password
+logout.menu=Logout
+
+# ACCESS JSP FILES ############################################################
+
+###########################################################
+#             403_error.jsp                               #
+###########################################################
+
+access.403_error=Access to requested content requires user login.
+if.403_error=If you are not already registered with the User Accounts Service, you must do so before logging in.
+login.403_error=Login
+nfis.403_error=User Accounts
+members.403_error=Members of the public may <a href="registration.jsp">register</a> to obtain a user account and to create a personal profile.
+employees.403_error=Members of participating jurisdictions that have deployed User Accounts authentication services may <a href="login.jsp">login</a> using their native username and password.
+currently.403_error=Currently, the following jurisdictions support native user authentication:
+employees.of.403_error=Members of other jurisdictions should <a href="registration.jsp">register</a> for an User Accounts public access account.
+more.403_error=More Information:
+why.403_error=Why Register?
+
+###########################################################
+#             error_handler.jsp                           #
+###########################################################
+
+401.401_error=401 Error Page
+402.402_error=402 Error Page
+403.403_error=403 Error Page
+404.404_error=404 Error Page
+500.500_error=500 Error Page
+501.501_error=500 Error Page
+502.502_error=502 Error Page
+900.900_error=900 Error Page
+901.901_error=901 Error Page
+902.902_error=902 Error Page
+903.903_error=903 Error Page
+999.999_error=999 Error Page
+-1.-1_error=Unknown Error Code
+
+
+sorry.401_error=Unauthorized.
+sorry.402_error=Payment Required.
+sorry.403_error=Forbidden.
+sorry.404_error=Page Not Found.
+sorry.500_error=Server Error.
+sorry.501_error=Not Implemented.
+sorry.502_error=Bad Gate.
+sorry.900_error=DACS Error: Access Denied, no applicable rule.
+sorry.901_error=DACS Error: Access denied, forbidden by rule.
+sorry.902_error=DACS Error: Access denied, user not authenticated.
+sorry.903_error=Access Denied.  You do not have permission to view this resource.
+sorry.999_error=DACS Error: Access denied, internal error.
+sorry.unknown_error=This is an unknown error code.
+
+
+
+###########################################################
+#             email_link_error.jsp                        #
+###########################################################
+
+no.email_link_error=No corresponding record could be found.
+your.email_link_error=The User Accounts Service could not verify the request you made when activating the link in your e-mail. This could happen for one of the following reasons: 
+the.email_link_error=<b>The link was not properly activated.</b> If the link spans two lines in your email, it is common only part of the link has been activated. <i>Compare the link shown at the bottom of this page with the one sent to you in your e-mail. The links should be exactly the same.</i>
+you_have.email_link_error=<b>You have already activated the accept or deny link in the email.</b> Once either of the links in the e-mail is activated and successfully processed, these links will no longer work.
+the_link.email_link_error=<b>The link you are trying to activate is invalid.</b> The link you are attempting to activate is not being recognized by our system. Please compare the link shown at the bottom of this page to ensure that it is the same as one of the links in your e-mail. If you have been repeatedly unsuccessful in activating a link, please contact: <a href="mailto:
+nfis.email_link_error=">User Accounts Support</a>.
+you_activated.email_link_error=You activated the following link:
+
+###########################################################
+#             error.jsp                                   #
+###########################################################
+
+an.error=An unexpected error has occurred!
+error.error=Error Details
+more.error=More Details
+if.error=If this error occurs repeatedly, please contact:
+support.error=User Accounts Support
+there.error=There is no information about the current error
+
+###########################################################
+#             error_init.jsp                              #
+###########################################################
+
+an.error_init=An error has occurred while initializing!
+error.error_init=Error Details
+more.error_init=More Details
+this.error_init=This web site is constantly monitored, and will automatically re-initialize when this error is resolved. You may also manually attempt to resolve the problem:
+re_initialize.error_init=Re-Initialize NOW
+if.error_init=If this error occurs repeatedly, please contact:
+nfis.error_init=User Accounts Support
+there.error_init=There is no information about the current error.
+
+###########################################################
+#         forgot_password.jsp                             #
+###########################################################
+
+forgot.forgot_password=Forgot Password
+you.forgot_password=You have recently logged in as:
+if.forgot_password=If you do know your password and wish to modify it, go to 
+modify.forgot_password=Modify Password</a>.
+if_you.forgot_password=If you have forgotten your password fill out the form below.
+jurisdiction.forgot_password=Jurisdiction
+username.forgot_password=Username
+request.forgot_password=Request Password
+
+###########################################################
+#         forgotChangePassword.jsp                        #
+###########################################################
+
+there.forgotChangePassword=There was no user information supplied to the page.
+create.forgotChangePassword=Create New Password
+enter.forgotChangePassword=Enter a new password for the following account:
+jurisdiction.forgotChangePassword=Jurisdiction
+email.forgotChangePassword=Email
+password.forgotChangePassword=Password
+repeat.forgotChangePassword=(repeat)
+submit.forgotChangePassword=Submit Password &gt;
+
+###########################################################
+#         forgotChangePasswordSuccess.jsp                 #
+###########################################################
+
+password.forgotChangePasswordSuccess=Password Changed!
+you.forgotChangePasswordSuccess=You have successfully changed your password for the following account:
+username.forgotChangePasswordSuccess=Username:
+jurisdiction.forgotChangePasswordSuccess=Jurisdiction:
+
+###########################################################
+#           forgotPasswordDecline.jsp                     #
+###########################################################
+
+title.forgotPasswordDecline=Password Change Declined
+you.forgotPasswordDecline=You have decided not to change the password for your User Accounts account. The links in the email you were sent will no longer work. 
+if.forgotPasswordDecline=If you have activated the decline link by mistake, go to
+forgot.forgotPasswordDecline=Forgot Password
+
+###########################################################
+#      forgotPasswordSuccess.jsp                          #
+###########################################################
+
+an.forgotPasswordSuccess=An Email Has Been Sent
+nfis.forgotPasswordSuccess=The User Accounts Service has sent a confirmation email. By activating the appropriate link in this email, you will be able to get a new password for your account.
+
+###########################################################
+#      forgotRemotePassword.jsp                           #
+###########################################################
+
+jurisdictional.forgotRemotePassword=Jurisdictional Password
+nfis.forgotRemotePassword=The User Accounts Service cannot retrieve the password for the following account:
+user.forgotRemotePassword=User name:
+jurisdiction.forgotRemotePassword=Jurisdiction:
+your.forgotRemotePassword=Your user name and password are maintained by your jurisdiction.  You must contact the system administrator for your jurisdiction in order to modify your password.
+
+###########################################################
+#           signout.jsp                                   #
+###########################################################
+logout.logout=Logout
+button.yes.signout_page=Yes
+button.no.signout_page=No
+confirm_signout.confirm_signout=Are you sure you want to log out?
+signout.signout=Sign Out
+
+###########################################################
+#           confirmation_signout.jsp                      #
+###########################################################
+
+confirmation_of_signout.confirmation_of_signout=You have successfully logged out of the system.
+
+###########################################################
+#           login.jsp                                     #
+###########################################################
+
+login.login=Login
+jurisdiction.login=Jurisdiction
+username.login=Username
+password.login=Password
+login.button.login=Login
+your.login=Your login attempt was not successful:
+
+###########################################################
+#         login_success.jsp                               #
+###########################################################
+
+successful.login_success=Successful Login
+you.login_success=You have successfully logged into the User Accounts Service.
+redirect.login_success=You will be redirected in two seconds to:
+
+###########################################################
+#         modify_profile.jsp                              #
+###########################################################
+
+mailing.modify_profile=Mailing&nbsp;List
+make.modify_profile=Make your profile modifications.
+yes-receive.modify_profile=Send email about new releases
+no-receive.modify_profile=No thanks
+title.modify_profile=Modify Profile Information
+you.modify_profile=You are modifying the profile information for the following account:
+
+###########################################################
+#         modify_profile_decline.jsp                      #
+###########################################################
+
+title.modify_profile_decline=Decline Profile Modification
+you.modify_profile_decline=You have cancelled any pending changes to your User Accounts Service profile. Your User Accounts Service profile remains unmodified.
+
+###########################################################
+#         modify_profile_intro.jsp                        #
+###########################################################
+
+title.modify_profile_intro=Modify Profile Introduction
+follow.modify_profile_intro=Follow these steps to modify your profile:
+these.modify_profile_intro=These simple steps will allow you to modify your User Accounts Service profile information.
+using.modify_profile_intro=Using a simple form, make your profile modifications.
+review.modify_profile_intro=Review your profile modifications to make sure they are correct.
+after.modify_profile_intro=After submitting your profile modifications, the User Accounts Service will send you an email!
+activate.modify_profile_intro=Activate a link in this email to complete your profile modifications.
+button.modify_profile_intro=Modify Profile
+ 
+###########################################################
+#             modify_profile_pending                      #
+###########################################################
+
+title.modify_profile_pending=Modify Profile Rejected
+an.modify_profile_pending=An email was sent to you on 
+stating.modify_profile_pending=stating you currently have a pending profile modification with the User Accounts Service.
+you.modify_profile_pending=You have tried to modify the account for:
+your.modify_profile_pending=Your profile modification may have been rejected for one of the following reasons:
+email_accept.modify_profile_pending=Email accept or decline link has not been activated.
+if.modify_profile_pending=If you have received an email from the User Accounts Service, activate the accept link to complete your modifications.
+nfis.modify_profile_pending=The User Accounts Service does not have your correct email address.
+our.modify_profile_pending=Our records show a confirmation email was sent to you at 
+is.modify_profile_pending=Is this address correct?
+if_this.modify_profile_pending=If this address is not your correct email address, start the <a href="
+registration.modify_profile_pending=">Modify Profile</a> process over using your correct address.
+nfis_does.modify_profile_pending=The User Accounts Service does have your correct email address.
+if_nfis.modify_profile_pending=If the User Accounts Service has your correct email address and you still did not receive a confirmation email, contact <a href="mailto:
+nfis_support.modify_profile_pending=">User Accounts Service Support</a>.
+ 
+###########################################################
+#         modify_profile_review.jsp                       #
+###########################################################
+
+if.modify_profile_review=If this information is correct, enter your User Accounts Service password and click 'Next'.
+please.modify_profile_review=Please review your edited profile information.
+submit.modify_profile_review=Submit Profile Changes &gt;
+the.modify_profile_review=The password you have entered is incorrect.
+title.modify_profile_review=Review Profile Information
+
+###########################################################
+#         modify_profile_submitted.jsp                    #
+###########################################################
+
+title.modify_profile_submitted=An Email Has Been Sent!
+an.modify_profile_submitted=An email has been sent to you by the User Accounts Service!  Your User Accounts Service profile will be changed when you activate the 'accept changes' link in this email.
+
+###########################################################
+#         modify_profile_success.jsp                      #
+###########################################################
+
+because.modify_profile_success=Because the User Accounts Service uses your email address as your username, your username has also changed. Next time you login, use your new username:
+profile.modify_profile_success=Profile Has Been Modified
+you.modify_profile_success=You have changed your email address.
+your.modify_profile_success=Your profile has been successfully modified!
+
+###########################################################
+#      modifyLocalPassword.jsp                            #
+###########################################################
+
+modify.modifyLocalPassword=Modify Password
+you.modifyLocalPassword=You may modify the password for the following User Accounts Service account:
+user.modifyLocalPassword=User name:
+jurisdiction.modifyLocalPassword=Jurisdiction:
+password.modifyLocalPassword=Password must be 6 - 12 characters long.
+old.modifyLocalPassword=Old&nbsp;Password
+new.modifyLocalPassword=New&nbsp;Password
+re_enter.modifyLocalPassword=Re-enter&nbsp;New&nbsp;Password
+submit.modifyLocalPassword=Submit Password
+
+###########################################################
+#      modifyRemotePassword.jsp                           #
+###########################################################
+
+jurisdictional.modifyRemotePassword=Jurisdictional Password
+nfis.modifyRemotePassword=The User Accounts Service cannot modify the password for the following account:
+user.modifyRemotePassword=User name:
+jurisdiction.modifyRemotePassword=Jurisdiction:
+your.modifyRemotePassword=Your user name and password are maintained by your jurisdiction.  You must contact the system administrator for your jurisdiction in order to modify your password.
+
+###########################################################
+#        no_account.jsp                                   #
+###########################################################
+
+no.no_account=No User Accounts Service Account
+nfis.no_account=The User Accounts Service has no record of an account associated with the submitted user name and jurisdiction
+user.no_account=User Name:&nbsp; 
+jurisdiction.no_account=Jurisdiction:&nbsp;
+if.no_account=If you entered your user name incorrectly or selected the wrong jurisdiction, try
+forgot.no_account=Forgot Password</a> again.
+if_you_would.no_account=If you would like to register for a User Accounts Service account, go to
+registration.no_account=User Accounts Service Registration</a>.
+
+###########################################################
+#        passwordSuccess.jsp                              #
+###########################################################
+
+password.passwordSuccess=Password&nbsp;Changed
+you.passwordSuccess=You have successfully changed the password to your User Accounts Service account.
+
+###########################################################
+#             registration.jsp                            #
+###########################################################
+
+title.registration=Registration
+these.registration=These simple steps will allow you to create a <i>user account</i> with the User Accounts Service:
+#TBT
+begin.registration=Begin the registration process by selecting a <i>Jurisdiction</i> to register in.
+#TBT
+next.registration=Next enter your <i>email address</i> in a text field.
+#TBT
+if.registration=If you don't already have an User Accounts Service profile, you will fill in a simple profile form. An email will be sent to you!
+activate.registration=Activate the link in this email to complete your registration.
+if.you.registration=If you are registering as a private individual, use 'Public' as your <i>jurisdiction</i>. You will then be asked to set a password.
+begin_button.registration=Begin Registration &gt;
+
+###########################################################
+#             registration_get_jurisdiction.jsp           #
+###########################################################
+
+title.registration_get_jurisdiction=Start Registration
+jurisdiction.registration_get_jurisdiction=Jurisdiction
+if_your.registration_get_jurisdiction=If your Jurisdiction is not listed, or you don't know if you have a Jurisdiction, select "Public".
+setJurList_error.registration_get_jurisdiction=A list of local jurisdictions could not be retrieved.
+
+###########################################################
+#             registration_remote_login.jsp               #
+###########################################################
+
+as.registration_remote_login=As part of the registration process, you must login to the jurisdiction you have selected.
+
+###########################################################
+#             registration_get_email.jsp                          #
+###########################################################
+
+#TBT
+title.registration_get_email=Email Address
+email.registration_get_email=Email
+if_you.registration_get_email=If you already have another User Accounts Service <i>user account</i>, use that account's email address.
+
+###########################################################
+#             registration_get_profile.jsp                          #
+###########################################################
+
+title.registration_get_profile=Profile Page
+
+###########################################################
+#             registration_already_registered             #
+###########################################################
+
+title.registration_already_registered=Registration Rejected
+you.registration_already_registered=You appear to already have a <i>user account</i> for this <i>jurisdiction</i>.
+you_have.registration_already_registered=You have tried to register a new account for:
+jurisdiction.registration_already_registered=Jurisdiction: 
+email.registration_already_registered=Email: 
+your.registration_already_registered=Your registration may have been rejected for one of the following reasons:
+you_have_forgotten.registration_already_registered=You have forgotten your password and are trying to reregister.
+go.registration_already_registered=Go to the 
+modify.registration_already_registered=Modify Password
+page.registration_already_registered=page to get a new password.
+you_intended.registration_already_registered=You intended to register a new account for a different jurisdiction.
+start.registration_already_registered=Start the 
+registration_process.registration_already_registered=Registration</a> process again and select a different jurisdiction.
+
+###########################################################
+#             registration_pending                        #
+###########################################################
+
+title.registration_pending=Registration Rejected
+an.registration_pending=An email was sent to you on 
+stating.registration_pending=stating you currently have a pending registration with the User Accounts Service.
+you.registration_pending=You have tried to register a new account for:
+jurisdiction.registration_pending=Jurisdiction:
+email.registration_pending=Email: 
+your.registration_pending=Your registration may have been rejected for one of the following reasons:
+email_accept.registration_pending=<b>Email accept or decline link has not been activated.</b><i> If you have received an email from the User Accounts Service, activate the accept link to complete your registration.</i>
+nfis.registration_pending=<b>The User Accounts Service does not have your correct email address.</b> Our records show a confirmation email was sent to you at <b> 
+is.registration_pending=</b>. Is this address correct? <i>If this address is not your correct email address, start the <a href="
+registration.registration_pending=">Registration</a> process over using your correct address.</i>
+nfis_does.registration_pending=<b>The User Accounts Service does have your correct email address.</b><i>If the User Accounts Service has your correct email address and you still did not receive a confirmation email, contact<a href="mailto:
+nfis_support.registration_pending="> User Accounts Service Support</a>.</i>
+
+###########################################################
+#             registration_email_sent.jsp                 #
+###########################################################
+
+title.registration_email_sent=Email Has Been Sent
+an.registration_email_sent=An email has been sent to you by the User Accounts Service.  Click on the link in the User Accounts Service email message to complete your registration.
+if.registration_email_sent=If you registered for the User Accounts Service Public jurisdiction you will be asked to set a password.     
+
+###########################################################
+#             registration_complete.jsp                 #
+###########################################################
+
+registration.registration_complete=Registration Confirmation
+your.registration_complete=Your registration is now complete. You have registered the following account information:
+user.registration_complete=User&nbsp;Name
+jurisdiction.registration_complete=Jurisdiction
+email.registration_complete=Email
+first.registration_complete=First&nbsp;Name
+last.registration_complete=Last&nbsp;Name
+postal.registration_complete=Postal&nbsp;Code
+organization.registration_complete=Organization
+phone.registration_complete=Phone&nbsp;Number
+this.registration_complete=This information can be changed using
+modify.registration_complete=Modify Profile
+
+###########################################################
+#             registration_decline.jsp                  #
+###########################################################
+
+title.registration_decline=Registration Declined
+you.registration_decline=You have chosen to decline on completing your User Accounts Service registration. The links in the email you were sent will no longer work, as all registration details have now been removed from our system. 
+if.registration_decline=If you wish to register at a later date, you can do so using the <a href="
+registration.registration_decline=">Registration</a> process.
+
+###########################################################
+#             registration_get_password.jsp                 #
+###########################################################
+
+title.registration_get_password=Registration Confirmation
+thank.registration_get_password=Thank you for confirming your registration. Your username for this account will be the same as your email address.
+please.registration_get_password=Please enter the password that you wish to use with your account:
+jurisdiction.registration_get_password=Jurisdiction
+email.registration_get_password=Email
+password.registration_get_password=Password
+repeat.registration_get_password=(repeat)
+submit.registration_get_password=Submit Password &gt;
+
+###########################################################
+#        why_register.jsp                                 #
+###########################################################
+
+title.why_register=Why register?
+some.why_register=Some of the services and content provided by the User Accounts Service require users to log in using an User Accounts Service account. The user account uniquely identifies the user across the User Accounts Service network. Once a User Accounts Service account is created, administrators may grant the user access to restricted services and content.
+nfis.why_register=User Accounts Service applications take advantage of the user account to maintain user profile information. For example, an User Accounts Service map viewing application (GeoExplore), when requested, will save user generated map images. Later, when the registered user starts the GeoExplore application from any computer, they can view their saved map images.
+other.why_register=Other User Accounts Service applications restrict what a user can do based on their account privilages.
+using.why_register=Using account information, the User Accounts Service application administrators can assign application privileges and keep in touch by sending registered users emails.  This helps application administrators inform users of application upgrades and changes.
+two.why_register=Two types of User Accounts Service user accounts are possible:
+public.why_register=<i>Public user account.</i> Users that are not employees or affiliates of a participating jurisdiction may create a user account through <a href="
+online.why_register=">User Accounts Service Registration.</a> 
+jurisdictional.why_register=<i>Jurisdictional user account.</i> Employees of participating jurisdictions may log into the User Accounts Service with their work user account username and password. After logging in they can create a user profile.
+currently.why_register=Currently, the following jurisdictions support native user authentication:
+
+###########################################################
+#             DatabaseInterface.java                    #
+###########################################################
+
+unable.DatabaseInterface=Unable to retrieve user profile information from the database.
+
+###########################################################
+#           ForgotPasswordBean.java                       #
+###########################################################
+
+jurisdiction.empty.ForgotPasswordBean=Jurisdiction cannot be empty.
+username.empty.ForgotPasswordBean=Username cannot be empty.
+
+###########################################################
+#               LoginBean.java                            #
+###########################################################
+
+jurisdiction.empty.LoginBean=Jurisdiction cannot be empty.
+username.empty.LoginBean=Username cannot be empty.
+password.empty.LoginBean=Password cannot be empty.
+
+###########################################################
+#             ModifyAccountServlet.java                   #
+###########################################################
+
+a.ModifyAccountServlet=A Forgot Password request has already been initiated. An email was sent with links permitting the account holder to accept or decline changing a password. Please check your inbox for the email message and respond using the included links.
+a.problem.ModifyAccountServlet=A problem occured forwarding to the decline page.
+a.problem.occured.ModifyAccountServlet=A problem occured forwarding to modify_profile_decline. The decline action was successfully completed.
+an.error.occured.ModifyAccountServlet=An error occured while inserting information into the database.
+an.error.occured.forwarding.ModifyAccountServlet=An error occured forwarding to the BadURL page.
+an.error.occured.updating.ModifyAccountServlet=An error occured updating the username.
+an.error.occured.updating.your.ModifyAccountServlet=An error occured updating your profile. Your changes may not have been successful.
+an.error.occured.while.ModifyAccountServlet=An error occured while retrieving or updating password information (delete tempForgotPassword entry) from the database the CID specified was:&nbsp;
+an.error.occured.while.changing.ModifyAccountServlet=An error occured while changing your password. The password may not have been changed.
+an.ModifyAccountServlet=An error occured while retrieving temporary forgot password information from the database.
+and.ModifyAccountServlet=" and jurisdiction is 
+clicking.the.ModifyAccountServlet=Clicking the acceptance link will change your profile information as indicated below.
+error.ModifyAccountServlet=Error occured querying the database.
+error.occured.ModifyAccountServlet=Error occured sending the email.
+if.ModifyAccountServlet=If you did not request to change your password or don't want to change your password, activate the link below. Your password will remain unchanged and the links in this e-mail will no longer work.
+if.you.ModifyAccountServlet=If you did not request to change your profile information or don't want to change it, activate the link below. Your profile will remain unchanged and the links in this e-mail will no longer work.
+is.ModifyAccountServlet=' is not a recognized command.
+missing.ModifyAccountServlet=Missing credentials to change password.
+missing.credentials.ModifyAccountServlet=Missing credentials to modify profile.
+nfis.ModifyAccountServlet=User Accounts Service Password Information
+nfis.profile.ModifyAccountServlet=User Accounts Service Profile Information
+no.ModifyAccountServlet=No record found
+process.ModifyAccountServlet=process.
+sending.ModifyAccountServlet=Sending an email could not be processed by the application. Please try resubmitting your request at a later time.
+the.application.ModifyAccountServlet=The application was unable to process the request.
+the.attempt.ModifyAccountServlet=The attempt to change your password failed
+the.attempt.to.ModifyAccountServlet=The attempt to update your profile information failed. You may want to try to again.
+the.cid.ModifyAccountServlet=The cid record was not deleted.
+the.command.ModifyAccountServlet=The command '
+the.db.ModifyAccountServlet=The database was unable to update the password.
+the.db.was.ModifyAccountServlet=The database was unable to process the insert.
+the.email.ModifyAccountServlet=The email link you activated is only good for 24 hours and has expired. You need to repeat the forgot password process.
+the.link.ModifyAccountServlet=The link you are trying to activate is expired.  You will need to repeat the 
+the.ModifyAccountServlet=The User Accounts Service is sending you this e-mail because you or someone posing as you has submitted a request for a new password for your User Accounts Service account where the username is "
+the.national.ModifyAccountServlet=The User Accounts Service is sending you this e-mail because you or someone posing as you has submitted a request for changes to your User Accounts Service account profile where the username is "
+there.ModifyAccountServlet=There is no User Accounts Service profile associated with your account.
+to.ModifyAccountServlet=To enter a new password please click on the link below:
+to.accept.ModifyAccountServlet=To accept the changes to your profile please click on the link below:
+your.ModifyAccountServlet=Your account password is stored in the User Accounts Service database in encrypted form and cannot be retrieved.
+
+###########################################################
+#             PasswordBean.java                           #
+###########################################################
+
+password.incorrect.PasswordBean=Password is not correct.
+password.more_than_five.PasswordBean=Password must be at least six characters
+password.less_than_thirteen.PasswordBean=Password must be no more than twelve characters
+password.identical.PasswordBean=Both passwords must be identical
+
+###########################################################
+#         RegistrationBean.java                           #
+###########################################################
+
+email.empty.RegistrationBean=Email address cannot be empty
+email.formatting.RegistrationBean=Email address is improperly formatted
+jurisdiction.empty.RegistrationBean=Jurisdiction cannot be empty.
+first.empty.RegistrationBean=First Name cannot be empty.
+first.more_than_two.RegistrationBean=First Name must be more than two letters
+first.less_than_25.RegistrationBean=First Name must be less than twenty-five letters
+last.empty.RegistrationBean=Last Name cannot be empty.
+last.more_than_two.RegistrationBean=Last Name must be more than two letters
+last.less_than_50.RegistrationBean=Last Name must be less than fifty letters
+organization.empty.RegistrationBean=Organization cannot be empty
+organization.more_than_three.RegistrationBean=Organization name must be a least three letters
+p_code.empty.RegistrationBean=Postal code cannot be empty
+p_code.formatting.RegistrationBean=Postal code is improperly formatted
+ph_num.empty.RegistrationBean=Phone number cannot be empty
+ph_num.formatting.RegistrationBean=Format of phone number must be: (123) 456-7890, or 123-456-7890
+ph_ext.formatting.RegistrationBean=Phone extention must contain one to four digits
+this.email.RegistrationBean=This email address is already associated with an User Accounts Service profile.
+
+###########################################################
+#             RegistrationServlet.java                    #
+###########################################################
+
+thank.RegistrationServlet=Thank you for registering for a User Accounts Service User Account.
+you.RegistrationServlet=You have registered for the "
+jurisdiction.RegistrationServlet=" jurisdiction, 
+and.RegistrationServlet=and your username is "
+to.RegistrationServlet=To complete your registration, please click the link below:
+if.RegistrationServlet=If you feel that you have received this email in error, \nand/or want to decline your registration, please click the link below:
+nfis.RegistrationServlet=User Accounts Service User Account Registration
