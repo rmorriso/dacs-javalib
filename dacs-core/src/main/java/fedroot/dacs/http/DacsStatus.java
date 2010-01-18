@@ -7,9 +7,7 @@
  * All rights reserved. See http://fedroot.com/licenses/metalogic.txt for redistribution information.
  */
 
-package com.fedroot.dacs.http;
-
-import org.apache.commons.httpclient.HttpStatus;
+package fedroot.dacs.http;
 
 /**
  * Constants enumerating the HTTP status codes (copied from Jakarta Commons

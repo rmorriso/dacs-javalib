@@ -5,19 +5,17 @@
 package com.fedroot.dacs;
 
 import java.io.File;
-import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.validation.SchemaFactory;
 import junit.framework.TestCase;
 
 /**
  *
  * @author rmorriso
  */
-public class DacxXmlTest extends TestCase {
+public class DacsXmlTest extends TestCase {
 
     public void testMarshall() throws JAXBException {
         JAXBContext jc = JAXBContext.newInstance("com.fedroot.dacs");
@@ -36,7 +34,7 @@ public class DacxXmlTest extends TestCase {
     }
 
     public void testUnmarshall() throws JAXBException {
-        File jurisdictionsFile = new File("/Users/rmorriso/NetBeansProjects/dacs-xmlbeans/src/main/xsd/dacs_list_jurisdictions.xml");
+        File jurisdictionsFile = new File("/Users/rmorriso/projects/dacs-javalib/trunk/dacs-xmlbeans/src/main/xsd/dacs_list_jurisdictions.xml");
         JAXBContext jc = JAXBContext.newInstance("com.fedroot.dacs");
         // use the following to validate against the schema
 //        SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
