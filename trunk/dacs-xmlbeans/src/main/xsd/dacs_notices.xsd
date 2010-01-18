@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id: dacs_notices.dtd 443 2005-09-07 00:46:47Z unauth $ -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-  targetNamespace="http://fedroot.com/dacs"
-  xmlns:dacs="http://fedroot.com/dacs"
+  targetNamespace="http://fedroot.com/dacs/v1.4"
+  xmlns:dacs="http://fedroot.com/dacs/v1.4"
   elementFormDefault="qualified">
   
   <xs:include schemaLocation="common.xsd"/>  

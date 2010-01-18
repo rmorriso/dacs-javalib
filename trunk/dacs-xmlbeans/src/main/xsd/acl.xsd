@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id: acl.dtd 581 2005-10-14 23:43:40Z brachman $ -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-  targetNamespace="http://fedroot.com/dacs"
-  xmlns:dacs="http://fedroot.com/dacs"
+  targetNamespace="http://fedroot.com/dacs/v1.4"
+  xmlns:dacs="http://fedroot.com/dacs/v1.4"
   elementFormDefault="qualified">
   
   <xs:annotation>

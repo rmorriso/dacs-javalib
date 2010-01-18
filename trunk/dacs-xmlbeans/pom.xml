@@ -29,7 +29,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <packagename>fedroot.dacs</packagename> 
+                    <packageName>com.fedroot.dacs</packageName>
                 </configuration>
         </plugin>
         </plugins>
