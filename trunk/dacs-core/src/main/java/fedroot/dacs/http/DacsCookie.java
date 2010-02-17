@@ -12,7 +12,6 @@ package fedroot.dacs.http;
 
 import fedroot.dacs.exceptions.DacsRuntimeException;
 import java.util.Date;
-import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.cookie.BasicClientCookie;
 
 /**
@@ -24,7 +23,7 @@ public class DacsCookie extends BasicClientCookie {
     /** 
      * Creates a new instance of DacsCookie from a javax.servlet.http.net.Cookie
      */
-    public DacsCookie(String federationDomain, javax.servlet.http.Cookie cookie) throws DacsRuntimeException {
+    public DacsCookie(javax.servlet.http.Cookie cookie) throws DacsRuntimeException {
 //        super(federationDomain, jcookie.getName(),jcookie.getValue(),"/", jcookie.getMaxAge(),jcookie.getSecure());
         super(cookie.getName(), cookie.getValue());
 
@@ -38,7 +37,7 @@ public class DacsCookie extends BasicClientCookie {
         setSecure(cookie.getSecure());
     }
     
-    public static boolean isDacsCookie(Cookie cookie) {
+    public static boolean isDacsCookie(org.apache.http.cookie.Cookie cookie) {
         return cookie.getName().startsWith("DACS:");
     }
     
