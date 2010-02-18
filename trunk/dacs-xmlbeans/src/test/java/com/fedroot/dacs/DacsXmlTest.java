@@ -1,7 +1,10 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * DacsXmlTest.java
+ * Created on Jan 15, 2010 8:24:49 PM.
+ * Copyright (c) 2010 Metalogic Software Corporation
+ * All rights reserved. See http://fedroot.com/licenses/metalogic.txt for redistribution information.
  */
+
 package com.fedroot.dacs;
 
 import java.io.File;
@@ -34,7 +37,7 @@ public class DacsXmlTest extends TestCase {
     }
 
     public void testUnmarshall() throws JAXBException {
-        File jurisdictionsFile = new File("/Users/rmorriso/projects/dacs-javalib/trunk/dacs-xmlbeans/src/main/xsd/dacs_list_jurisdictions.xml");
+        File jurisdictionsFile = new File("C:/projects/fedroot/dacs-javalib/trunk/dacs-xmlbeans/src/main/xsd/dacs_list_jurisdictions.xml");
         JAXBContext jc = JAXBContext.newInstance("com.fedroot.dacs");
         // use the following to validate against the schema
 //        SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
