@@ -1,12 +1,10 @@
 /*
  * DacsCookie.java
- *
- * Created on November 1, 2006, 8:43 AM
- *
- * Copyright 2006 Cisco Systems, Inc. All rights reserved. No portion of this
- * software may be reproduced in any form, or by any means, without prior written
- * permission from Cisco Systems, Inc.
+ * Created on Jan 15, 2010 8:24:49 PM.
+ * Copyright (c) 2010 Metalogic Software Corporation
+ * All rights reserved. See http://fedroot.com/licenses/metalogic.txt for redistribution information.
  */
+
 
 package fedroot.dacs.http;
 
@@ -38,11 +36,26 @@ public class DacsCookie extends BasicClientCookie {
     }
     
     public static boolean isDacsCookie(org.apache.http.cookie.Cookie cookie) {
-        return cookie.getName().startsWith("DACS:");
+        return isDacsCookieName(cookie.getName());
     }
     
     public static boolean isDacsCookie(javax.servlet.http.Cookie cookie) {
-        return cookie.getName().startsWith("DACS:");
+        return isDacsCookieName(cookie.getName());
     }
 
+    public static boolean isDacsSelectCookie(org.apache.http.cookie.Cookie cookie) {
+        return isDacsSelectCookieName(cookie.getName());
+    }
+
+    public static boolean isDacsSelectCookie(javax.servlet.http.Cookie cookie) {
+        return isDacsSelectCookieName(cookie.getName());
+    }
+
+    private static boolean isDacsCookieName(String cookieName) {
+        return (cookieName.startsWith("DACS:") && !cookieName.endsWith(":SELECT"));
+    }
+
+    private static boolean isDacsSelectCookieName(String cookieName) {
+        return (cookieName.startsWith("DACS:") && cookieName.endsWith(":SELECT"));
+    }
 }
