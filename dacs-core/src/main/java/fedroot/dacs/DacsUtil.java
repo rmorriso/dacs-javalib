@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class DacsUtil {
 
-    private static Logger logger = Logger.getLogger("fedroot.dacs.DacsUtil");
+    private static Logger logger = Logger.getLogger(DacsUtil.class.getName());
 
     /**
      * extracts <code>username</code> from DACS credential cookie in HTTP request
