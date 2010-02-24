@@ -88,7 +88,7 @@ public class DACS {
      * @return DACS cookie name of form DACS::FEDNAME:JURNAME:USERNAME
      */
     public static String makeCookieName(String federation, String jurisdiction, String username) {
-        // example: "DACS:DEMO::METALOGIC:smith"
+        // example: "DACS:FEDROOT::METALOGIC:smith"
         return "DACS:" + federation + "::" + jurisdiction + ":" + username ;
     }
     
@@ -98,7 +98,7 @@ public class DACS {
             name = name.substring(5);
             return name;
         } else {
-            throw new DacsRuntimeException("invalid dacscookie: " + name);
+            throw new DacsRuntimeException("invalid DACS cookie: " + name);
         }
     }
 }
