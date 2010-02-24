@@ -13,18 +13,23 @@ package fedroot.dacs.http;
  * @author Roderick Morrison <rmorriso at fedroot.com>
  */
 
+import fedroot.dacs.client.DacsWebServiceRequest;
 import fedroot.dacs.exceptions.DacsException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.http.HttpEntity;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
@@ -52,6 +57,16 @@ public class DacsClientContext {
         localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
     }
 
+    public HttpResponse executeGetRequest(DacsWebServiceRequest dacsWebServiceRequest) throws DacsException {
+        HttpGet httpGet = new HttpGet(dacsWebServiceRequest.getServiceURI());
+        try {
+            return httpClient.execute(httpGet, localContext);
+        } catch (IOException ex) {
+            Logger.getLogger(DacsClientContext.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DacsException("DACS HTTP Get Request failed: " + ex.getMessage());
+        }
+    }
+    
     public HttpResponse executeGetRequest(URI uri) throws DacsException {
         HttpGet httpGet = new HttpGet(uri);
         try {
@@ -59,6 +74,18 @@ public class DacsClientContext {
         } catch (IOException ex) {
             Logger.getLogger(DacsClientContext.class.getName()).log(Level.SEVERE, null, ex);
             throw new DacsException("DACS HTTP Get Request failed: " + ex.getMessage());
+        }
+    }
+
+    public HttpResponse executePostRequest(DacsWebServiceRequest dacsWebServiceRequest) throws DacsException, UnsupportedEncodingException {
+        HttpPost httpPost = new HttpPost(dacsWebServiceRequest.getServiceURI());
+        HttpEntity httpEntity = new UrlEncodedFormEntity(dacsWebServiceRequest.getNameValuePairs());
+        httpPost.setEntity(httpEntity);
+        try {
+            return httpClient.execute(httpPost, localContext);
+        } catch (IOException ex) {
+            Logger.getLogger(DacsClientContext.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DacsException("DACS HTTP Post Request failed: " + ex.getMessage());
         }
     }
 

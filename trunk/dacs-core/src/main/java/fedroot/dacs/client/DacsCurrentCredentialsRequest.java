@@ -23,7 +23,7 @@ public class DacsCurrentCredentialsRequest extends DacsWebServiceRequest {
     public DacsCurrentCredentialsRequest(Jurisdiction jurisdiction) throws URISyntaxException {
         super(jurisdiction.getDacsUri() + "/" + ServiceName.dacs_current_credentials);
         ServiceParameters serviceParameters = new ServiceParameters();
-        serviceParameters.addParameter(null, null);
+//        serviceParameters.addParameter(null, null);
     }
 
 

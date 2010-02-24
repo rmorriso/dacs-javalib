@@ -19,10 +19,18 @@ import java.net.URISyntaxException;
  */
 public class DacsAuthenticateRequest extends DacsWebServiceRequest {
 
+    public enum args { DACS_BROWSER, DACS_JURISDICTION, DACS_VERSION, FORMAT, PASSWORD, USERNAME };
+
     public DacsAuthenticateRequest(Jurisdiction jurisdiction) throws URISyntaxException {
         super(jurisdiction.getDacsUri() + "/" + ServiceName.dacs_authenticate);
-
     }
 
+    public DacsAuthenticateRequest(Jurisdiction jurisdiction, String username, String password) throws URISyntaxException {
+        super(jurisdiction.getDacsUri() + "/" + ServiceName.dacs_authenticate);
+        addParameter(args.USERNAME, username);
+        addParameter(args.PASSWORD, password);
+        addParameter(args.DACS_BROWSER, "1");
+        addParameter(args.DACS_JURISDICTION, jurisdiction.getJName());
+    }
 
 }
