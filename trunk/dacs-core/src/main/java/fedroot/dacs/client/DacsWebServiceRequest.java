@@ -8,75 +8,41 @@
  */
 
 package fedroot.dacs.client;
-import com.fedroot.dacs.http.DacsGetMethod;
-import com.fedroot.dacs.http.DacsPostMethod;
-import fedroot.util.httpclient.NameValueSet;
-import com.fedroot.dacs.services.DACS.ServiceName;
-import fedroot.web.AbstractWebService;
-import org.apache.commons.httpclient.NameValuePair;
 
+import fedroot.dacs.DACS.CommonArgs;
+import fedroot.dacs.DACS.ReplyFormat;
+import fedroot.web.ServiceParameters;
+import fedroot.web.WebServiceRequest;
+import java.net.URISyntaxException;
 
 /**
  * All DACS Web services extend this class
  * @author rmorriso
  */
-public abstract class DacsWebServiceRequest extends AbstractWebServiceRequest {
-    public ServiceName name;
-    protected String serviceuri;
-    protected NameValueSet nvs;
+abstract public class DacsWebServiceRequest extends WebServiceRequest {
 
+    private ReplyFormat replyFormat;
     /**
-     * constructor for DacsService
+     * constructor for DacsWebServiceRequest
      * @param serviceuri uri for DACS service
-     * @param args query string arguments for DACS service
      */
-    public DacsWebServiceRequest(String serviceuri, String... args) {
-        this.serviceuri = serviceuri;
+    protected DacsWebServiceRequest(String serviceuri) throws URISyntaxException {
+        super(serviceuri);
+        // default reply format for DACS Web service requests is XML Schema
+        replyFormat = ReplyFormat.XMLSCHEMA;
+    }
+
+    public ReplyFormat getReplyFormat() {
+        return replyFormat;
+    }
+
+    public void setReplyFormat(ReplyFormat replyFormat) {
+        this.replyFormat = replyFormat;
+    }
+
+    public void initParameters() {
+        ServiceParameters dacsServiceParameters = getServiceParameters();
+        dacsServiceParameters.addParameter(CommonArgs.FORMAT.toString(), replyFormat.toString());
     }
     
-    /**
-     * get DacsGetMethod for this DacsService
-     * @return DacsGetMethod with which to invoke service
-     * @throws java.lang.Exception TODO
-     */
-    public DacsGetMethod getDacsGetMethod() {
-        DacsGetMethod dacsget = new DacsGetMethod(this.serviceuri, this.nvs);
-        return dacsget;
-    }
-    
-    /**
-     * get DacsPostMethod for this DacsService
-     * @return DacsGetMethod with which to invoke service
-     * @throws java.lang.Exception TODO
-     */
-    public DacsPostMethod getDacsPostMethod() {
-        DacsPostMethod dacspost = new DacsPostMethod(this.serviceuri, this.nvs);
-        return dacspost;
-    }
-    
-    /**
-     * getter for DacsService.uri
-     * @return the uri to be used for invoking the service
-     */
-    public String getServiceUri() {
-        return serviceuri;
-    }
-    
-    /**
-     * getter for DacsService.nvs
-     * @return the NVS containing name-value pairs for the service
-     */
-    public NameValueSet getNVS() {
-        return this.nvs;
-    }
-    
-    /**
-     * getter for DacsService to NVPArray
-     * @return the NVPArray (constructed from NVS)
-     * @throws java.lang.Exception TODO
-     */
-    public NameValuePair[] getNVPArray()
-    throws Exception {
-        return nvs.getNVPArray();
-    }
 }
