@@ -74,6 +74,8 @@ public class DacsClientContext {
         } catch (IOException ex) {
             Logger.getLogger(DacsClientContext.class.getName()).log(Level.SEVERE, null, ex);
             throw new DacsException("DACS HTTP Get Request failed: " + ex.getMessage());
+        } finally {
+           // TODO need to close connection, or use multithreaded connection manager or SOMETHING!
         }
     }
 
