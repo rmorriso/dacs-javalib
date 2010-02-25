@@ -36,6 +36,7 @@ public class DacsCurrentCredentialsRequestTest extends TestCase {
         Federation federation = federationLoader.getFederation();
         signon = federation.getJurisdictionByName("SIGNON");
         DacsAuthenticateRequest dacsAuthenticateRequest = new DacsAuthenticateRequest(signon, "jcarcill", "foozle");
+        dacsClientContext.executePostRequest(dacsAuthenticateRequest);
     }
 
     @Override
