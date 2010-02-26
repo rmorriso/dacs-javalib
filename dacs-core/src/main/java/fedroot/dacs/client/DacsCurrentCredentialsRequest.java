@@ -11,7 +11,6 @@ package fedroot.dacs.client;
 
 import fedroot.dacs.entities.Jurisdiction;
 import fedroot.dacs.DACS.ServiceName;
-import fedroot.web.ServiceParameters;
 import java.net.URISyntaxException;
 
 /**
@@ -22,8 +21,6 @@ public class DacsCurrentCredentialsRequest extends DacsWebServiceRequest {
 
     public DacsCurrentCredentialsRequest(Jurisdiction jurisdiction) throws URISyntaxException {
         super(jurisdiction.getDacsUri() + "/" + ServiceName.dacs_current_credentials);
-        ServiceParameters serviceParameters = new ServiceParameters();
-//        serviceParameters.addParameter(null, null);
     }
 
 

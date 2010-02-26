@@ -4,8 +4,6 @@
  * Copyright (c) 2010 Metalogic Software Corporation
  * All rights reserved. See http://fedroot.com/licenses/metalogic.txt for redistribution information.
  */
-
-
 package fedroot.dacs.entities;
 
 import fedroot.dacs.http.DacsClientContext;
@@ -19,7 +17,9 @@ import junit.framework.TestCase;
  */
 public class FederationLoaderTest extends TestCase {
 
-    FederationLoader federationLoader;
+    private FederationLoader federationLoader;
+    private Federation federation;
+    private Jurisdiction jurisdiction;
 
     public FederationLoaderTest(String testName) {
         super(testName);
@@ -29,14 +29,15 @@ public class FederationLoaderTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         federationLoader = new FederationLoader(new DacsClientContext(), "https://fedroot.com/dacs");
+        federationLoader.load();
+        federation = federationLoader.getFederation();
+        jurisdiction = federation.getJurisdictionByName("TEST");
     }
 
     public void testGetFederation() {
         try {
-            federationLoader.load();
-            Federation federation = federationLoader.getFederation();
             assertEquals("FEDROOT", federation.getFederationName());
-            assertEquals(16,federation.getJurisdictions().size());
+            assertEquals(16, federation.getJurisdictions().size());
             Jurisdiction metalogic = federation.getJurisdictionByName("METALOGIC");
             assertNotNull(metalogic);
             assertTrue(metalogic.isAuthenticates());
@@ -47,5 +48,4 @@ public class FederationLoaderTest extends TestCase {
         }
 
     }
-
 }

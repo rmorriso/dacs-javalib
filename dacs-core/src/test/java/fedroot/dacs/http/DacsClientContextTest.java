@@ -56,4 +56,10 @@ public class DacsClientContextTest extends TestCase {
         }
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        dacsClientContext.closeConnection();
+    }
+
 }
