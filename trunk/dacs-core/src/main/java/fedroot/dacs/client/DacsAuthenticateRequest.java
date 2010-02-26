@@ -11,6 +11,7 @@ package fedroot.dacs.client;
 
 import fedroot.dacs.entities.Jurisdiction;
 import fedroot.dacs.DACS.ServiceName;
+import fedroot.web.ServiceParameters;
 import java.net.URISyntaxException;
 
 /**
@@ -21,16 +22,24 @@ public class DacsAuthenticateRequest extends DacsWebServiceRequest {
 
     public enum args { DACS_BROWSER, DACS_JURISDICTION, DACS_VERSION, FORMAT, PASSWORD, USERNAME };
 
-    public DacsAuthenticateRequest(Jurisdiction jurisdiction) throws URISyntaxException {
-        super(jurisdiction.getDacsUri() + "/" + ServiceName.dacs_authenticate);
-    }
+    private Jurisdiction jurisdiction;
+    private String username;
+    private String password;
 
     public DacsAuthenticateRequest(Jurisdiction jurisdiction, String username, String password) throws URISyntaxException {
         super(jurisdiction.getDacsUri() + "/" + ServiceName.dacs_authenticate);
-        addParameter(args.USERNAME, username);
-        addParameter(args.PASSWORD, password);
-        addParameter(args.DACS_BROWSER, "1");
-        addParameter(args.DACS_JURISDICTION, jurisdiction.getJName());
+        this.jurisdiction = jurisdiction;
+        this.username = username;
+        this.password = password;
     }
 
+    @Override
+    public ServiceParameters getServiceParameters() {
+        ServiceParameters serviceParameters = super.getServiceParameters();
+        serviceParameters.addParameter(args.USERNAME, username);
+        serviceParameters.addParameter(args.PASSWORD, password);
+        serviceParameters.addParameter(args.DACS_BROWSER, "1");
+        serviceParameters.addParameter(args.DACS_JURISDICTION, jurisdiction.getJName());
+        return serviceParameters;
+    }
 }

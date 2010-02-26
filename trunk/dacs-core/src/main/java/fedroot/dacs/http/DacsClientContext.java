@@ -18,6 +18,7 @@ import fedroot.dacs.exceptions.DacsException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -58,12 +59,11 @@ public class DacsClientContext {
     }
 
     public HttpResponse executeGetRequest(DacsWebServiceRequest dacsWebServiceRequest) throws DacsException {
-        HttpGet httpGet = new HttpGet(dacsWebServiceRequest.getServiceURI());
         try {
-            return httpClient.execute(httpGet, localContext);
-        } catch (IOException ex) {
+            return executeGetRequest(dacsWebServiceRequest.getURI());
+        } catch (URISyntaxException ex) {
             Logger.getLogger(DacsClientContext.class.getName()).log(Level.SEVERE, null, ex);
-            throw new DacsException("DACS HTTP Get Request failed: " + ex.getMessage());
+            throw new DacsException("Invalid DacsWebServiceRequest: " + ex.getMessage());
         }
     }
     
