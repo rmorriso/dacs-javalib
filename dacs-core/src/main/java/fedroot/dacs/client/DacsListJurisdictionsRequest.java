@@ -10,6 +10,7 @@
 package fedroot.dacs.client;
 
 import fedroot.dacs.DACS.ServiceName;
+import fedroot.web.ServiceParameters;
 import java.net.URISyntaxException;
 
 /**
@@ -20,5 +21,10 @@ public class DacsListJurisdictionsRequest extends DacsWebServiceRequest {
 
     public DacsListJurisdictionsRequest(String dacsURI) throws URISyntaxException {
         super(dacsURI + "/" + ServiceName.dacs_list_jurisdictions);
+    }
+
+    @Override
+    public ServiceParameters getServiceParameters() {
+        return super.getServiceParameters();
     }
 }

@@ -33,14 +33,14 @@ public class CredentialsLoaderTest extends TestCase {
         Federation federation = federationLoader.getFederation();
         Jurisdiction test = federation.getJurisdictionByName("TEST");
         credentialsLoader = new CredentialsLoader(dacsClientContext, test);
-        credentialsLoader.load();
         // authenticate as test user
-        DacsAuthenticateRequest dacsAuthenticateRequest = new DacsAuthenticateRequest(test, "jcarcill", "foozle");
+        DacsAuthenticateRequest dacsAuthenticateRequest = new DacsAuthenticateRequest(test, "black", "foozle");
         dacsClientContext.executePostRequest(dacsAuthenticateRequest);
     }
 
     public void testGetCredentials() {
         try {
+            credentialsLoader.load();
             Credentials credentials = credentialsLoader.getCredentials();
             assertEquals(1, credentials.getCredentials().size());
             for (Credential credential : credentials.getCredentials()) {

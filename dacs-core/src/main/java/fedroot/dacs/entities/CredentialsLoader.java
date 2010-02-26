@@ -14,7 +14,6 @@ import fedroot.dacs.exceptions.DacsException;
 import fedroot.dacs.http.DacsClientContext;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
@@ -62,7 +61,7 @@ public class CredentialsLoader extends AbstractEntityLoader {
                 InputStream inputStream = bufferedEntity.getContent();
                 return inputStream;
             } else {
-                throw new DacsException("DacsClientContext return null httpEntity");
+                throw new DacsException("DacsClientContext returned null httpEntity");
             }
         }
     }

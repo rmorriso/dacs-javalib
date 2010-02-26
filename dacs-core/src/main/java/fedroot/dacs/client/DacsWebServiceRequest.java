@@ -28,6 +28,8 @@ abstract public class DacsWebServiceRequest extends WebServiceRequest {
      */
     protected DacsWebServiceRequest(String serviceuri) throws URISyntaxException {
         super(serviceuri);
+        // default reply format for DACS Web service requests is XML Schema
+        replyFormat = ReplyFormat.XMLSCHEMA;
     }
 
     public ReplyFormat getReplyFormat() {
@@ -38,10 +40,11 @@ abstract public class DacsWebServiceRequest extends WebServiceRequest {
         this.replyFormat = replyFormat;
     }
 
-    public void initParameters() {
-        ServiceParameters dacsServiceParameters = getServiceParameters();
-        // default reply format for DACS Web service requests is XML Schema
-        dacsServiceParameters.addParameter(CommonArgs.FORMAT.toString(), replyFormat.toString());
+    @Override
+    public ServiceParameters getServiceParameters() {
+       ServiceParameters serviceParameters = new ServiceParameters();
+       serviceParameters.addParameter(CommonArgs.FORMAT.toString(), replyFormat.toString());
+       return serviceParameters;
     }
     
 }
