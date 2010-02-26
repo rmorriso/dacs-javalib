@@ -10,7 +10,8 @@ package fedroot.dacs.entities;
 
 import fedroot.dacs.exceptions.DacsException;
 import fedroot.dacs.http.DacsClientContext;
-import org.apache.http.HttpEntity;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  *
@@ -24,7 +25,7 @@ abstract public class AbstractEntityLoader {
      * @param dacsClientContext the dacsClientContext to issue the Web service request
      * @return the XML document returned in the Web service request
      */
-    abstract protected HttpEntity getXmlForEntity(DacsClientContext dacsClientContext)  throws DacsException;
+    abstract protected InputStream getXmlStream(DacsClientContext dacsClientContext)  throws DacsException, IOException;
 
     /**
      * loads an entity from an XML document
@@ -32,7 +33,7 @@ abstract public class AbstractEntityLoader {
      * @param xml
      * @throws Exception
      */
-    abstract protected void loadEntityFromXml(HttpEntity httpEntity) throws DacsException;
+    abstract protected void loadEntityFromStream(InputStream inputStream) throws DacsException;
 
     protected DacsClientContext dacsClientContext;
 
@@ -41,8 +42,7 @@ abstract public class AbstractEntityLoader {
     }
 
     public void load() throws Exception {
-        HttpEntity httpEntity = getXmlForEntity(dacsClientContext);
-        loadEntityFromXml(httpEntity);
+        loadEntityFromStream(getXmlStream(dacsClientContext));
     }
 
 }

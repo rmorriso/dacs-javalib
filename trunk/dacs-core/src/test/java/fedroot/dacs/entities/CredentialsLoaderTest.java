@@ -4,27 +4,23 @@
  * Copyright (c) 2010 Metalogic Software Corporation
  * All rights reserved. See http://fedroot.com/licenses/metalogic.txt for redistribution information.
  */
-
-
 package fedroot.dacs.entities;
 
-import fedroot.dacs.DacsTest;
 import fedroot.dacs.client.DacsAuthenticateRequest;
 import fedroot.dacs.http.DacsClientContext;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import junit.framework.TestCase;
 
 /**
  *
  * @author Roderick Morrison <rmorriso at fedroot.com>
  */
-public class CredentialsLoaderTest extends DacsTest {
+public class CredentialsLoaderTest extends TestCase {
 
-    CredentialsLoader credentialsLoader;
+    private CredentialsLoader credentialsLoader;
 
-
-    public CredentialsLoaderTest(String testName) throws Exception {
+    public CredentialsLoaderTest(String testName) {
         super(testName);
     }
 
@@ -32,18 +28,22 @@ public class CredentialsLoaderTest extends DacsTest {
     protected void setUp() throws Exception {
         super.setUp();
         DacsClientContext dacsClientContext = new DacsClientContext();
-        credentialsLoader = new CredentialsLoader(dacsClientContext, getJurisdiction());
+        FederationLoader federationLoader = new FederationLoader(new DacsClientContext(), "https://fedroot.com/dacs");
+        federationLoader.load();
+        Federation federation = federationLoader.getFederation();
+        Jurisdiction test = federation.getJurisdictionByName("TEST");
+        credentialsLoader = new CredentialsLoader(dacsClientContext, test);
+        credentialsLoader.load();
         // authenticate as test user
-        DacsAuthenticateRequest dacsAuthenticateRequest = new DacsAuthenticateRequest(getJurisdiction(), "jcarcill", "foozle");
+        DacsAuthenticateRequest dacsAuthenticateRequest = new DacsAuthenticateRequest(test, "jcarcill", "foozle");
         dacsClientContext.executePostRequest(dacsAuthenticateRequest);
     }
 
     public void testGetCredentials() {
         try {
-            credentialsLoader.load();
-            Set<Credential> credentials = credentialsLoader.getCredentials();
-            assertEquals(1, credentials.size());
-            for (Credential credential : credentials) {
+            Credentials credentials = credentialsLoader.getCredentials();
+            assertEquals(1, credentials.getCredentials().size());
+            for (Credential credential : credentials.getCredentials()) {
                 System.out.println(credential.getName() + credential.getRoles());
             }
         } catch (Exception ex) {
@@ -55,6 +55,5 @@ public class CredentialsLoaderTest extends DacsTest {
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-//      signout of an credentials that were created during set up
     }
 }

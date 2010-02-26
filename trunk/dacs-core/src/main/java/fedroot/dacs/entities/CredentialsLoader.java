@@ -22,6 +22,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.entity.BufferedHttpEntity;
 
 /**
  *
@@ -30,7 +31,7 @@ import org.apache.http.HttpResponse;
 public class CredentialsLoader extends AbstractEntityLoader {
 
     private Jurisdiction jurisdiction;
-    private Set<Credential> credentials;
+    private Credentials credentials;
 
     public CredentialsLoader(DacsClientContext dacsClientContext, Jurisdiction jurisdiction) {
         super(dacsClientContext);
@@ -42,46 +43,49 @@ public class CredentialsLoader extends AbstractEntityLoader {
      *
      * @return the federation
      */
-    public Set<Credential> getCredentials() {
+    public Credentials getCredentials() {
         return this.credentials;
     }
 
     @Override
-    protected HttpEntity getXmlForEntity(DacsClientContext dacsClientContext) throws DacsException {
+    protected InputStream getXmlStream(DacsClientContext dacsClientContext) throws DacsException, IOException {
         HttpEntity httpEntity  = null;
         try {
             DacsCurrentCredentialsRequest dacsCurrentCredentialsRequest = new DacsCurrentCredentialsRequest(jurisdiction);
             HttpResponse httpResponse = dacsClientContext.executeGetRequest(dacsCurrentCredentialsRequest);
             httpEntity = httpResponse.getEntity();
         } catch (IllegalStateException ex) {
-            Logger.getLogger(CredentialsLoader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CredentialsLoader.class.getName()).log(Level.SEVERE, ex.getMessage());
         } finally {
-            return httpEntity;
+            if (httpEntity != null) {
+                BufferedHttpEntity bufferedEntity = new BufferedHttpEntity(httpEntity);
+                InputStream inputStream = bufferedEntity.getContent();
+                return inputStream;
+            } else {
+                throw new DacsException("DacsClientContext return null httpEntity");
+            }
         }
     }
 
     @Override
-    protected void loadEntityFromXml(HttpEntity httpEntity) throws DacsException {
-        InputStream inputStream = null;
+    protected void loadEntityFromStream(InputStream inputStream) throws DacsException {
         try {
-            inputStream = httpEntity.getContent();
             JAXBContext jc = JAXBContext.newInstance("com.fedroot.dacs");
             Unmarshaller um = jc.createUnmarshaller();
             DacsCurrentCredentials dacsCurrentCredentials = (DacsCurrentCredentials) um.unmarshal(inputStream);
+            credentials = new Credentials(dacsCurrentCredentials.getFederationName(), dacsCurrentCredentials.getFederationDomain());
             for(DacsCurrentCredentials.Credentials credential : dacsCurrentCredentials.getCredentials()) {
-                credentials.add(new Credential(credential.getFederation(), credential.getJurisdiction(), credential.getName(), credential.getRoles(), credential.getAuthStyle(), credential.getCookieName()));
+                credentials.addCredential(new Credential(credential.getFederation(), credential.getJurisdiction(), credential.getName(), credential.getRoles(), credential.getAuthStyle(), credential.getCookieName()));
             }
         } catch (JAXBException ex) {
-            Logger.getLogger(CredentialsLoader.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(CredentialsLoader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CredentialsLoader.class.getName()).log(Level.SEVERE, ex.getMessage());
         } catch (IllegalStateException ex) {
-            Logger.getLogger(CredentialsLoader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CredentialsLoader.class.getName()).log(Level.SEVERE, ex.getMessage());
         } finally {
             try {
                 if (inputStream != null) inputStream.close();
             } catch (IOException ex) {
-                Logger.getLogger(CredentialsLoader.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CredentialsLoader.class.getName()).log(Level.SEVERE, ex.getMessage());
             }
         }
     }

@@ -10,11 +10,11 @@ package fedroot.dacs.entities;
 
 import com.fedroot.dacs.DacsJurisdiction;
 import com.fedroot.dacs.DacsListJurisdictions;
+import fedroot.dacs.client.DacsListJurisdictionsRequest;
 import fedroot.dacs.exceptions.DacsException;
 import fedroot.dacs.http.DacsClientContext;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -51,24 +51,27 @@ public class FederationLoader extends AbstractEntityLoader {
     }
 
     @Override
-    protected HttpEntity getXmlForEntity(DacsClientContext dacsClientContext) throws DacsException {
+    protected InputStream getXmlStream(DacsClientContext dacsClientContext) throws DacsException, IOException {
         HttpEntity httpEntity  = null;
         try {
-            URI uri = URI.create(dacsUrl + "/dacs_list_jurisdictions?FORMAT=XMLSCHEMA");
-            HttpResponse httpResponse = dacsClientContext.executeGetRequest(uri);
+            DacsListJurisdictionsRequest dacsListJurisdictionsRequest = new DacsListJurisdictionsRequest(dacsUrl);
+            HttpResponse httpResponse = dacsClientContext.executeGetRequest(dacsListJurisdictionsRequest);
             httpEntity = httpResponse.getEntity();
         } catch (IllegalStateException ex) {
-            Logger.getLogger(FederationLoader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FederationLoader.class.getName()).log(Level.SEVERE, ex.getMessage());
         } finally {
-            return httpEntity;
+            if (httpEntity != null) {
+                InputStream inputStream = httpEntity.getContent();
+                return inputStream;
+            } else {
+                throw new DacsException("DacsClientContext return null httpEntity");
+            }
         }
     }
 
     @Override
-    protected void loadEntityFromXml(HttpEntity httpEntity) throws DacsException {
-        InputStream inputStream = null;
+    protected void loadEntityFromStream(InputStream inputStream) throws DacsException {
         try {
-            inputStream = httpEntity.getContent();
             JAXBContext jc = JAXBContext.newInstance("com.fedroot.dacs");
             Unmarshaller um = jc.createUnmarshaller();
             DacsListJurisdictions dacsListJurisdictions = (DacsListJurisdictions) um.unmarshal(inputStream);
@@ -77,16 +80,14 @@ public class FederationLoader extends AbstractEntityLoader {
                 federation.addJurisdiction(valueOf(dacsJurisdiction));
             }
         } catch (JAXBException ex) {
-            Logger.getLogger(FederationLoader.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(FederationLoader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FederationLoader.class.getName()).log(Level.SEVERE, ex.getMessage());
         } catch (IllegalStateException ex) {
-            Logger.getLogger(FederationLoader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FederationLoader.class.getName()).log(Level.SEVERE, ex.getMessage());
         } finally {
             try {
                 if (inputStream != null) inputStream.close();
             } catch (IOException ex) {
-                Logger.getLogger(FederationLoader.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(FederationLoader.class.getName()).log(Level.SEVERE, ex.getMessage());
             }
         }
     }
