@@ -22,8 +22,6 @@ import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 
 /**
  *
@@ -52,21 +50,8 @@ public class FederationLoader extends AbstractEntityLoader {
 
     @Override
     protected InputStream getXmlStream(DacsClientContext dacsClientContext) throws DacsException, IOException {
-        HttpEntity httpEntity  = null;
-        try {
             DacsListJurisdictionsRequest dacsListJurisdictionsRequest = new DacsListJurisdictionsRequest(dacsUrl);
-            HttpResponse httpResponse = dacsClientContext.executeGetRequest(dacsListJurisdictionsRequest);
-            httpEntity = httpResponse.getEntity();
-        } catch (IllegalStateException ex) {
-            Logger.getLogger(FederationLoader.class.getName()).log(Level.SEVERE, ex.getMessage());
-        } finally {
-            if (httpEntity != null) {
-                InputStream inputStream = httpEntity.getContent();
-                return inputStream;
-            } else {
-                throw new DacsException("DacsClientContext return null httpEntity");
-            }
-        }
+            return dacsClientContext.executeGetRequest(dacsListJurisdictionsRequest);
     }
 
     @Override
@@ -91,6 +76,7 @@ public class FederationLoader extends AbstractEntityLoader {
             }
         }
     }
+
 
     private Jurisdiction valueOf(DacsJurisdiction dacsJurisdiction) {
         boolean authenticates = (dacsJurisdiction.getAuthenticates().equals("yes") ? true : false);
