@@ -19,9 +19,6 @@ import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.entity.BufferedHttpEntity;
 
 /**
  *
@@ -48,22 +45,8 @@ public class CredentialsLoader extends AbstractEntityLoader {
 
     @Override
     protected InputStream getXmlStream(DacsClientContext dacsClientContext) throws DacsException, IOException {
-        HttpEntity httpEntity  = null;
-        try {
             DacsCurrentCredentialsRequest dacsCurrentCredentialsRequest = new DacsCurrentCredentialsRequest(jurisdiction);
-            HttpResponse httpResponse = dacsClientContext.executeGetRequest(dacsCurrentCredentialsRequest);
-            httpEntity = httpResponse.getEntity();
-        } catch (IllegalStateException ex) {
-            Logger.getLogger(CredentialsLoader.class.getName()).log(Level.SEVERE, ex.getMessage());
-        } finally {
-            if (httpEntity != null) {
-                BufferedHttpEntity bufferedEntity = new BufferedHttpEntity(httpEntity);
-                InputStream inputStream = bufferedEntity.getContent();
-                return inputStream;
-            } else {
-                throw new DacsException("DacsClientContext returned null httpEntity");
-            }
-        }
+            return dacsClientContext.executeGetRequest(dacsCurrentCredentialsRequest);
     }
 
     @Override
@@ -88,9 +71,5 @@ public class CredentialsLoader extends AbstractEntityLoader {
             }
         }
     }
-
-//    private Credential valueOf(Credentials dacsCredential) {
-//
-//    }
 
 }

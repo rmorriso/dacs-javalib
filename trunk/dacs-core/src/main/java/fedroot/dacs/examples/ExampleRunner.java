@@ -9,6 +9,8 @@
 package fedroot.dacs.examples;
 
 import fedroot.dacs.client.DacsAuthenticateRequest;
+import fedroot.dacs.entities.Credential;
+import fedroot.dacs.entities.Credentials;
 import fedroot.dacs.entities.CredentialsLoader;
 import fedroot.dacs.entities.Federation;
 import fedroot.dacs.entities.FederationLoader;
@@ -16,6 +18,7 @@ import fedroot.dacs.entities.Jurisdiction;
 import fedroot.dacs.http.DacsClientContext;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 
 /**
@@ -30,6 +33,7 @@ public class ExampleRunner {
     public static void main(String[] args) {
         try {
             credentialsExample();
+//            federationExample();
         } catch (Exception ex) {
             Logger.getLogger(ExampleRunner.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -52,8 +56,13 @@ public class ExampleRunner {
         // authenticate as test user
         DacsAuthenticateRequest dacsAuthenticateRequest = new DacsAuthenticateRequest(test, "black", "foozle");
         HttpResponse response = dacsClientContext.executePostRequest(dacsAuthenticateRequest);
-        response.getEntity().getContent();
+        HttpEntity entity = response.getEntity();
+        entity.getContent();
+        entity.consumeContent();
         credentialsLoader.load();
-
+        Credentials credentials = credentialsLoader.getCredentials();
+        for (Credential credential : credentials.getCredentials()) {
+            System.out.println(credential.getName() + credential.getRoles());
+        }
     }
 }

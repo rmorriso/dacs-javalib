@@ -1,6 +1,8 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * DacsClientContext.java
+ * Created on Jan 15, 2010 8:02:49 PM.
+ * Copyright (c) 2010 Metalogic Software Corporation
+ * All rights reserved. See http://fedroot.com/licenses/metalogic.txt for redistribution information.
  */
  
 package fedroot.dacs.servlet;
@@ -28,7 +30,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
 
 /**
  *
- * @author ntrepke
+ * @author Norbert Trepke <ntrepke at cisco.com>
  */
 public class DacsFilter implements Filter {
 
@@ -108,7 +110,6 @@ public class DacsFilter implements Filter {
 	    t.printStackTrace();
 	}
 
-
 	// If there was a problem, we want to rethrow it if it is
 	// a known type, otherwise log it.
 	if (problem != null) {
@@ -138,12 +139,14 @@ public class DacsFilter implements Filter {
     /**
      * Destroy method for this filter 
      */
+    @Override
     public void destroy() { 
     }
 
     /**
      * Init method for this filter 
      */
+    @Override
     public void init(FilterConfig filterConfig) { 
 	this.filterConfig = filterConfig;
 	if (filterConfig != null) {

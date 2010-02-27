@@ -13,7 +13,6 @@ import fedroot.dacs.DACS.CommonArgs;
 import fedroot.dacs.DACS.ReplyFormat;
 import fedroot.web.ServiceParameters;
 import fedroot.web.WebServiceRequest;
-import java.net.URISyntaxException;
 
 /**
  * All DACS Web services extend this class
@@ -26,7 +25,7 @@ abstract public class DacsWebServiceRequest extends WebServiceRequest {
      * constructor for DacsWebServiceRequest
      * @param serviceuri uri for DACS service
      */
-    protected DacsWebServiceRequest(String serviceuri) throws URISyntaxException {
+    protected DacsWebServiceRequest(String serviceuri) {
         super(serviceuri);
         // default reply format for DACS Web service requests is XML Schema
         replyFormat = ReplyFormat.XMLSCHEMA;
