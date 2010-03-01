@@ -75,9 +75,11 @@ public class DacsUtil {
             }
             if (dacsCookies.size() == 1) {
                 DacsClientContext dacsClientContext = new DacsClientContext();
+                dacsClientContext.addCookie(dacsCookies.get(1));
                 try {
                     // URI dacsUri = URI uri = URIUtils.resolve();
-                    URI dacsUri = new URI(jurisdiction.getDacsUri()+ "/dacs_current_credentials");
+                    URI dacsUri = new URI(jurisdiction.getDacsUri()); //+ "/dacs_current_credentials");
+                    
                     dacsClientContext.executeGetRequest(dacsUri);
                 } catch (URISyntaxException ex) {
                     Logger.getLogger(DacsUtil.class.getName()).log(Level.SEVERE, null, ex);

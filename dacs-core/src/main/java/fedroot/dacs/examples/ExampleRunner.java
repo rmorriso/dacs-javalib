@@ -18,8 +18,8 @@ import fedroot.dacs.entities.Jurisdiction;
 import fedroot.dacs.http.DacsClientContext;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.cookie.Cookie;
 
 /**
  *
@@ -32,7 +32,8 @@ public class ExampleRunner {
      */
     public static void main(String[] args) {
         try {
-            credentialsExample();
+            authenticationExample();
+//            credentialsExample();
 //            federationExample();
         } catch (Exception ex) {
             Logger.getLogger(ExampleRunner.class.getName()).log(Level.SEVERE, null, ex);
@@ -46,6 +47,21 @@ public class ExampleRunner {
         Jurisdiction jurisdiction = federation.getJurisdictionByName("TEST");
     }
 
+    private static void authenticationExample() throws Exception {
+        DacsClientContext dacsClientContext = new DacsClientContext();
+        FederationLoader federationLoader = new FederationLoader(new DacsClientContext(), "https://fedroot.com/dacs");
+        federationLoader.load();
+        Federation federation = federationLoader.getFederation();
+        Jurisdiction test = federation.getJurisdictionByName("TEST");
+        // authenticate as test user
+        DacsAuthenticateRequest dacsAuthenticateRequest = new DacsAuthenticateRequest(test, "black", "foozle");
+        HttpResponse response = dacsClientContext.executePostRequest(dacsAuthenticateRequest);
+        for (Cookie cookie : dacsClientContext.getDacsCookies("fedroot.com")) {
+            System.out.println(cookie);
+        }
+    }
+
+
     private static void credentialsExample() throws Exception {
         DacsClientContext dacsClientContext = new DacsClientContext();
         FederationLoader federationLoader = new FederationLoader(new DacsClientContext(), "https://fedroot.com/dacs");
@@ -53,16 +69,12 @@ public class ExampleRunner {
         Federation federation = federationLoader.getFederation();
         Jurisdiction test = federation.getJurisdictionByName("TEST");
         CredentialsLoader credentialsLoader = new CredentialsLoader(dacsClientContext, test);
-        // authenticate as test user
-        DacsAuthenticateRequest dacsAuthenticateRequest = new DacsAuthenticateRequest(test, "black", "foozle");
-        HttpResponse response = dacsClientContext.executePostRequest(dacsAuthenticateRequest);
-        HttpEntity entity = response.getEntity();
-        entity.getContent();
-        entity.consumeContent();
         credentialsLoader.load();
         Credentials credentials = credentialsLoader.getCredentials();
         for (Credential credential : credentials.getCredentials()) {
             System.out.println(credential.getName() + credential.getRoles());
         }
     }
+
+
 }
