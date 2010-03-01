@@ -22,15 +22,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.http.HttpHost;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.params.ClientPNames;
+import org.apache.http.client.params.CookiePolicy;
 import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.BasicHttpContext;
 
@@ -45,28 +56,29 @@ public class DacsClientContext {
     private CookieStore cookieStore;
     private HttpContext localContext;
 
+    /**
+     * constructor for DacsContext;
+     * initializes HttpClient that will be used for this DacsContext,
+     * sets legacy BROWSER_COMPATIBILITY mode to emulate typical browser behaviour.
+     * In particular this is relied upon to ensure that cookies are sent when
+     * hostname = cookie domainname.
+     */
     public DacsClientContext() {
-        httpClient = new DefaultHttpClient();
+        SchemeRegistry schemeRegistry = new SchemeRegistry();
+        schemeRegistry.register(
+                new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+        schemeRegistry.register(
+                new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
+
+        ClientConnectionManager cm = new ThreadSafeClientConnManager(schemeRegistry);
+
+        httpClient = new DefaultHttpClient(cm);
+        httpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.BROWSER_COMPATIBILITY);
         cookieStore = new BasicCookieStore();
         localContext = new BasicHttpContext();
         // Bind custom cookie store to the local context
         localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
     }
-
-
-//    ResponseHandler<InputStream> responseHandler = new ResponseHandler<InputStream>() {
-//        @Override
-//        public InputStream handleResponse(
-//                HttpResponse response) throws ClientProtocolException, IOException {
-//            HttpEntity entity = response.getEntity();
-//            if (entity != null) {
-//                return entity.getContent();
-//            } else {
-//                return null;
-//            }
-//        }
-//    };
-
 
     public InputStream executeGetRequest(DacsWebServiceRequest dacsWebServiceRequest) throws DacsException {
             DacsGetRequest dacsGetRequest = new DacsGetRequest(dacsWebServiceRequest);
@@ -94,19 +106,6 @@ public class DacsClientContext {
         DacsPostRequest dacsPostRequest = new DacsPostRequest(dacsWebServiceRequest);
         return httpClient.execute(dacsPostRequest.getHttpPost(), localContext);
     }
-
-    
-    //    public HttpResponse executePostRequest(DacsWebServiceRequest dacsWebServiceRequest) throws DacsException, UnsupportedEncodingException {
-//        HttpPost httpPost = new HttpPost(dacsWebServiceRequest.getBaseURI());
-//        HttpEntity httpEntity = new UrlEncodedFormEntity(dacsWebServiceRequest.getNameValuePairs());
-//        httpPost.setEntity(httpEntity);
-//        try {
-//            return httpClient.execute(httpPost, localContext);
-//        } catch (IOException ex) {
-//            Logger.getLogger(DacsClientContext.class.getName()).log(Level.SEVERE, null, ex);
-//            throw new DacsException("DACS HTTP Post Request failed: " + ex.getMessage());
-//        }
-//    }
 
     public List<Cookie> getAllCookies() {
         return cookieStore.getCookies();

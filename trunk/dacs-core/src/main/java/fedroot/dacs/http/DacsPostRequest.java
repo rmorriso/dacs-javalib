@@ -48,10 +48,11 @@ public class DacsPostRequest {
 
     public DacsPostRequest(DacsWebServiceRequest dacsWebServiceRequest) {
         this.httpPost = new HttpPost(dacsWebServiceRequest.getURI());
-        HttpEntity httpEntity;
+        UrlEncodedFormEntity urlEncodedFormEntity = null;
         try {
-            httpEntity = new UrlEncodedFormEntity(dacsWebServiceRequest.getNameValuePairs());
-            this.httpPost.setEntity(httpEntity);
+            urlEncodedFormEntity = new UrlEncodedFormEntity(dacsWebServiceRequest.getNameValuePairs(), "us-ascii");
+            // urlEncodedFormEntity = new UrlEncodedFormEntity(dacsWebServiceRequest.getNameValuePairs(), "UTF-8");
+            this.httpPost.setEntity(urlEncodedFormEntity);
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(DacsPostRequest.class.getName()).log(Level.SEVERE, null, ex);
             throw new RuntimeException("Invalid DacsWebServiceRequest parameters " + ex.getMessage());
@@ -75,18 +76,6 @@ public class DacsPostRequest {
             }
         }
     };
-
-//    public HttpResponse executePostRequest(DacsWebServiceRequest dacsWebServiceRequest) throws DacsException, UnsupportedEncodingException {
-//        HttpPost httpPost = new HttpPost(dacsWebServiceRequest.getBaseURI());
-//        HttpEntity httpEntity = new UrlEncodedFormEntity(dacsWebServiceRequest.getNameValuePairs());
-//        httpPost.setEntity(httpEntity);
-//        try {
-//            return httpClient.execute(httpPost, localContext);
-//        } catch (IOException ex) {
-//            Logger.getLogger(DacsPostRequest.class.getName()).log(Level.SEVERE, null, ex);
-//            throw new DacsException("DACS HTTP Post Request failed: " + ex.getMessage());
-//        }
-//    }
 
     public InputStream getInputStream(HttpClient httpClient, HttpContext httpContext) throws DacsException {
         try {
