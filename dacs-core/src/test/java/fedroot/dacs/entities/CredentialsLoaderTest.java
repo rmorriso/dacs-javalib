@@ -43,9 +43,7 @@ public class CredentialsLoaderTest extends TestCase {
             credentialsLoader.load();
             Credentials credentials = credentialsLoader.getCredentials();
             assertEquals(1, credentials.getCredentials().size());
-            for (Credential credential : credentials.getCredentials()) {
-                System.out.println(credential.getName() + credential.getRoles());
-            }
+            assertEquals("black", credentials.getEffectiveCredential().getName());
         } catch (Exception ex) {
             Logger.getLogger(CredentialsLoaderTest.class.getName()).log(Level.SEVERE, null, ex);
         }

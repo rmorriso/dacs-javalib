@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.http.HttpHost;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
@@ -32,7 +31,6 @@ import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.params.CookiePolicy;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -41,7 +39,6 @@ import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
-import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.BasicHttpContext;
 
@@ -123,6 +120,12 @@ public class DacsClientContext {
 
     public void addCookie(Cookie cookie) {
         cookieStore.addCookie(cookie);
+    }
+
+    public void addCookies(List<Cookie> cookies) {
+        for (Cookie cookie : cookies) {
+            cookieStore.addCookie(cookie);
+        }
     }
 
     /**

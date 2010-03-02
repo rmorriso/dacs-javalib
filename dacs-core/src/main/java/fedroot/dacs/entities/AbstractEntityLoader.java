@@ -25,7 +25,7 @@ abstract public class AbstractEntityLoader {
      * @param dacsClientContext the dacsClientContext to issue the Web service request
      * @return the XML document returned in the Web service request
      */
-    abstract protected InputStream getXmlStream(DacsClientContext dacsClientContext)  throws DacsException, IOException;
+    abstract protected InputStream getXmlStream(DacsClientContext dacsClientContext)  throws DacsException;
 
     /**
      * loads an entity from an XML document
@@ -41,7 +41,7 @@ abstract public class AbstractEntityLoader {
         this.dacsClientContext = dacsClientContext;
     }
 
-    public void load() throws Exception {
+    public void load() throws DacsException {
         loadEntityFromStream(getXmlStream(dacsClientContext));
     }
 

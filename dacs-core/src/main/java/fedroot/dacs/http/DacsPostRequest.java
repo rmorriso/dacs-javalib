@@ -47,10 +47,9 @@ public class DacsPostRequest {
     }
 
     public DacsPostRequest(DacsWebServiceRequest dacsWebServiceRequest) {
-        this.httpPost = new HttpPost(dacsWebServiceRequest.getURI());
-        UrlEncodedFormEntity urlEncodedFormEntity = null;
+        this.httpPost = new HttpPost(dacsWebServiceRequest.getBaseURI());
         try {
-            urlEncodedFormEntity = new UrlEncodedFormEntity(dacsWebServiceRequest.getNameValuePairs(), "us-ascii");
+            UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(dacsWebServiceRequest.getNameValuePairs());
             // urlEncodedFormEntity = new UrlEncodedFormEntity(dacsWebServiceRequest.getNameValuePairs(), "UTF-8");
             this.httpPost.setEntity(urlEncodedFormEntity);
         } catch (UnsupportedEncodingException ex) {
