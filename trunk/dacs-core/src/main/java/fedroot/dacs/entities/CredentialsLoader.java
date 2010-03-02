@@ -44,7 +44,7 @@ public class CredentialsLoader extends AbstractEntityLoader {
     }
 
     @Override
-    protected InputStream getXmlStream(DacsClientContext dacsClientContext) throws DacsException, IOException {
+    protected InputStream getXmlStream(DacsClientContext dacsClientContext) throws DacsException {
             DacsCurrentCredentialsRequest dacsCurrentCredentialsRequest = new DacsCurrentCredentialsRequest(jurisdiction);
             return dacsClientContext.executeGetRequest(dacsCurrentCredentialsRequest);
     }

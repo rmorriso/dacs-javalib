@@ -1,19 +1,17 @@
 /*
- * HealthCheckServlet.java
+ * DacsDemoServlet.java
  *
  * Created on June 19, 2007, 3:03 PM
  */
-package cisco.demos;
+package fedroot.demo.dacsweb;
 
-import cisco.servlets.util.HttpUtil;
-import com.fedroot.dacs.exceptions.DacsException;
-import fedroot.dacs.utils.DacsUtil;
+import fedroot.dacs.exceptions.DacsException;
 import java.io.*;
 
-import java.util.ResourceBundle;
 import javax.servlet.*;
 import javax.servlet.http.*;
-import org.apache.commons.httpclient.HttpStatus;
+import org.apache.http.HttpStatus;
+
 
 /**
  *
@@ -23,18 +21,7 @@ import org.apache.commons.httpclient.HttpStatus;
 public class DacsDemoServlet extends HttpServlet {
 
     private static final String ARG_REQUEST = "request";
-    private static final String SESSION_USER = "username";
-    // DACS User Authentication
-    private static final String DACS_AUTH_JURISDICTION;
-    private static final String DACS_BASE_URI;
-
-
-    static {
-        // Static initializer to retrieve information from configuration properties file.
-        ResourceBundle config = ResourceBundle.getBundle("cisco.demos.Configuration");
-        DACS_BASE_URI = config.getString("dacs_base_uri");
-        DACS_AUTH_JURISDICTION = config.getString("dacs_auth_jurisdiction");
-    }
+    private static String SESSION_USERNAME = "session_username";
 
     private enum RequestType {
         info, logout
@@ -50,7 +37,8 @@ public class DacsDemoServlet extends HttpServlet {
         String requestString = null;
         RequestType requestType = RequestType.info;
         HttpSession session = request.getSession();
-        String username = (String) session.getAttribute(SESSION_USER);
+//        String username = request.getParameter("username");
+        String username = (String) session.getAttribute(SESSION_USERNAME);
 
         response.setContentType("text/html;charset=UTF-8");
         response.setStatus(HttpStatus.SC_OK);
@@ -58,7 +46,7 @@ public class DacsDemoServlet extends HttpServlet {
         // bail out with error message on invalid requests
         try {
             if (request.getQueryString() != null) {
-                requestString = HttpUtil.getArgString(request, ARG_REQUEST, null);
+                requestString = request.getParameter(ARG_REQUEST);
                 if (requestString != null) {
                     requestType = RequestType.valueOf(requestString.trim());
                 } else {
@@ -69,11 +57,7 @@ public class DacsDemoServlet extends HttpServlet {
 
             switch (requestType) {
                 case info:
-                    if (username == null) {
-                        username = getUsername(request);
-                        session.setAttribute(SESSION_USER, username);
-                        out.println("initialized session user from DACS credential: " + username);
-                    } else {
+                    if (username != null) {
                         out.println("username found in session: " + username);
                     }
                     break;
@@ -90,13 +74,9 @@ public class DacsDemoServlet extends HttpServlet {
         }
     }
 
-    private String getUsername(HttpServletRequest request) throws DacsException {
-        return DacsUtil.resolveUsername(DACS_BASE_URI, DACS_AUTH_JURISDICTION, request);
-    }
-
     private void dacsLogout(HttpSession session, HttpServletResponse response) throws DacsException, IOException {
-        session.removeAttribute(SESSION_USER);
-        response.sendRedirect(DACS_BASE_URI + "/dacs_signout");
+        session.removeAttribute(SESSION_USERNAME);
+//        response.sendRedirect(DACS_BASE_URI + "/dacs_signout");
     }
 
 

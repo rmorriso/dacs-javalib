@@ -28,6 +28,9 @@ public class DacsCookie extends BasicClientCookie {
         if(! isDacsCookie(cookie)) {
             throw new DacsRuntimeException("invalid DACS cookie: " + cookie.getName());
         }
+
+        setDomain(cookie.getDomain());
+        
         Date expires = new Date();
         expires.setTime(expires.getTime() + cookie.getMaxAge());
 

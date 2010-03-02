@@ -49,7 +49,7 @@ public class FederationLoader extends AbstractEntityLoader {
     }
 
     @Override
-    protected InputStream getXmlStream(DacsClientContext dacsClientContext) throws DacsException, IOException {
+    protected InputStream getXmlStream(DacsClientContext dacsClientContext) throws DacsException {
             DacsListJurisdictionsRequest dacsListJurisdictionsRequest = new DacsListJurisdictionsRequest(dacsUrl);
             return dacsClientContext.executeGetRequest(dacsListJurisdictionsRequest);
     }
