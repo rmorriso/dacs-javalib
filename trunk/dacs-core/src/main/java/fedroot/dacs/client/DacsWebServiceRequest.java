@@ -11,8 +11,8 @@ package fedroot.dacs.client;
 
 import fedroot.dacs.DACS.CommonArgs;
 import fedroot.dacs.DACS.ReplyFormat;
-import fedroot.web.ServiceParameters;
-import fedroot.web.WebServiceRequest;
+import fedroot.servlet.ServiceParameters;
+import fedroot.servlet.WebServiceRequest;
 
 /**
  * All DACS Web services extend this class

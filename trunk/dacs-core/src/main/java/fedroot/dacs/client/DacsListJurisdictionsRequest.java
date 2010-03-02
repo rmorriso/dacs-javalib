@@ -10,7 +10,7 @@
 package fedroot.dacs.client;
 
 import fedroot.dacs.DACS.ServiceName;
-import fedroot.web.ServiceParameters;
+import fedroot.servlet.ServiceParameters;
 
 /**
  *
