@@ -41,10 +41,10 @@ public class DacsUtil {
      * DACS cookies found in @param request or null if none is found
      */
     public static String resolveUser(Jurisdiction jurisdiction, HttpServletRequest request) throws DacsException {
-        List<Cookie> dacsCookies = getDacsCookies(request);
+        List<DacsCookie> dacsCookies = getDacsCookies(jurisdiction.getFederation().getFederationDomain(), request);
         if (dacsCookies != null) {
             DacsClientContext dacsClientContext = new DacsClientContext();
-            dacsClientContext.addCookies(dacsCookies);
+            dacsClientContext.addDacsCookies(dacsCookies);
             CredentialsLoader credentialsLoader = new CredentialsLoader(dacsClientContext, jurisdiction);
             credentialsLoader.load();
             Credentials credentials = credentialsLoader.getCredentials();
@@ -54,17 +54,17 @@ public class DacsUtil {
         return null;
     }
 
-    private static List<Cookie> getDacsCookies(HttpServletRequest request) {
+    private static List<DacsCookie> getDacsCookies(String domain, HttpServletRequest request) {
         javax.servlet.http.Cookie[] jcookies = request.getCookies();
         if (jcookies == null) {
             return null;
         } else {
             DacsCookie dacsCookie = null;
             DacsCookie selectCookie = null;
-            List<Cookie> dacsCookies = new ArrayList<Cookie>();
+            List<DacsCookie> dacsCookies = new ArrayList<DacsCookie>();
             for (javax.servlet.http.Cookie jcookie : jcookies) {
                 if (DacsCookie.isDacsCookie(jcookie)) {
-                    dacsCookie = new DacsCookie(jcookie);
+                    dacsCookie = new DacsCookie(domain, jcookie);
                     dacsCookies.add(dacsCookie);
                     // if there are multiple DACS cookies, exactly one must be
                     // indicated as the SELECTED DACS cookie
@@ -73,7 +73,7 @@ public class DacsUtil {
                     if (selectCookie != null) {
                         throw new DacsRuntimeException("Multiple DACS SELECT cookies found in request.");
                     }
-                    selectCookie = new DacsCookie(jcookie);
+                    selectCookie = new DacsCookie(domain, jcookie);
                     dacsCookies.add(selectCookie);
                 }
             }
