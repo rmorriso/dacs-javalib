@@ -27,7 +27,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>DacsDemoServlet</servlet-name>
-        <url-pattern>/dacs-demo</url-pattern>
+        <url-pattern>/user</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
