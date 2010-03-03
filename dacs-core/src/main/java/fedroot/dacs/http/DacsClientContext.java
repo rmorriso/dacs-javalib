@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -118,12 +119,40 @@ public class DacsClientContext {
         return dacsCookies;
     }
 
-    public void addCookie(Cookie cookie) {
-        cookieStore.addCookie(cookie);
+    /**
+     * get cookie from CookieStore by name
+     * @param name name of cookie to retrieve
+     * @return cookie matching @param name, else null
+     */
+    private DacsCookie getCookieByName(String cookieName) {
+        for (Cookie cookie : cookieStore.getCookies()) {
+            if (cookie.getName().equals(cookieName)) {
+                return (DacsCookie)cookie;
+            }
+        }
+        return null;
+    }
+    
+    public void addCookie(DacsCookie cookie) {
+            DacsCookie foundCookie = getCookieByName(cookie.getName());
+            if (foundCookie != null) {
+                // do nothing if identical cookie is present in DacsContext
+                if (foundCookie.getValue().equals(cookie.getValue())) {
+                    return;
+                }
+                // cookie with same name but different value present in DacsContext
+                //    -- nuke it and add the new one --
+                // this is relevant when the browser has obtained credentials
+                // outside of FedAdmin app; we assume the browser holds the
+                // definitive version of state
+                    foundCookie.setExpiryDate(new Date(0));
+                    cookieStore.clearExpired(new Date());
+            }
+            cookieStore.addCookie(cookie);
     }
 
-    public void addCookies(List<Cookie> cookies) {
-        for (Cookie cookie : cookies) {
+    public void addDacsCookies(List<DacsCookie> cookies) {
+        for (DacsCookie cookie : cookies) {
             cookieStore.addCookie(cookie);
         }
     }

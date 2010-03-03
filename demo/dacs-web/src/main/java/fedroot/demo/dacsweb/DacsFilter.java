@@ -109,12 +109,15 @@ public class DacsFilter implements Filter {
                     username = "dacsuser";
                     sendProcessingError("Authentication problem. Couldn't find dacsUsername.", response);
                 }
+                log("resolved username as: " + username);
                 session.setAttribute(SESSION_USERNAME, username);
             } catch (DacsException ex) {
                 sendProcessingError("Failed authenticating with DACS: " + ex.getMessage(), response);
             } catch (Exception ex) {
                 sendProcessingError("Unknown error occured: " + ex.getMessage(), response);
             }
+        } else {
+            log("found username in session as: " + username);
         }
 
         Throwable problem = null;
