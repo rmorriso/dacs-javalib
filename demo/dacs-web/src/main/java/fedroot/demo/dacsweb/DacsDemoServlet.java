@@ -59,6 +59,7 @@ public class DacsDemoServlet extends HttpServlet {
                 case info:
                     if (username != null) {
                         out.println("username found in session: " + username);
+                        out.println(System.getProperty("org.glassfish.web.rfc2109.cookie_names_enforced"));
                     }
                     break;
                 case logout:
