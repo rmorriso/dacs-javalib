@@ -15,10 +15,10 @@ import fedroot.dacs.exceptions.DacsRuntimeException;
 import fedroot.dacs.http.DacsClientContext;
 import fedroot.dacs.http.DacsCookie;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.http.cookie.Cookie;
 
 /**
  *
@@ -41,7 +41,8 @@ public class DacsUtil {
      * DACS cookies found in @param request or null if none is found
      */
     public static String resolveUser(Jurisdiction jurisdiction, HttpServletRequest request) throws DacsException {
-        List<DacsCookie> dacsCookies = getDacsCookies(jurisdiction.getFederation().getFederationDomain(), request);
+//        List<DacsCookie> dacsCookies = getDacsCookies(jurisdiction.getFederation().getFederationDomain(), request);
+        List<DacsCookie> dacsCookies = getDacsCookies(jurisdiction.getFederation().getFederationDomain(), getCookieHeaders(request));
         if (dacsCookies != null) {
             DacsClientContext dacsClientContext = new DacsClientContext();
             dacsClientContext.addDacsCookies(dacsCookies);
@@ -54,7 +55,7 @@ public class DacsUtil {
         return null;
     }
 
-    private static List<DacsCookie> getDacsCookies(String domain, HttpServletRequest request) {
+    public static List<DacsCookie> getDacsCookies(String domain, HttpServletRequest request) {
         javax.servlet.http.Cookie[] jcookies = request.getCookies();
         if (jcookies == null) {
             return null;
@@ -79,5 +80,23 @@ public class DacsUtil {
             }
             return dacsCookies;
         }
+    }
+
+    public static List<DacsCookie> getDacsCookies(String domain, Enumeration cookieHeaders) {
+        List<DacsCookie> dacsCookies = new ArrayList<DacsCookie>();
+        while (cookieHeaders.hasMoreElements()) {
+            String cookieHeader = (String) cookieHeaders.nextElement();
+            if (cookieHeader.startsWith("DACS:")) {
+                String name = cookieHeader.substring(0, cookieHeader.indexOf('='));
+                String value = cookieHeader.substring(cookieHeader.indexOf('=')+1);
+                dacsCookies.add(new DacsCookie(domain, name,value));
+            }
+
+        }
+        return dacsCookies;
+    }
+
+    public static Enumeration getCookieHeaders(HttpServletRequest request) {
+        return request.getHeaders("cookie");
     }
 }

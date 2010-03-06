@@ -53,7 +53,7 @@ public class DacsCookie extends BasicClientCookie {
             throw new DacsRuntimeException("invalid DACS cookie: " + this.getName());
         }
 
-        setVersion(1);
+        setVersion(0);
         setDomain("." + domain);
         setPath("/");
 
@@ -62,8 +62,8 @@ public class DacsCookie extends BasicClientCookie {
 
         setSecure(false);
         // Set attributes EXACTLY as sent by the server
-        setAttribute(ClientCookie.VERSION_ATTR, "1");
-        setAttribute(ClientCookie.DOMAIN_ATTR, domain);
+        setAttribute(ClientCookie.VERSION_ATTR, "0");
+        setAttribute(ClientCookie.DOMAIN_ATTR, "." + domain);
     }
 
     public static boolean isDacsCookie(org.apache.http.cookie.Cookie cookie) {

@@ -27,7 +27,6 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
@@ -102,9 +101,6 @@ public class DacsFilter implements Filter {
                 Jurisdiction jurisdiction = federation.getJurisdictionByName(DACS_AUTH_JURISDICTION);
                 log("resolving user against jurisdiction " + jurisdiction.getJName() + " (" + jurisdiction.getDacsUri() + ")");
                 username = DacsUtil.resolveUser(jurisdiction, wrappedRequest);
-                for (Cookie cookie : wrappedRequest.getCookies()) {
-                    log(cookie.getName());
-                }
                 if (username == null) {
                     username = "dacsuser";
                     sendProcessingError("Authentication problem. Couldn't find dacsUsername.", response);
