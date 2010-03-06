@@ -6,11 +6,11 @@
         <filter-class>fedroot.demo.dacsweb.DacsFilter</filter-class>
         <init-param>
             <param-name>dacs_base_uri</param-name>
-            <param-value>http://opsdev.cisco.com/dacs</param-value>
+            <param-value>https://fedroot.com/dacs</param-value>
         </init-param>
         <init-param>
             <param-name>dacs_auth_jurisdiction</param-name>
-            <param-value>SIGNON</param-value>
+            <param-value>METALOGIC</param-value>
         </init-param>
         <init-param>
             <param-name>session_user_role</param-name>
