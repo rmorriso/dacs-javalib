@@ -29,7 +29,11 @@ public class DacsCookie extends BasicClientCookie {
         }
         
         setVersion(1);
-        setDomain("." + domain);
+        if (domain.startsWith(".")) {
+            setDomain(domain);
+        } else {
+            setDomain("." + domain);
+        }
         setPath("/");
 
         if (cookie.getMaxAge() == -1) {
@@ -40,30 +44,27 @@ public class DacsCookie extends BasicClientCookie {
         }
 
         setSecure(cookie.getSecure());
-
-        // Set attributes EXACTLY as sent by the server
-        setAttribute(ClientCookie.VERSION_ATTR, "1");
-        setAttribute(ClientCookie.DOMAIN_ATTR, domain);
     }
 
-    public DacsCookie(String domain, String name, String value) throws DacsRuntimeException {
+    public DacsCookie(String domain, String name, String value, boolean secure) throws DacsRuntimeException {
         super(name, value);
 
-        if (!isDacsCookie(this)) {
-            throw new DacsRuntimeException("invalid DACS cookie: " + this.getName());
+        if (!isDacsCookieName(name)) {
+            throw new DacsRuntimeException("invalid DACS cookie: " + name);
         }
 
         setVersion(0);
-        setDomain("." + domain);
+        if (domain.startsWith(".")) {
+            setDomain(domain);
+        } else {
+            setDomain("." + domain);
+        }
         setPath("/");
 
         Date expires = new Date();
         expires.setTime(expires.getTime() + 3600);
 
-        setSecure(false);
-        // Set attributes EXACTLY as sent by the server
-        setAttribute(ClientCookie.VERSION_ATTR, "0");
-        setAttribute(ClientCookie.DOMAIN_ATTR, "." + domain);
+        setSecure(secure);
     }
 
     public static boolean isDacsCookie(org.apache.http.cookie.Cookie cookie) {
@@ -83,7 +84,7 @@ public class DacsCookie extends BasicClientCookie {
     }
 
     private static boolean isDacsCookieName(String cookieName) {
-        return (cookieName.startsWith("DACS:") && !cookieName.endsWith(":SELECT"));
+        return (cookieName.startsWith("DACS:"));
     }
 
     private static boolean isDacsSelectCookieName(String cookieName) {

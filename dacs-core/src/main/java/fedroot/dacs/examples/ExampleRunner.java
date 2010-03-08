@@ -41,16 +41,15 @@ public class ExampleRunner {
     }
 
     private static void federationExample() throws Exception {
-        FederationLoader federationLoader = new FederationLoader(new DacsClientContext(), "https://fedroot.com/dacs");
-        federationLoader.load();
+        DacsClientContext dacsClientContext = new DacsClientContext();
+        FederationLoader federationLoader = new FederationLoader("https://fedroot.com/dacs", dacsClientContext);
         Federation federation = federationLoader.getFederation();
         Jurisdiction jurisdiction = federation.getJurisdictionByName("TEST");
     }
 
     private static void authenticationExample() throws Exception {
         DacsClientContext dacsClientContext = new DacsClientContext();
-        FederationLoader federationLoader = new FederationLoader(new DacsClientContext(), "https://fedroot.com/dacs");
-        federationLoader.load();
+        FederationLoader federationLoader = new FederationLoader("https://fedroot.com/dacs", dacsClientContext);
         Federation federation = federationLoader.getFederation();
         Jurisdiction test = federation.getJurisdictionByName("TEST");
         // authenticate as test user
@@ -64,12 +63,10 @@ public class ExampleRunner {
 
     private static void credentialsExample() throws Exception {
         DacsClientContext dacsClientContext = new DacsClientContext();
-        FederationLoader federationLoader = new FederationLoader(new DacsClientContext(), "https://fedroot.com/dacs");
-        federationLoader.load();
+        FederationLoader federationLoader = new FederationLoader("https://fedroot.com/dacs", dacsClientContext);
         Federation federation = federationLoader.getFederation();
         Jurisdiction test = federation.getJurisdictionByName("TEST");
-        CredentialsLoader credentialsLoader = new CredentialsLoader(dacsClientContext, test);
-        credentialsLoader.load();
+        CredentialsLoader credentialsLoader = new CredentialsLoader(test, dacsClientContext);
         Credentials credentials = credentialsLoader.getCredentials();
         for (Credential credential : credentials.getCredentials()) {
             System.out.println(credential.getName() + credential.getRoles());

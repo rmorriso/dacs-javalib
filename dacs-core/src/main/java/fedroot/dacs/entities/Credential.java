@@ -12,6 +12,8 @@ package fedroot.dacs.entities;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -39,13 +41,18 @@ public class Credential {
         this.roles = parseRolesString(rolesString);
     }
 
+    /*
+     * parse a comma-separated list of roles into a list of Role objects
+     * @return the list of Roles
+     */
     private List<Role> parseRolesString(String rolesString) {
         List roleList = new ArrayList<Role>();
-        Scanner tokenize = new Scanner(rolesString);
-        while (tokenize.hasNext()) {
-            roleList.add(tokenize.next());
+        Pattern p = Pattern.compile("[\\w]+");
+        Matcher m = p.matcher(rolesString);
+        while(m.find()) {
+            roleList.add(new Role(m.group()));
         }
-        return roleList;
+        return (roleList.isEmpty() ? null : roleList);
     }
     /**
      * standard toString() operator

@@ -42,4 +42,17 @@ public class Role {
         return this.name;
     }
 
+    @Override
+    public boolean equals(Object other) {
+        return other.getClass() == Role.class && other != null && this.name.equals(((Role)other).name);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 89 * hash + (this.name != null ? this.name.hashCode() : 0);
+        return hash;
+    }
+
+
 }
