@@ -19,6 +19,8 @@ import junit.framework.TestCase;
 public class CredentialsLoaderTest extends TestCase {
 
     private CredentialsLoader credentialsLoader;
+    private DacsClientContext dacsClientContext;
+    private Credentials credentials;
 
     public CredentialsLoaderTest(String testName) {
         super(testName);
@@ -27,23 +29,26 @@ public class CredentialsLoaderTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        DacsClientContext dacsClientContext = new DacsClientContext();
-        FederationLoader federationLoader = new FederationLoader(new DacsClientContext(), "https://fedroot.com/dacs");
-        federationLoader.load();
+        dacsClientContext = new DacsClientContext();
+        FederationLoader federationLoader = new FederationLoader("https://fedroot.com/dacs", dacsClientContext);
         Federation federation = federationLoader.getFederation();
         Jurisdiction test = federation.getJurisdictionByName("TEST");
-        credentialsLoader = new CredentialsLoader(dacsClientContext, test);
         // authenticate as test user
         DacsAuthenticateRequest dacsAuthenticateRequest = new DacsAuthenticateRequest(test, "black", "foozle");
         dacsClientContext.executePostRequest(dacsAuthenticateRequest);
+        // load credentials from dacsClientContext AFTER authentication
+        credentialsLoader = new CredentialsLoader(test, dacsClientContext);
+        credentials = credentialsLoader.getCredentials();
     }
 
     public void testGetCredentials() {
         try {
-            credentialsLoader.load();
-            Credentials credentials = credentialsLoader.getCredentials();
             assertEquals(1, credentials.getCredentials().size());
-            assertEquals("black", credentials.getEffectiveCredential().getName());
+            Credential black = credentials.getEffectiveCredential();
+            assertEquals("black", black.getName());
+            assertEquals(2,black.getRoles().size());
+            assertTrue(black.getRoles().contains(new Role("farmer")));
+            assertTrue(black.getRoles().contains(new Role("beautiful")));
         } catch (Exception ex) {
             Logger.getLogger(CredentialsLoaderTest.class.getName()).log(Level.SEVERE, null, ex);
         }

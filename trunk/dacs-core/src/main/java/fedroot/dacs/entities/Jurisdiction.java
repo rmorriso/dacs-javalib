@@ -166,6 +166,10 @@ public class Jurisdiction {
         this.setRevocations(revocations);
     }
 
+    public boolean isSecure() {
+        return dacsUrl.toLowerCase().startsWith("https");
+    }
+    
     /**
      * standard toString() operator
      * @return string representation of this jurisdiction

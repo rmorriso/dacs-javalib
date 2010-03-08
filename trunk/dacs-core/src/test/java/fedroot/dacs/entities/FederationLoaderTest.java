@@ -20,6 +20,7 @@ public class FederationLoaderTest extends TestCase {
     private FederationLoader federationLoader;
     private Federation federation;
     private Jurisdiction jurisdiction;
+    private DacsClientContext dacsClientContext;
 
     public FederationLoaderTest(String testName) {
         super(testName);
@@ -28,8 +29,8 @@ public class FederationLoaderTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        federationLoader = new FederationLoader(new DacsClientContext(), "https://fedroot.com/dacs");
-        federationLoader.load();
+        dacsClientContext = new DacsClientContext();
+        federationLoader = new FederationLoader("https://fedroot.com/dacs", dacsClientContext);
         federation = federationLoader.getFederation();
         jurisdiction = federation.getJurisdictionByName("TEST");
     }

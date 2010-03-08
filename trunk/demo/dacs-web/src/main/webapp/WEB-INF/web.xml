@@ -8,9 +8,10 @@
             <param-name>dacs_base_uri</param-name>
             <param-value>https://fedroot.com/dacs</param-value>
         </init-param>
+        <!-- set the jurisdiction to resolve user credentials  -->
         <init-param>
             <param-name>dacs_auth_jurisdiction</param-name>
-            <param-value>METALOGIC</param-value>
+            <param-value>SIGNON</param-value>
         </init-param>
         <init-param>
             <param-name>session_user_role</param-name>

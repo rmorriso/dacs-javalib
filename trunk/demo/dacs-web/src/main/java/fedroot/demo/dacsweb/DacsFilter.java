@@ -93,9 +93,9 @@ public class DacsFilter implements Filter {
         String username = (String) session.getAttribute(SESSION_USERNAME);
         if (username == null) {
             try {
-                FederationLoader federationLoader = new FederationLoader(new DacsClientContext(), DACS_BASE_URI);
+                DacsClientContext dacsClientContext = new DacsClientContext();
+                FederationLoader federationLoader = new FederationLoader(DACS_BASE_URI, dacsClientContext);
                 log("loading federation from " + DACS_BASE_URI);
-                federationLoader.load();
                 Federation federation = federationLoader.getFederation();
                 log("loaded federation " + federation.getFederationName());
                 Jurisdiction jurisdiction = federation.getJurisdictionByName(DACS_AUTH_JURISDICTION);

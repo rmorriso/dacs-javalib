@@ -9,11 +9,13 @@ package fedroot.dacs;
 import fedroot.dacs.entities.Credential;
 import fedroot.dacs.entities.Credentials;
 import fedroot.dacs.entities.CredentialsLoader;
+import fedroot.dacs.entities.Federation;
 import fedroot.dacs.entities.Jurisdiction;
 import fedroot.dacs.exceptions.DacsException;
 import fedroot.dacs.exceptions.DacsRuntimeException;
 import fedroot.dacs.http.DacsClientContext;
 import fedroot.dacs.http.DacsCookie;
+import fedroot.dacs.http.DacsCookieName;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -42,12 +44,11 @@ public class DacsUtil {
      */
     public static String resolveUser(Jurisdiction jurisdiction, HttpServletRequest request) throws DacsException {
 //        List<DacsCookie> dacsCookies = getDacsCookies(jurisdiction.getFederation().getFederationDomain(), request);
-        List<DacsCookie> dacsCookies = getDacsCookies(jurisdiction.getFederation().getFederationDomain(), getCookieHeaders(request));
+        List<DacsCookie> dacsCookies = getDacsCookies(jurisdiction.getFederation(), getCookieHeaders(request));
         if (dacsCookies != null) {
             DacsClientContext dacsClientContext = new DacsClientContext();
             dacsClientContext.addDacsCookies(dacsCookies);
-            CredentialsLoader credentialsLoader = new CredentialsLoader(dacsClientContext, jurisdiction);
-            credentialsLoader.load();
+            CredentialsLoader credentialsLoader = new CredentialsLoader(jurisdiction, dacsClientContext);
             Credentials credentials = credentialsLoader.getCredentials();
             Credential effectiveCredential = (credentials != null ? credentials.getEffectiveCredential() : null);
             return (effectiveCredential != null ? effectiveCredential.getName() : null);
@@ -82,18 +83,21 @@ public class DacsUtil {
         }
     }
 
-    public static List<DacsCookie> getDacsCookies(String domain, Enumeration cookieHeaders) {
-        List<DacsCookie> dacsCookies = new ArrayList<DacsCookie>();
-        while (cookieHeaders.hasMoreElements()) {
-            String cookieHeader = (String) cookieHeaders.nextElement();
-            if (cookieHeader.startsWith("DACS:")) {
-                String name = cookieHeader.substring(0, cookieHeader.indexOf('='));
-                String value = cookieHeader.substring(cookieHeader.indexOf('=')+1);
-                dacsCookies.add(new DacsCookie(domain, name,value));
+    public static List<DacsCookie> getDacsCookies(Federation federation, Enumeration cookieHeaders) {
+            String federationName = federation.getFederationName();
+            String federationDomain = federation.getFederationDomain();
+            List<DacsCookie> dacsCookies = new ArrayList<DacsCookie>();
+            while (cookieHeaders.hasMoreElements()) {
+                String cookieHeader = (String) cookieHeaders.nextElement();
+                String cookieName = cookieHeader.substring(0, cookieHeader.indexOf('='));
+                String cookieValue = cookieHeader.substring(cookieHeader.indexOf('=') + 1);
+                DacsCookieName dacsCookieName = DacsCookieName.valueOf(cookieName);
+                if (dacsCookieName != null && federationName.equals(dacsCookieName.getFederationPart())) {
+                    Jurisdiction jurisdiction = federation.getJurisdictionByName(dacsCookieName.getJurisdictionPart());
+                    dacsCookies.add(new DacsCookie(federationDomain, cookieName, cookieValue, jurisdiction.isSecure()));
+                }
             }
-
-        }
-        return dacsCookies;
+            return dacsCookies;
     }
 
     public static Enumeration getCookieHeaders(HttpServletRequest request) {
