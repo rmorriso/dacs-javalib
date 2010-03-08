@@ -100,7 +100,7 @@ public class DacsFilter implements Filter {
                 log("loaded federation " + federation.getFederationName());
                 Jurisdiction jurisdiction = federation.getJurisdictionByName(DACS_AUTH_JURISDICTION);
                 log("resolving user against jurisdiction " + jurisdiction.getJName() + " (" + jurisdiction.getDacsUri() + ")");
-                username = DacsUtil.resolveUser(jurisdiction, wrappedRequest);
+                username = DacsUtil.resolveUsername(jurisdiction, wrappedRequest);
                 if (username == null) {
                     username = "dacsuser";
                     sendProcessingError("Authentication problem. Couldn't find dacsUsername.", response);
