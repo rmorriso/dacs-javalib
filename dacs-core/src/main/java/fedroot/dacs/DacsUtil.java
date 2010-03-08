@@ -42,18 +42,21 @@ public class DacsUtil {
      * @return the username associated with the effective credential in the
      * DACS cookies found in @param request or null if none is found
      */
-    public static String resolveUser(Jurisdiction jurisdiction, HttpServletRequest request) throws DacsException {
-//        List<DacsCookie> dacsCookies = getDacsCookies(jurisdiction.getFederation().getFederationDomain(), request);
+    public static Credential resolveUser(Jurisdiction jurisdiction, HttpServletRequest request) throws DacsException {
         List<DacsCookie> dacsCookies = getDacsCookies(jurisdiction.getFederation(), getCookieHeaders(request));
         if (dacsCookies != null) {
             DacsClientContext dacsClientContext = new DacsClientContext();
             dacsClientContext.addDacsCookies(dacsCookies);
             CredentialsLoader credentialsLoader = new CredentialsLoader(jurisdiction, dacsClientContext);
             Credentials credentials = credentialsLoader.getCredentials();
-            Credential effectiveCredential = (credentials != null ? credentials.getEffectiveCredential() : null);
-            return (effectiveCredential != null ? effectiveCredential.getName() : null);
+            return (credentials != null ? credentials.getEffectiveCredential() : null);
         }
         return null;
+    }
+
+    public static String resolveUsername(Jurisdiction jurisdiction, HttpServletRequest request) throws DacsException {
+            Credential effectiveCredential = resolveUser(jurisdiction, request);
+            return (effectiveCredential != null ? effectiveCredential.getName() : null);
     }
 
     public static List<DacsCookie> getDacsCookies(String domain, HttpServletRequest request) {
