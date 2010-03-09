@@ -19,7 +19,6 @@ import fedroot.dacs.http.DacsCookieName;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -95,15 +94,13 @@ public class DacsUtil {
         String federationName = federation.getFederationName();
         String federationDomain = federation.getFederationDomain();
         List<DacsCookie> dacsCookies = new ArrayList<DacsCookie>();
-        Pattern word = Pattern.compile("DACS:[\\w:]+=[.]+[\b]");
         while (cookieHeaders.hasMoreElements()) {
             String cookieHeader = (String) cookieHeaders.nextElement();
-            Matcher m = word.matcher(cookieHeader);
+            Pattern name = Pattern.compile("(DACS:[:\\w]+)=([-\\w]+)");
+            Matcher m = name.matcher(cookieHeader);
             while (m.find()) {
-                String cookieString = m.group();
-                logger.log(Level.INFO, cookieString);
-                String cookieName = cookieString.substring(0, cookieString.indexOf('='));
-                String cookieValue = cookieString.substring(cookieString.indexOf('=') + 1);
+                String cookieName = m.group(1);
+                String cookieValue = m.group(2);
                 DacsCookieName dacsCookieName = DacsCookieName.valueOf(cookieName);
                 if (dacsCookieName != null && federationName.equals(dacsCookieName.getFederationPart())) {
                     Jurisdiction jurisdiction = federation.getJurisdictionByName(dacsCookieName.getJurisdictionPart());
@@ -115,15 +112,15 @@ public class DacsUtil {
     }
 
     public static List<Cookie> getCookies(String cookieHeader) {
-        List<Cookie> cookies = new ArrayList<Cookie>();
-        Pattern name = Pattern.compile("(DACS:[\\w]+::[\\w]+:[\\w]+)=([-\\w]+)"); //.*");
+        List<Cookie> dacsCookies = new ArrayList<Cookie>();
+        Pattern name = Pattern.compile("(DACS:[:\\w]+)=([-\\w]+)");
         Matcher m = name.matcher(cookieHeader);
         while (m.find()) {
             String cookieName = m.group(1);
             String cookieValue = m.group(2);
-            cookies.add(new BasicClientCookie(cookieName, cookieValue));
+            dacsCookies.add(new BasicClientCookie(cookieName, cookieValue));
         }
-        return cookies;
+        return dacsCookies;
     }
 
     public static Enumeration getCookieHeaders(HttpServletRequest request) {
