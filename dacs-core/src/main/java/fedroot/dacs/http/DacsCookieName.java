@@ -45,40 +45,62 @@ public class DacsCookieName {
     /*
      * TOTO parse cookieName into component parts
      */
+//    public static DacsCookieName valueOf(String cookieName) {
+//        if (cookieName.startsWith("DACS:")) {
+//            Pattern word = Pattern.compile("[\\w]+");
+//            try {
+//                String rest = cookieName.substring(cookieName.indexOf(":") + 1);
+//                // look for DACS Select Credentials cookie name of the form
+//                // DACS:Federation-Name:::SELECTED
+//                if (rest.endsWith(":::SELECTED")) {
+//                    String federationPart = rest.substring(0, rest.indexOf(":::SELECTED"));
+//                    Matcher m = word.matcher(federationPart);
+//                    if (m.matches()) {
+//                        return new DacsCookieName(federationPart);
+//                    }
+//                } else {
+//                // look for DACS Credentials cookie name of the form
+//                // DACS:Federation-Name::Jurisdiction-Name:Username
+//                    String federationPart = rest.substring(0, rest.indexOf("::"));
+//                    Matcher m = word.matcher(federationPart);
+//                    if (m.matches()) {
+//                        rest = rest.substring(rest.indexOf("::") + 2);
+//                        String jurisdictionPart = rest.substring(0, rest.indexOf(":"));
+//                        m = word.matcher(jurisdictionPart);
+//                        if (m.matches()) {
+//                            rest = rest.substring(rest.indexOf(":") + 1);
+//                            String usernamePart = rest;
+//                            m = word.matcher(usernamePart);
+//                            if (m.matches()) {
+//                                return new DacsCookieName(federationPart, jurisdictionPart, usernamePart);
+//                            }
+//                        }
+//                    }
+//                }
+//            } catch (IndexOutOfBoundsException ex) {
+//                return null;
+//            }
+//        }
+//        return null;
+//    }
+
+    /**
+     * TOTO parse cookieName into component parts
+     */
     public static DacsCookieName valueOf(String cookieName) {
-        if (cookieName.startsWith("DACS:")) {
-            Pattern word = Pattern.compile("[\\w]+");
-            try {
-                String rest = cookieName.substring(cookieName.indexOf(":") + 1);
-                // look for DACS Select Credentials cookie name of the form
-                // DACS:Federation-Name:::SELECTED
-                if (rest.endsWith(":::SELECTED")) {
-                    String federationPart = rest.substring(0, rest.indexOf(":::SELECTED"));
-                    Matcher m = word.matcher(federationPart);
-                    if (m.matches()) {
-                        return new DacsCookieName(federationPart);
-                    }
-                } else {
-                // look for DACS Credentials cookie name of the form
-                // DACS:Federation-Name::Jurisdiction-Name:Username
-                    String federationPart = rest.substring(0, rest.indexOf("::"));
-                    Matcher m = word.matcher(federationPart);
-                    if (m.matches()) {
-                        rest = rest.substring(rest.indexOf("::") + 2);
-                        String jurisdictionPart = rest.substring(0, rest.indexOf(":"));
-                        m = word.matcher(jurisdictionPart);
-                        if (m.matches()) {
-                            rest = rest.substring(rest.indexOf(":") + 1);
-                            String usernamePart = rest;
-                            m = word.matcher(usernamePart);
-                            if (m.matches()) {
-                                return new DacsCookieName(federationPart, jurisdictionPart, usernamePart);
-                            }
-                        }
-                    }
-                }
-            } catch (IndexOutOfBoundsException ex) {
-                return null;
+        Pattern name = Pattern.compile("DACS:([\\w]+)::([\\w]+):([\\w]+)");
+        Matcher m = name.matcher(cookieName);
+        if (m.matches()) {
+            String federationPart = m.group(1);
+            String jurisdictionPart = m.group(2);
+            String usernamePart = m.group(3);
+            return new DacsCookieName(federationPart, jurisdictionPart, usernamePart);
+        } else {
+            name = Pattern.compile("DACS:([\\w]+):::SELECTED");
+            m = name.matcher(cookieName);
+            if (m.matches()) {
+                String federationPart = m.group(1);
+                return new DacsCookieName(federationPart);
             }
         }
         return null;

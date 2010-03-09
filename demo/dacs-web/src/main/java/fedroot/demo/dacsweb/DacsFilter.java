@@ -90,6 +90,11 @@ public class DacsFilter implements Filter {
         // log the session ID
         log("session ID: " + session.getId());
 
+        Enumeration<String> headers = wrappedRequest.getHeaders("cookie");
+        while(headers.hasMoreElements()) {
+            log("header: " + headers.nextElement());
+        }
+
         String username = (String) session.getAttribute(SESSION_USERNAME);
         if (username == null) {
             try {
