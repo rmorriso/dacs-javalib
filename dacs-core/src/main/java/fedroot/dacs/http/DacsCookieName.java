@@ -42,50 +42,9 @@ public class DacsCookieName {
         selectCookieName = true;
     }
 
-    /*
-     * TOTO parse cookieName into component parts
-     */
-//    public static DacsCookieName valueOf(String cookieName) {
-//        if (cookieName.startsWith("DACS:")) {
-//            Pattern word = Pattern.compile("[\\w]+");
-//            try {
-//                String rest = cookieName.substring(cookieName.indexOf(":") + 1);
-//                // look for DACS Select Credentials cookie name of the form
-//                // DACS:Federation-Name:::SELECTED
-//                if (rest.endsWith(":::SELECTED")) {
-//                    String federationPart = rest.substring(0, rest.indexOf(":::SELECTED"));
-//                    Matcher m = word.matcher(federationPart);
-//                    if (m.matches()) {
-//                        return new DacsCookieName(federationPart);
-//                    }
-//                } else {
-//                // look for DACS Credentials cookie name of the form
-//                // DACS:Federation-Name::Jurisdiction-Name:Username
-//                    String federationPart = rest.substring(0, rest.indexOf("::"));
-//                    Matcher m = word.matcher(federationPart);
-//                    if (m.matches()) {
-//                        rest = rest.substring(rest.indexOf("::") + 2);
-//                        String jurisdictionPart = rest.substring(0, rest.indexOf(":"));
-//                        m = word.matcher(jurisdictionPart);
-//                        if (m.matches()) {
-//                            rest = rest.substring(rest.indexOf(":") + 1);
-//                            String usernamePart = rest;
-//                            m = word.matcher(usernamePart);
-//                            if (m.matches()) {
-//                                return new DacsCookieName(federationPart, jurisdictionPart, usernamePart);
-//                            }
-//                        }
-//                    }
-//                }
-//            } catch (IndexOutOfBoundsException ex) {
-//                return null;
-//            }
-//        }
-//        return null;
-//    }
 
     /**
-     * TOTO parse cookieName into component parts
+     * parse cookieName into component parts
      */
     public static DacsCookieName valueOf(String cookieName) {
         Pattern name = Pattern.compile("DACS:([\\w]+)::([\\w]+):([\\w]+)");
