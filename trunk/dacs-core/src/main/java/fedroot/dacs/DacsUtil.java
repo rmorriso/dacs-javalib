@@ -19,8 +19,13 @@ import fedroot.dacs.http.DacsCookieName;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.impl.cookie.BasicClientCookie;
 
 /**
  *
@@ -55,8 +60,8 @@ public class DacsUtil {
     }
 
     public static String resolveUsername(Jurisdiction jurisdiction, HttpServletRequest request) throws DacsException {
-            Credential effectiveCredential = resolveUser(jurisdiction, request);
-            return (effectiveCredential != null ? effectiveCredential.getName() : null);
+        Credential effectiveCredential = resolveUser(jurisdiction, request);
+        return (effectiveCredential != null ? effectiveCredential.getName() : null);
     }
 
     public static List<DacsCookie> getDacsCookies(String domain, HttpServletRequest request) {
@@ -87,20 +92,38 @@ public class DacsUtil {
     }
 
     public static List<DacsCookie> getDacsCookies(Federation federation, Enumeration cookieHeaders) {
-            String federationName = federation.getFederationName();
-            String federationDomain = federation.getFederationDomain();
-            List<DacsCookie> dacsCookies = new ArrayList<DacsCookie>();
-            while (cookieHeaders.hasMoreElements()) {
-                String cookieHeader = (String) cookieHeaders.nextElement();
-                String cookieName = cookieHeader.substring(0, cookieHeader.indexOf('='));
-                String cookieValue = cookieHeader.substring(cookieHeader.indexOf('=') + 1);
+        String federationName = federation.getFederationName();
+        String federationDomain = federation.getFederationDomain();
+        List<DacsCookie> dacsCookies = new ArrayList<DacsCookie>();
+        Pattern word = Pattern.compile("DACS:[\\w:]+=[.]+[\b]");
+        while (cookieHeaders.hasMoreElements()) {
+            String cookieHeader = (String) cookieHeaders.nextElement();
+            Matcher m = word.matcher(cookieHeader);
+            while (m.find()) {
+                String cookieString = m.group();
+                logger.log(Level.INFO, cookieString);
+                String cookieName = cookieString.substring(0, cookieString.indexOf('='));
+                String cookieValue = cookieString.substring(cookieString.indexOf('=') + 1);
                 DacsCookieName dacsCookieName = DacsCookieName.valueOf(cookieName);
                 if (dacsCookieName != null && federationName.equals(dacsCookieName.getFederationPart())) {
                     Jurisdiction jurisdiction = federation.getJurisdictionByName(dacsCookieName.getJurisdictionPart());
                     dacsCookies.add(new DacsCookie(federationDomain, cookieName, cookieValue, jurisdiction.isSecure()));
                 }
             }
-            return dacsCookies;
+        }
+        return dacsCookies;
+    }
+
+    public static List<Cookie> getCookies(String cookieHeader) {
+        List<Cookie> cookies = new ArrayList<Cookie>();
+        Pattern name = Pattern.compile("(DACS:[\\w]+::[\\w]+:[\\w]+)=([-\\w]+)"); //.*");
+        Matcher m = name.matcher(cookieHeader);
+        while (m.find()) {
+            String cookieName = m.group(1);
+            String cookieValue = m.group(2);
+            cookies.add(new BasicClientCookie(cookieName, cookieValue));
+        }
+        return cookies;
     }
 
     public static Enumeration getCookieHeaders(HttpServletRequest request) {

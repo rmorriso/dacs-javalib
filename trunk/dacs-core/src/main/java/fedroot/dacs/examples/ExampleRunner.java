@@ -8,6 +8,7 @@
  */
 package fedroot.dacs.examples;
 
+import fedroot.dacs.DacsUtil;
 import fedroot.dacs.client.DacsAuthenticateRequest;
 import fedroot.dacs.entities.Credential;
 import fedroot.dacs.entities.Credentials;
@@ -16,6 +17,7 @@ import fedroot.dacs.entities.Federation;
 import fedroot.dacs.entities.FederationLoader;
 import fedroot.dacs.entities.Jurisdiction;
 import fedroot.dacs.http.DacsClientContext;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.http.HttpResponse;
@@ -32,9 +34,10 @@ public class ExampleRunner {
      */
     public static void main(String[] args) {
         try {
-            authenticationExample();
+//            authenticationExample();
 //            credentialsExample();
 //            federationExample();
+            getCookiesExample();
         } catch (Exception ex) {
             Logger.getLogger(ExampleRunner.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -60,7 +63,6 @@ public class ExampleRunner {
         }
     }
 
-
     private static void credentialsExample() throws Exception {
         DacsClientContext dacsClientContext = new DacsClientContext();
         FederationLoader federationLoader = new FederationLoader("https://fedroot.com/dacs", dacsClientContext);
@@ -73,5 +75,16 @@ public class ExampleRunner {
         }
     }
 
+    private static void getCookiesExample() throws Exception {
+        String header1 = "JSESSIONID=fec51a10f955a26756e4d15d6eb2; DACS:FEDROOT::METALOGIC:rmorriso=mIIKA5vrtLJgMxTG3UsrS4FBbQopZk1gxG4lDmuOUCL2w53n3wYoX2vdPBiF1K1xKOaEsyw3arq0PBnrxWNDLW0IP_O1jVJGAO14gWUNgkIFaEpdGLY3vOnXdZmCjYDTKLqAdzTJDm8GSHBjzr-XZvfokf_yrOnkYpFrxpZQgACEgMnPamqO4BUMeZcbWqo1_4TjxmzM5gWLKu1y0KwltG8QVLqfc4cCWfnakQuIT9VNDRnoyi79lh-RhIMugJGRJcICwlTEi5nlusrucooAk7_PP0kCEh2FMGJb03GR3Cj-yf6Ayh87KZpOuSNYPCyrmxW030bVLbsVHIlBdeMyvpmz5xJkqu-jfAuINlgqmKdY1p6jYkxsijI2s2lTJetIpkZnocnbSvU_RQSMezhLQWeVQu02clhDusMvjv3bMWfwNU7CiDhowXq8cSly5mLH6GhKH7iyP0";
+        String header2 = "DACS:FEDROOT::METALOGIC:rmorriso=mIIKA5vrtLJgMxTG3UsrS4FBbQopZk1gxG4lDmuOUCL2w53n3wYoX2vdPBiF1K1xKOaEsyw3arq0PBnrxWNDLW0IP_O1jVJGAO14gWUNgkIFaEpdGLY3vOnXdZmCjYDTKLqAdzTJDm8GSHBjzr-XZvfokf_yrOnkYpFrxpZQgACEgMnPamqO4BUMeZcbWqo1_4TjxmzM5gWLKu1y0KwltG8QVLqfc4cCWfnakQuIT9VNDRnoyi79lh-RhIMugJGRJcICwlTEi5nlusrucooAk7_PP0kCEh2FMGJb03GR3Cj-yf6Ayh87KZpOuSNYPCyrmxW030bVLbsVHIlBdeMyvpmz5xJkqu-jfAuINlgqmKdY1p6jYkxsijI2s2lTJetIpkZnocnbSvU_RQSMezhLQWeVQu02clhDusMvjv3bMWfwNU7CiDhowXq8cSly5mLH6GhKH7iyP0; JSESSIONID=fec51a10f955a26756e4d15d6eb2";
+        String header3 = "JSESSIONID=fec51a10f955a26756e4d15d6eb2; DACS:FEDROOT::METALOGIC:rmorriso=mIIKA5vrtLJgMxTG3UsrS4FBbQopZk1gxG4lDmuOUCL2w53n3wYoX2vdPBiF1K1xKOaEsyw3arq0PBnrxWNDLW0IP_O1jVJGAO14gWUNgkIFaEpdGLY3vOnXdZmCjYDTKLqAdzTJDm8GSHBjzr-XZvfokf_yrOnkYpFrxpZQgACEgMnPamqO4BUMeZcbWqo1_4TjxmzM5gWLKu1y0KwltG8QVLqfc4cCWfnakQuIT9VNDRnoyi79lh-RhIMugJGRJcICwlTEi5nlusrucooAk7_PP0kCEh2FMGJb03GR3Cj-yf6Ayh87KZpOuSNYPCyrmxW030bVLbsVHIlBdeMyvpmz5xJkqu-jfAuINlgqmKdY1p6jYkxsijI2s2lTJetIpkZnocnbSvU_RQSMezhLQWeVQu02clhDusMvjv3bMWfwNU7CiDhowXq8cSly5mLH6GhKH7iyP0; DACS:FEDROOT::DSS:brachman=mIIKA5vrtLJgMxTG3UsrS4FBbQopZk1gxG4lDmuOUCL2w53n3wYoX2vdPBiF1K1xKOaEsyw3arq0PBnrxWNDLW0IP_O1jVJGAO14gWUNgkIFaEpdGLY3vOnXdZmCjYDTKLqAdzTJDm8GSHBjzr-XZvfokf_yrOnkYpFrxpZQgACEgMnPamqO4BUMeZcbWqo1_4TjxmzM5gWLKu1y0KwltG8QVLqfc4cCWfnakQuIT9VNDRnoyi79lh-RhIMugJGRJcICwlTEi5nlusrucooAk7_PP0kCEh2FMGJb03GR3Cj-yf6Ayh87KZpOuSNYPCyrmxW030bVLbsVHIlBdeMyvpmz5xJkqu-jfAuINlgqmKdY1p6jYkxsijI2s2lTJetIpkZnocnbSvU_RQSMezhLQWeVQu02clhDusMvjv3bMWfwNU7CiDhowXq8cSly5mLH6GhKH7iyP0; JSESSIONID=fec51a10f955a26756e4d15d6eb2";
 
+
+        List<Cookie> cookies = DacsUtil.getCookies(header3);
+        Cookie cookie2 = cookies.get(1);
+        for (Cookie cookie : cookies) {
+            System.out.println(cookie);
+        }
+    }
 }
