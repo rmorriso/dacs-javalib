@@ -16,7 +16,7 @@ import fedroot.dacs.http.DacsClientContext;
  *
  * @author Roderick Morrison <rmorriso at fedroot.com>
  */
-public class FederationLoader extends AbstractEntityLoader {
+public class FederationLoader extends WebServiceEntityLoader {
 
     private DacsListJurisdictionsRequest dacsListJurisdictionsRequest;
     private Federation federation;

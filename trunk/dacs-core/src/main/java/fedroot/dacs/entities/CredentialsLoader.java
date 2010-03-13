@@ -15,7 +15,7 @@ import fedroot.dacs.http.DacsClientContext;
  *
  * @author Roderick Morrison <rmorriso at fedroot.com>
  */
-public class CredentialsLoader extends AbstractEntityLoader {
+public class CredentialsLoader extends WebServiceEntityLoader {
 
     private Credentials credentials;
     private DacsCurrentCredentialsRequest dacsCurrentCredentialsRequest;

@@ -1,5 +1,5 @@
 /*
- * AbstractEntityLoader.java
+ * WebServiceEntityLoader.java
  * Created on Jan 16, 2010 5:00:08 PM.
  * Copyright (c) 2010 Metalogic Software Corporation
  * All rights reserved. See http://fedroot.com/licenses/metalogic.txt for redistribution information.
@@ -22,14 +22,14 @@ import javax.xml.bind.Unmarshaller;
  *
  * @author Roderick Morrison <rmorriso at fedroot.com>
  */
-abstract public class AbstractEntityLoader {
+abstract public class WebServiceEntityLoader {
 
     private DacsWebServiceRequest dacsWebServiceRequest;
 
     /**
      * subclasses are expected to initialize the appropriate DacsWebServiceRequest
      */
-    public AbstractEntityLoader(DacsWebServiceRequest dacsWebServiceRequest) {
+    public WebServiceEntityLoader(DacsWebServiceRequest dacsWebServiceRequest) {
         this.dacsWebServiceRequest = dacsWebServiceRequest;
     }
     
