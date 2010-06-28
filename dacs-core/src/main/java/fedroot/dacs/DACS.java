@@ -23,7 +23,7 @@ public class DACS {
  * Enumeration of valid service names
  */
     public enum ServiceName {
-        dacs_acs, 
+        dacs_acs,
         dacs_admin,
         dacs_auth_agent,
         dacs_authenticate,
@@ -43,28 +43,39 @@ public class DACS {
  * Enumeration of common DACS arguments
  */
    public enum CommonArgs {
-       DACS_ACS, FORMAT
+       DACS_ACS,
+       FORMAT
    }
    
 /**
  * Enumeration of internal DACS arguments
  */
    public enum InternalArgs {
-       DACS_ERROR_URL, DACS_JURISDICTION
+       DACS_ERROR_URL,
+       DACS_JURISDICTION
    }
    
 /**
  * Enumeration of valid check options to DACS_ACS argument (-check_only, -check_fail)
  */
     public enum AcsCheck {
-        check_only, check_fail
+        check_only,
+        check_fail
     }
     
 /**
  * Enumeration of valid values for FORMAT argument to DACS services
  */
     public enum ReplyFormat {
-        HTML, PLAIN, TEXT, PHP, XML, XMLDTD, XMLSIMPLE, XMLSCHEMA, FILE
+        HTML,
+        PLAIN,
+        TEXT,
+        PHP,
+        XML,
+        XMLDTD,
+        XMLSIMPLE,
+        XMLSCHEMA,
+        FILE
     }
     
     /**
@@ -92,6 +103,12 @@ public class DACS {
         return "DACS:" + federation + "::" + jurisdiction + ":" + username ;
     }
     
+    /**
+     *
+     * @param dacscookie
+     * @return
+     * @throws DacsRuntimeException
+     */
     public static String getDacsUsername(Cookie dacscookie) throws DacsRuntimeException {
         String name = dacscookie.getName();
         if (name.startsWith("DACS:")) {
