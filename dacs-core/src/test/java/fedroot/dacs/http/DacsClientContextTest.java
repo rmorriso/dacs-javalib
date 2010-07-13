@@ -50,7 +50,7 @@ public class DacsClientContextTest extends TestCase {
         DacsGetRequest dacsGetRequest = new DacsGetRequest(uri);
         HttpResponse httpResponse = dacsClientContext.executeGetRequest(dacsGetRequest);
         List<Cookie> cookies = dacsClientContext.getAllCookies();
-        assertEquals(3, cookies.size());
+        assertEquals(2, cookies.size());
         for (Cookie cookie : cookies) {
             assertFalse(cookie.isSecure());
             assertFalse(cookie.isExpired(new Date()));
