@@ -84,11 +84,39 @@ public class Jurisdiction {
      * @return uri for the base of the DACS install under this jurisdiction
      */
     public String getDacsUri() {
-        return dacsUrl;
+        return getDacsUrl();
     }
 
     public void setDacsUri(String dacsUri) {
-        this.dacsUrl = dacsUri;
+        this.setDacsUrl(dacsUri);
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return the dacsUrl
+     */
+    public String getDacsUrl() {
+        return dacsUrl;
+    }
+
+    /**
+     * @param dacsUrl the dacsUrl to set
+     */
+    public void setDacsUrl(String dacsUrl) {
+        this.dacsUrl = dacsUrl;
     }
 
     public String getAltName() {
@@ -167,7 +195,7 @@ public class Jurisdiction {
     }
 
     public boolean isSecure() {
-        return dacsUrl.toLowerCase().startsWith("https");
+        return getDacsUrl().toLowerCase().startsWith("https");
     }
     
     /**
@@ -176,7 +204,7 @@ public class Jurisdiction {
      */
     @Override
     public String toString() {
-        return "Jurisdiction: " + name + "(" + getAltName() + "), " + dacsUrl;
+        return "Jurisdiction: " + getName() + "(" + getAltName() + "), " + getDacsUrl();
     }
 
 }
