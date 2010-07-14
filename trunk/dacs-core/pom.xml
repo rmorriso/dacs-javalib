@@ -68,13 +68,11 @@
             <groupId>com.fedroot</groupId>
             <artifactId>dacs-xmlbeans</artifactId>
             <version>1.4.24-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.1-alpha1</version>
-            <type>jar</type>
+            <version>4.1-alpha2</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
@@ -92,7 +90,6 @@
             <groupId>com.fedroot</groupId>
             <artifactId>fedutils</artifactId>
             <version>1.0-SNAPSHOT</version>
-            <type>jar</type>
         </dependency>
     </dependencies>
 </project>

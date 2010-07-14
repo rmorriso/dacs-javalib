@@ -15,6 +15,7 @@ package fedroot.dacs.http;
 
 import fedroot.dacs.client.DacsWebServiceRequest;
 import fedroot.dacs.exceptions.DacsException;
+import fedroot.servlet.WebServiceRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -64,9 +65,9 @@ public class DacsClientContext {
     public DacsClientContext() {
         SchemeRegistry schemeRegistry = new SchemeRegistry();
         schemeRegistry.register(
-                new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+                new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
         schemeRegistry.register(
-                new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
+                new Scheme("https", 443, SSLSocketFactory.getSocketFactory()));
 
         ClientConnectionManager cm = new ThreadSafeClientConnManager(schemeRegistry);
 
@@ -78,11 +79,16 @@ public class DacsClientContext {
         localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
     }
 
-    public InputStream executeGetRequest(DacsWebServiceRequest dacsWebServiceRequest) throws DacsException {
-            DacsGetRequest dacsGetRequest = new DacsGetRequest(dacsWebServiceRequest);
+//    public InputStream executeGetRequest(DacsWebServiceRequest dacsWebServiceRequest) throws DacsException {
+//            DacsGetRequest dacsGetRequest = new DacsGetRequest(dacsWebServiceRequest);
+//            return dacsGetRequest.getInputStream(httpClient, localContext);
+//    }
+    
+    public InputStream executeGetRequest(WebServiceRequest webServiceRequest) throws DacsException {
+            DacsGetRequest dacsGetRequest = new DacsGetRequest(webServiceRequest);
             return dacsGetRequest.getInputStream(httpClient, localContext);
     }
-    
+
     public HttpResponse executeGetRequest(URI uri) throws DacsException {
         DacsGetRequest dacsGetRequest = new DacsGetRequest(uri);
         HttpGet httpGet = dacsGetRequest.getHttpGet();
