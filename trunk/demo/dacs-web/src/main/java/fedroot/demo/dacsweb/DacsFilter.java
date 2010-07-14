@@ -191,7 +191,7 @@ public class DacsFilter implements Filter {
         if (filterConfig == null) {
             return ("DacsFilter()");
         }
-        StringBuffer sb = new StringBuffer("DacsFilter(");
+        StringBuilder sb = new StringBuilder("DacsFilter(");
         sb.append(filterConfig);
         sb.append(")");
         return (sb.toString());
@@ -283,7 +283,7 @@ public class DacsFilter implements Filter {
 
         public void setParameter(String name, String[] values) {
             if (debug) {
-                System.out.println("DacsFilter::setParameter(" + name + "=" + values + ")" + " localParams = " + localParams);
+                log("DacsFilter::setParameter(" + name + "=" + values + ")" + " localParams = " + localParams);
             }
 
             if (localParams == null) {
@@ -303,7 +303,7 @@ public class DacsFilter implements Filter {
         @Override
         public String getParameter(String name) {
             if (debug) {
-                System.out.println("DacsFilter::getParameter(" + name + ") localParams = " + localParams);
+                log("DacsFilter::getParameter(" + name + ") localParams = " + localParams);
             }
             if (localParams == null) {
                 return getRequest().getParameter(name);
@@ -322,7 +322,7 @@ public class DacsFilter implements Filter {
         @Override
         public String[] getParameterValues(String name) {
             if (debug) {
-                System.out.println("DacsFilter::getParameterValues(" + name + ") localParams = " + localParams);
+                log("DacsFilter::getParameterValues(" + name + ") localParams = " + localParams);
             }
             if (localParams == null) {
                 return getRequest().getParameterValues(name);
@@ -333,7 +333,7 @@ public class DacsFilter implements Filter {
         @Override
         public Enumeration getParameterNames() {
             if (debug) {
-                System.out.println("DacsFilter::getParameterNames() localParams = " + localParams);
+                log("DacsFilter::getParameterNames() localParams = " + localParams);
             }
             if (localParams == null) {
                 return getRequest().getParameterNames();
@@ -344,7 +344,7 @@ public class DacsFilter implements Filter {
         @Override
         public Map getParameterMap() {
             if (debug) {
-                System.out.println("DacsFilter::getParameterMap() localParams = " + localParams);
+                log("DacsFilter::getParameterMap() localParams = " + localParams);
             }
             if (localParams == null) {
                 return getRequest().getParameterMap();

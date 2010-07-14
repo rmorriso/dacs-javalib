@@ -13,8 +13,8 @@ package fedroot.dacs.http;
  * @author Roderick Morrison <rmorriso at fedroot.com>
  */
 
-import fedroot.dacs.client.DacsWebServiceRequest;
 import fedroot.dacs.exceptions.DacsException;
+import fedroot.servlet.WebServiceRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -46,10 +46,10 @@ public class DacsPostRequest {
         this.baseUri = baseUri;
     }
 
-    public DacsPostRequest(DacsWebServiceRequest dacsWebServiceRequest) {
-        this.httpPost = new HttpPost(dacsWebServiceRequest.getBaseURI());
+    public DacsPostRequest(WebServiceRequest webServiceRequest) {
+        this.httpPost = new HttpPost(webServiceRequest.getBaseURI());
         try {
-            UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(dacsWebServiceRequest.getNameValuePairs());
+            UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(webServiceRequest.getNameValuePairs());
             // urlEncodedFormEntity = new UrlEncodedFormEntity(dacsWebServiceRequest.getNameValuePairs(), "UTF-8");
             this.httpPost.setEntity(urlEncodedFormEntity);
         } catch (UnsupportedEncodingException ex) {

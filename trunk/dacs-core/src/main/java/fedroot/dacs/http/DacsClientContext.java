@@ -78,11 +78,6 @@ public class DacsClientContext {
         // Bind custom cookie store to the local context
         localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
     }
-
-//    public InputStream executeGetRequest(DacsWebServiceRequest dacsWebServiceRequest) throws DacsException {
-//            DacsGetRequest dacsGetRequest = new DacsGetRequest(dacsWebServiceRequest);
-//            return dacsGetRequest.getInputStream(httpClient, localContext);
-//    }
     
     public InputStream executeGetRequest(WebServiceRequest webServiceRequest) throws DacsException {
             DacsGetRequest dacsGetRequest = new DacsGetRequest(webServiceRequest);
@@ -106,8 +101,8 @@ public class DacsClientContext {
         return httpClient.execute(dacsGetRequest.getHttpGet(), localContext);
     }
 
-    public HttpResponse executePostRequest(DacsWebServiceRequest dacsWebServiceRequest) throws IOException {
-        DacsPostRequest dacsPostRequest = new DacsPostRequest(dacsWebServiceRequest);
+    public HttpResponse executePostRequest(WebServiceRequest webServiceRequest) throws IOException {
+        DacsPostRequest dacsPostRequest = new DacsPostRequest(webServiceRequest);
         return httpClient.execute(dacsPostRequest.getHttpPost(), localContext);
     }
 
