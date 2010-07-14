@@ -15,6 +15,7 @@ package fedroot.dacs.http;
 
 import fedroot.dacs.client.DacsWebServiceRequest;
 import fedroot.dacs.exceptions.DacsException;
+import fedroot.servlet.WebServiceRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -42,8 +43,8 @@ public class DacsGetRequest {
 
     private HttpGet httpGet;
 
-    public DacsGetRequest(DacsWebServiceRequest dacsWebServiceRequest) {
-        this.httpGet = new HttpGet(dacsWebServiceRequest.getURI());
+    public DacsGetRequest(WebServiceRequest webServiceRequest) {
+        this.httpGet = new HttpGet(webServiceRequest.getURI());
     }
 
     public DacsGetRequest(URI uri) {
