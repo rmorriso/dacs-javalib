@@ -11,6 +11,8 @@ package fedroot.dacs.client;
 
 import fedroot.dacs.entities.Jurisdiction;
 import fedroot.dacs.DACS.ServiceName;
+import fedroot.servlet.ParameterValidator;
+import fedroot.servlet.ParameterValidators;
 import fedroot.servlet.ServiceParameters;
 import java.net.URISyntaxException;
 
@@ -42,4 +44,22 @@ public class DacsAuthenticateRequest extends DacsWebServiceRequest {
         serviceParameters.addParameter(args.DACS_JURISDICTION, jurisdiction.getJName());
         return serviceParameters;
     }
+
+    /**
+     * return ParameterValidators for use by clients that implement
+     * the DacsAuthenticateRequest service
+     * @return
+     */
+    @Override
+    public ParameterValidators getParameterValidators() {
+        ParameterValidators parameterValidators = new ParameterValidators();
+        ParameterValidator parameterValidator = new ParameterValidator(ParameterValidator.ValidationType.ALL);
+        parameterValidator.addParameter(args.USERNAME.toString());
+        parameterValidator.addParameter(args.PASSWORD.toString());
+        parameterValidator.addParameter(args.DACS_BROWSER.toString());
+        parameterValidator.addParameter(args.DACS_JURISDICTION.toString());
+        parameterValidators.addValidator(parameterValidator);
+        return parameterValidators;
+    }
+
 }
