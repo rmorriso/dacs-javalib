@@ -10,6 +10,7 @@
 package fedroot.dacs.client;
 
 import fedroot.dacs.DACS.ServiceName;
+import fedroot.servlet.ParameterValidators;
 import fedroot.servlet.ServiceParameters;
 
 /**
@@ -25,5 +26,15 @@ public class DacsListJurisdictionsRequest extends DacsWebServiceRequest {
     @Override
     public ServiceParameters getServiceParameters() {
         return super.getServiceParameters();
+    }
+
+    /**
+     * return ParameterValidators for use by clients that implement
+     * the DacsListJurisdictionsRequest service
+     * @return
+     */
+    @Override
+    public ParameterValidators getParameterValidators() {
+        return null;
     }
 }
