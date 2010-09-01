@@ -32,7 +32,7 @@ import org.apache.http.impl.cookie.BasicClientCookie;
  */
 public class DacsUtil {
 
-    private static Logger logger = Logger.getLogger(DacsUtil.class.getName());
+    private static final Logger logger = Logger.getLogger(DacsUtil.class.getName());
 
     /**
      * extracts <code>username</code> from DACS credential cookie in HTTP request
@@ -40,7 +40,7 @@ public class DacsUtil {
      * creates and attaches a corresponding HttpClient cookie in a DacsClientContext.
      * The resulting DacsClientContext is used to execute a DacsCurrentCredentials
      * web service request. In some DACS deployments it is permissible for a user
-     * session to carry mutliple DACS credentials, but in those cases one such
+     * session to carry multiple DACS credentials, but in those cases one such
      * credential must be the <i>selected</i> credential. A DacsException is thrown if this
      * is not the case.
      * @return the username associated with the effective credential in the
