@@ -21,12 +21,17 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
+import javax.servlet.annotation.WebInitParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
@@ -35,21 +40,28 @@ import javax.servlet.http.HttpSession;
 
 /**
  *
- * @author Norbert Trepke <ntrepke at cisco.com>
+ * @author Norbert Trepke
  */
+@WebFilter(filterName = "DacsFilter", urlPatterns = "/*", 
+initParams = {
+    @WebInitParam(name = "dacs_base_uri", value = "https://fedroot.com/dacs"),
+    @WebInitParam(name = "dacs_auth_jurisdiction", value = "SIGNON"),
+    @WebInitParam(name = "session_user_role", value = "dacsUserRole")})
 public class DacsFilter implements Filter {
 
-    private static final boolean debug = false;
+    private static final Logger logger = Logger.getLogger("com.fedroot");
+
+    private static final boolean FINE = false;
     private static String DACS_BASE_URI;
     private static String DACS_AUTH_JURISDICTION;
     private static String SESSION_USERNAME = "session_username";
-
     // The filter configuration object we are associated with.  If
     // this value is null, this filter instance is not currently
     // configured. 
     private FilterConfig filterConfig = null;
 
     public DacsFilter() {
+        logger.setLevel(Level.INFO);
     }
 
     /**
@@ -80,19 +92,20 @@ public class DacsFilter implements Filter {
 
         HttpSession session = wrappedRequest.getSession();
 
+        logger.log(Level.FINE, "> Filtering: {0}", ((HttpServletRequest) request).getRequestURI());
+
         /*
          * use the ServletContext.log method to log filter messages
          */
-        log("doFilter called in: " + filterConfig.getFilterName() + " on "
-                + (new java.util.Date()));
+        logger.log(Level.FINE, "doFilter called in: {0} on {1}", new Object[]{filterConfig.getFilterName(), new java.util.Date()});
 
 
         // log the session ID
-        log("session ID: " + session.getId());
+        logger.log(Level.FINE, "session ID: {0}", session.getId());
 
         Enumeration<String> headers = wrappedRequest.getHeaders("cookie");
-        while(headers.hasMoreElements()) {
-            log("header: " + headers.nextElement());
+        while (headers.hasMoreElements()) {
+            logger.log(Level.FINE, "header: {0}", headers.nextElement());
         }
 
         String username = (String) session.getAttribute(SESSION_USERNAME);
@@ -100,17 +113,17 @@ public class DacsFilter implements Filter {
             try {
                 DacsClientContext dacsClientContext = new DacsClientContext();
                 FederationLoader federationLoader = new FederationLoader(DACS_BASE_URI, dacsClientContext);
-                log("loading federation from " + DACS_BASE_URI);
+                logger.log(Level.FINE, "loading federation from {0}", DACS_BASE_URI);
                 Federation federation = federationLoader.getFederation();
-                log("loaded federation " + federation.getFederationName());
+                logger.log(Level.FINE, "loaded federation {0}", federation.getFederationName());
                 Jurisdiction jurisdiction = federation.getJurisdictionByName(DACS_AUTH_JURISDICTION);
-                log("resolving user against jurisdiction " + jurisdiction.getJName() + " (" + jurisdiction.getDacsUri() + ")");
+                logger.log(Level.FINE, "resolving user against jurisdiction {0} ({1})", new Object[]{jurisdiction.getJName(), jurisdiction.getDacsUri()});
                 username = DacsUtil.resolveUsername(jurisdiction, wrappedRequest);
                 if (username == null) {
                     username = "dacsuser";
                     sendProcessingError("Authentication problem. Couldn't find dacsUsername.", response);
                 }
-                log("resolved username as: " + username);
+                logger.log(Level.FINE, "resolved username as: {0}", username);
                 session.setAttribute(SESSION_USERNAME, username);
             } catch (DacsException ex) {
                 sendProcessingError("Failed authenticating with DACS: " + ex.getMessage(), response);
@@ -118,7 +131,7 @@ public class DacsFilter implements Filter {
                 sendProcessingError("Unknown error occured: " + ex.getMessage(), response);
             }
         } else {
-            log("found username in session as: " + username);
+            logger.log(Level.FINE, "found username in session as: {0}", username);
         }
 
         Throwable problem = null;
@@ -172,7 +185,8 @@ public class DacsFilter implements Filter {
 
     /**
      * Init method for this filter
-     * set the parameters to be used by DACS
+     * get the parameters to be used by DACS, get and store DACS Federation
+     * information in ApplicationContext
      */
     @Override
     public void init(FilterConfig filterConfig) {
@@ -199,11 +213,13 @@ public class DacsFilter implements Filter {
     }
 
     private void sendProcessingError(String error, ServletResponse response) {
-
+        ServletOutputStream outputStream = null;
+            PrintStream ps = null;
+            PrintWriter pw = null;
         try {
             response.setContentType("text/plain");
-            PrintStream ps = new PrintStream(response.getOutputStream());
-            PrintWriter pw = new PrintWriter(ps);
+            ps = new PrintStream(response.getOutputStream());
+            pw = new PrintWriter(ps);
             pw.print(error);
             pw.close();
             ps.close();
@@ -211,6 +227,8 @@ public class DacsFilter implements Filter {
 
         } catch (Exception ex) {
             //TODO: catch this
+        } finally {
+            // TODO cleanup in here
         }
 
 
@@ -282,9 +300,7 @@ public class DacsFilter implements Filter {
         protected Hashtable localParams = null;
 
         public void setParameter(String name, String[] values) {
-            if (debug) {
-                log("DacsFilter::setParameter(" + name + "=" + values + ")" + " localParams = " + localParams);
-            }
+            logger.log(Level.FINE, "DacsFilter::setParameter({0}={1}" + ")" + " localParams = " + "{2}", new Object[]{name, values, localParams});
 
             if (localParams == null) {
                 localParams = new Hashtable();
@@ -302,9 +318,7 @@ public class DacsFilter implements Filter {
 
         @Override
         public String getParameter(String name) {
-            if (debug) {
-                log("DacsFilter::getParameter(" + name + ") localParams = " + localParams);
-            }
+            logger.log(Level.FINE, "DacsFilter::getParameter({0}) localParams = {1}", new Object[]{name, localParams});
             if (localParams == null) {
                 return getRequest().getParameter(name);
             }
@@ -321,9 +335,7 @@ public class DacsFilter implements Filter {
 
         @Override
         public String[] getParameterValues(String name) {
-            if (debug) {
-                log("DacsFilter::getParameterValues(" + name + ") localParams = " + localParams);
-            }
+            logger.log(Level.FINE, "DacsFilter::getParameterValues({0}) localParams = {1}", new Object[]{name, localParams});
             if (localParams == null) {
                 return getRequest().getParameterValues(name);
             }
@@ -332,9 +344,7 @@ public class DacsFilter implements Filter {
 
         @Override
         public Enumeration getParameterNames() {
-            if (debug) {
-                log("DacsFilter::getParameterNames() localParams = " + localParams);
-            }
+            logger.log(Level.FINE, "DacsFilter::getParameterNames() localParams = {0}", localParams);
             if (localParams == null) {
                 return getRequest().getParameterNames();
             }
@@ -343,9 +353,7 @@ public class DacsFilter implements Filter {
 
         @Override
         public Map getParameterMap() {
-            if (debug) {
-                log("DacsFilter::getParameterMap() localParams = " + localParams);
-            }
+            logger.log(Level.FINE, "DacsFilter::getParameterMap() localParams = {0}", localParams);
             if (localParams == null) {
                 return getRequest().getParameterMap();
             }
