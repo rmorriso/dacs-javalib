@@ -4,6 +4,7 @@
  */
 package fedroot.demo.dacsweb;
 
+import fedroot.dacs.entities.Credential;
 import fedroot.servlet.ParameterValidator;
 import fedroot.servlet.ServiceContext;
 import fedroot.servlet.WebService;
@@ -22,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 public class DemoWebService extends WebService {
 
     private static final String PARAM_REQUEST = "request";
-    private static String SESSION_USERNAME = "session_username";
+    private static String SESSION_DACS_CREDENTIAL = "session_dacs_credential";
 
     // TODO do value checking for parameters in ParameterValidation (data type and enumerated value sets)
     private enum RequestType {
@@ -42,18 +43,21 @@ public class DemoWebService extends WebService {
     protected void printResponse(PrintWriter out, ServiceContext serviceContext) throws Exception {
         RequestType requestType = RequestType.info;
         String requestString = serviceContext.getParameters().getString(PARAM_REQUEST);
-        String username = (String) serviceContext.getSessionAttribute(SESSION_USERNAME);
+        Credential credential = (Credential) serviceContext.getSessionAttribute(SESSION_DACS_CREDENTIAL);
         if (requestString != null) {
             requestType = RequestType.valueOf(requestString.trim());
             switch (requestType) {
                 case info:
-                    if (username != null) {
-                        out.println("username found in session: " + username);
+                    if (credential != null) {
+                        out.println("DACS credential found in session:");
+                        out.println(" Federation: " + credential.getFederationName());
+                        out.println(" Jurisdiction: " + credential.getJurisdictionName());
+                        out.println(" Username: " + credential.getName());
                     }
                     break;
                 case logout:
-                    serviceContext.removeSessionAttribute(SESSION_USERNAME);
-                    out.println("removed username " + username + " from session");
+                    serviceContext.removeSessionAttribute(SESSION_DACS_CREDENTIAL);
+                    out.println("removed credential " + credential + " from session");
                     break;
             }
         } else {
