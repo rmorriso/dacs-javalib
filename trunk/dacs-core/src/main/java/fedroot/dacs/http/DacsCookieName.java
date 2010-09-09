@@ -47,7 +47,8 @@ public class DacsCookieName {
      * parse cookieName into component parts
      */
     public static DacsCookieName valueOf(String cookieName) {
-        Pattern name = Pattern.compile("DACS:([\\w]+)::([\\w]+):([\\w]+)");
+//        Pattern name = Pattern.compile("DACS:([\\w]+)::([\\w]+):([\\w]+)");
+        Pattern name = Pattern.compile("DACS:([\\w]+)::([\\w]+):([\\w\\-]*[\\.]{0,1}[\\w\\-]*[@[A-Za-z0-9-]+\\.+[A-Za-z]{2,4}]*)", Pattern.CASE_INSENSITIVE);
         Matcher m = name.matcher(cookieName);
         if (m.matches()) {
             String federationPart = m.group(1);
