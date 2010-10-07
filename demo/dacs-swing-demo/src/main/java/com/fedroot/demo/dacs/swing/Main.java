@@ -9,8 +9,9 @@
 
 package com.fedroot.demo.dacs.swing;
 
-import com.fedroot.dacs.Federation;
-import com.fedroot.dacs.UserContext;
+import fedroot.dacs.entities.Federation;
+import fedroot.dacs.entities.FederationLoader;
+import fedroot.dacs.http.DacsClientContext;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -21,7 +22,7 @@ import java.awt.event.WindowEvent;
  */
 public class Main {
     
-    private static UserContext usercontext = UserContext.getInstance("DacsClient Demo");
+    private static DacsClientContext dacsClientContext = new DacsClientContext();
 
     private static String feduri = "https://fedroot.com/fedadmin/dacs";
     
@@ -31,8 +32,9 @@ public class Main {
      */
     public static void main(String[] args) {
         try {
-            Federation federation = Federation.getInstance(usercontext, feduri);
-            DacsClientFrame f = new DacsClientFrame(usercontext, federation);
+            FederationLoader federationLoader = new FederationLoader(feduri, dacsClientContext);
+            Federation federation = federationLoader.getFederation();
+            DacsClientFrame f = new DacsClientFrame(dacsClientContext, federation);
             f.setTitle("DACS JavaLib Example Thick Client");
             f.setSize(900, 500);
             f.addWindowListener(

@@ -36,31 +36,32 @@ public class Event905Handler implements Dacs905EventHandler{
     }
     
     public int handleEvent(DacsClientContext dacscontext, DacsGetRequest dacsget, DacsAccess905Event event) {
-        try {
-            // execute DacsNoticePresentationService to get notices back for acceptance
-            // then execute DacsNoticePresentationService to send user's acceptance and get NAT
-            DacsNotices notices = new DacsNotices(dacscontext, event);
-            DacsNoticePresentationDialog dialog = new DacsNoticePresentationDialog(this.parent, "DACS Notices Must Be Acknowledged", dacscontext, notices);
-            if(dialog.showDialog()){ // user clicked ACCEPT                
-                // send user accept response via DacsNoticeAckService
-                if (notices.acceptNotices(dacscontext)) {
-                    // dialog.dispose();
-                    dialog.setVisible(false);
-                    // return the result of executing dacsget again in the modified context
-                    return dacscontext.executeCheckFailMethod(dacsget);
-                } else {
-                    // TODO: these messages should be reported in GUI
-                    LOG.info("Notice acknowledgement failed");
-                    return DacsStatus.SC_DACS_ACCESS_DENIED;
-                }
-            } else {
-                LOG.info("User declined or closed dialog without accepting notices.");
-                // dialog.dispose();
-                dialog.setVisible(false);
-                return DacsStatus.SC_DACS_ACCESS_DENIED;
-            }
-        } catch (Exception e) {
-            return DacsStatus.SC_DACS_ACCESS_DENIED;
-        }
+        return -1; //TODO fix me!
+//        try {
+//            // execute DacsNoticePresentationService to get notices back for acceptance
+//            // then execute DacsNoticePresentationService to send user's acceptance and get NAT
+//            DacsNotices notices = new DacsNotices(dacscontext, event);
+//            DacsNoticePresentationDialog dialog = new DacsNoticePresentationDialog(this.parent, "DACS Notices Must Be Acknowledged", dacscontext, notices);
+//            if(dialog.showDialog()){ // user clicked ACCEPT
+//                // send user accept response via DacsNoticeAckService
+//                if (notices.acceptNotices(dacscontext)) {
+//                    // dialog.dispose();
+//                    dialog.setVisible(false);
+//                    // return the result of executing dacsget again in the modified context
+//                    return dacscontext.executeCheckFailMethod(dacsget);
+//                } else {
+//                    // TODO: these messages should be reported in GUI
+//                    LOG.info("Notice acknowledgement failed");
+//                    return DacsStatus.SC_DACS_ACCESS_DENIED;
+//                }
+//            } else {
+//                LOG.info("User declined or closed dialog without accepting notices.");
+//                // dialog.dispose();
+//                dialog.setVisible(false);
+//                return DacsStatus.SC_DACS_ACCESS_DENIED;
+//            }
+//        } catch (Exception e) {
+//            return DacsStatus.SC_DACS_ACCESS_DENIED;
+//        }
     }
 }

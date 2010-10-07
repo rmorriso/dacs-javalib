@@ -1,9 +1,6 @@
 package com.fedroot.demo.dacs.swing;
 
-import com.fedroot.dacs.DacsContext;
-import com.fedroot.dacs.DacsUserAccount;
-import com.fedroot.dacs.Jurisdiction;
-import com.fedroot.dacs.UserContext;
+import fedroot.dacs.http.DacsClientContext;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.FlowLayout;
@@ -18,8 +15,8 @@ import javax.swing.*;
  * Get DACS signout details
  */
 public class DacsUsernameFrame extends JFrame {
-    protected DacsContext dacscontext;
-    protected UserContext user;
+
+    private DacsClientContext dacsClientContext;
     private JComboBox cmbDacsUsernames;
     private List<String> dacs_usernames;
     protected TextField tfStatus;
@@ -31,13 +28,13 @@ public class DacsUsernameFrame extends JFrame {
     /**
      * Construct a DacsLoginFrame
      * 
-     * @param user the UserContext under which DACS authentication will be done
+     * @param dacsCientContext the UserContext under which DACS authentication will be done
      */
-    public DacsUsernameFrame(UserContext user) {
+    public DacsUsernameFrame(DacsClientContext dacsCientContext) {
         super();
-        this.user = user;
-        setTitle("DACS Credentials: " + user.getName());
-        dacs_usernames = user.getDacsUsernames();
+        this.dacsClientContext = dacsCientContext;
+//        setTitle("DACS Credentials: " + dacsCientContext.getName());
+//        dacs_usernames = dacsCientContext.getDacsUsernames();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
         //Set up the content pane.
@@ -112,7 +109,7 @@ public class DacsUsernameFrame extends JFrame {
      * @param dacs_username the DACS username to signout
      */
     protected void signout(String dacs_username) {
-        this.user.signout(dacs_username);
+//        this.dacsClientContext.signout(dacs_username);
         dacs_usernames.remove(dacs_username);
         cmbDacsUsernames.removeItem(dacs_username);
     }

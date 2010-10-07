@@ -1,5 +1,5 @@
 /*
- * DesktopApplication1View.java
+ * View.java
  */
 
 package com.fedroot.demo.dacs;
@@ -19,9 +19,9 @@ import javax.swing.JFrame;
 /**
  * The application's main frame.
  */
-public class DesktopApplication1View extends FrameView {
+public class View extends FrameView {
 
-    public DesktopApplication1View(SingleFrameApplication app) {
+    public View(SingleFrameApplication app) {
         super(app);
 
         initComponents();
@@ -84,11 +84,11 @@ public class DesktopApplication1View extends FrameView {
     @Action
     public void showAboutBox() {
         if (aboutBox == null) {
-            JFrame mainFrame = DesktopApplication1.getApplication().getMainFrame();
-            aboutBox = new DesktopApplication1AboutBox(mainFrame);
+            JFrame mainFrame = DacsSwingDemo.getApplication().getMainFrame();
+            aboutBox = new AboutBox(mainFrame);
             aboutBox.setLocationRelativeTo(mainFrame);
         }
-        DesktopApplication1.getApplication().show(aboutBox);
+        DacsSwingDemo.getApplication().show(aboutBox);
     }
 
     /** This method is called from within the constructor to
@@ -127,11 +127,11 @@ public class DesktopApplication1View extends FrameView {
 
         menuBar.setName("menuBar"); // NOI18N
 
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(com.fedroot.demo.dacs.DesktopApplication1.class).getContext().getResourceMap(DesktopApplication1View.class);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(com.fedroot.demo.dacs.DacsSwingDemo.class).getContext().getResourceMap(View.class);
         fileMenu.setText(resourceMap.getString("fileMenu.text")); // NOI18N
         fileMenu.setName("fileMenu"); // NOI18N
 
-        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(com.fedroot.demo.dacs.DesktopApplication1.class).getContext().getActionMap(DesktopApplication1View.class, this);
+        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(com.fedroot.demo.dacs.DacsSwingDemo.class).getContext().getActionMap(View.class, this);
         exitMenuItem.setAction(actionMap.get("quit")); // NOI18N
         exitMenuItem.setName("exitMenuItem"); // NOI18N
         fileMenu.add(exitMenuItem);

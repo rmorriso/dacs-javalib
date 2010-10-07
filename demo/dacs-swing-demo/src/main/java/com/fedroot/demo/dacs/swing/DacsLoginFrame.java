@@ -1,10 +1,10 @@
 package com.fedroot.demo.dacs.swing;
 
-import com.fedroot.dacs.DacsContext;
-import com.fedroot.dacs.DacsUserAccount;
-import com.fedroot.dacs.Federation;
-import com.fedroot.dacs.Jurisdiction;
-import com.fedroot.dacs.UserContext;
+
+import fedroot.dacs.client.DacsAuthenticateRequest;
+import fedroot.dacs.entities.Federation;
+import fedroot.dacs.entities.Jurisdiction;
+import fedroot.dacs.http.DacsClientContext;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.FlowLayout;
@@ -12,15 +12,17 @@ import java.awt.Label;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
-import org.apache.commons.httpclient.HttpStatus;
+import org.apache.http.HttpResponse;
+
 
 /**
  * Get DACS login details
  */
 public class DacsLoginFrame extends JFrame {
-    protected UserContext user;
+    protected DacsClientContext dacsClientContext;
     protected final Federation federation;
     private JComboBox cmbJurisdictions;
     private List<String> jurisdiction_names;
@@ -35,14 +37,17 @@ public class DacsLoginFrame extends JFrame {
      * Construct a DacsLoginFrame
      * 
      * @param federation the Federation in which DACS authentication will be done
-     * @param user the UserContext under which authentication will be done
+     * @param dacsClientContext the UserContext under which authentication will be done
      */
-    public DacsLoginFrame(final Federation federation, UserContext user) {
+    public DacsLoginFrame(final Federation federation, DacsClientContext user) {
         super();
-        setTitle("DACS Login to Federation: " + federation.getName());
+        setTitle("DACS Login to Federation: " + federation.getFederationName());
         this.federation = federation;
-        this.user = user;
-        this.jurisdiction_names = federation.getAuthenticatingJurisdictionNames();
+        this.dacsClientContext = user;
+        jurisdiction_names = new ArrayList<String>();
+        for (Jurisdiction jurisdiction : federation.getAuthenticatingJurisdictions()) {
+            this.jurisdiction_names.add(jurisdiction.getJName());
+        }
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
         //Set up the content pane.
@@ -132,13 +137,13 @@ public class DacsLoginFrame extends JFrame {
     }
     
     /*
-     * extract username/password text fields, do DACS authentication in jurisdictionand on
+     * extract username/password text fields, do DACS authentication in jurisdiction
      * @return true on success, else false
      * @param jurisdiction DACS jurisdiction in which to authenticate username
      * @deprecated fixme
      */
     /**
-     * authentication user in a jurisdiction
+     * authentication dacsClientContext in a jurisdiction
      * @param jurisdiction the Jurisdiction in which to authentication
      * @return 
      */
@@ -147,9 +152,11 @@ public class DacsLoginFrame extends JFrame {
         String username = tfUsername.getSelectedText();
         pwfPassword.selectAll();
         String password = pwfPassword.getSelectedText();
-        DacsUserAccount account = new DacsUserAccount(this.federation, jurisdiction, username);
+        DacsAuthenticateRequest dacsAuthenticateRequest = new DacsAuthenticateRequest(jurisdiction, username, password);
+
         try {
-            return this.user.authenticate(account, password);     
+            HttpResponse httpResponse = dacsClientContext.executePostRequest(dacsAuthenticateRequest);
+            return (httpResponse.getStatusLine().getStatusCode() == 200);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
