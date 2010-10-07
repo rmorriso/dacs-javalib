@@ -14,7 +14,7 @@ import fedroot.dacs.DACS.ServiceName;
 import fedroot.servlet.ParameterValidator;
 import fedroot.servlet.ParameterValidators;
 import fedroot.servlet.ServiceParameters;
-import java.net.URISyntaxException;
+
 
 /**
  *
@@ -28,7 +28,7 @@ public class DacsAuthenticateRequest extends DacsWebServiceRequest {
     private String username;
     private String password;
 
-    public DacsAuthenticateRequest(Jurisdiction jurisdiction, String username, String password) throws URISyntaxException {
+    public DacsAuthenticateRequest(Jurisdiction jurisdiction, String username, String password) {
         super(jurisdiction.getDacsUri() + "/" + ServiceName.dacs_authenticate);
         this.jurisdiction = jurisdiction;
         this.username = username;
