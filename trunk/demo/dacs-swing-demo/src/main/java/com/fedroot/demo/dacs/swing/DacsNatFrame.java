@@ -1,7 +1,6 @@
 package com.fedroot.demo.dacs.swing;
 
-import com.fedroot.dacs.DacsContext;
-import com.fedroot.dacs.UserContext;
+import fedroot.dacs.http.DacsClientContext;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.FlowLayout;
@@ -18,8 +17,8 @@ import javax.swing.*;
  * Show current DACS NATs and allow them to be cleared
  */
 public class DacsNatFrame extends JFrame {
-    protected DacsContext dacscontext;
-    protected UserContext user;
+    protected DacsClientContext dacscontext;
+    protected DacsClientContext dacsClientContext;
     private JTextArea textarea;
     private JComboBox cmbDacsNats;
     private List<String> dacs_natnames;
@@ -32,13 +31,13 @@ public class DacsNatFrame extends JFrame {
     /**
      * Construct a DacsLoginFrame
      *
-     * @param user the UserContext under which DACS authentication will be done
+     * @param dacsClientContext the UserContext under which DACS authentication will be done
      */
-    public DacsNatFrame(final UserContext user) {
+    public DacsNatFrame(final DacsClientContext dacsClientContext) {
         super();
-        this.user = user;
+        this.dacsClientContext = dacsClientContext;
         setTitle("DACS Notice Acknowledgement Tokens");
-        dacs_natnames = user.getDacsNatNames();
+//        dacs_natnames = dacsClientContext.getDacsNatNames();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
         //Set up the content pane.
@@ -57,14 +56,14 @@ public class DacsNatFrame extends JFrame {
             cmbDacsNats.setToolTipText("Signout Credentials");
             cmbDacsNats.setEditable(false);
             cmbDacsNats.setSelectedIndex(0);
-            textarea.setText(user.getNoticeUris(cmbDacsNats.getSelectedItem().toString()));
+//            textarea.setText(dacsClientContext.getNoticeUris(cmbDacsNats.getSelectedItem().toString()));
             cmbDacsNats.addItemListener(
                     new ItemListener() {
                 public void itemStateChanged(ItemEvent ae) {
                     if (ae.getStateChange() == ItemEvent.SELECTED) {
                         int i = cmbDacsNats.getSelectedIndex();
                         if (i >= 0) {
-                         textarea.setText(user.getNoticeUris(cmbDacsNats.getSelectedItem().toString()));
+//                         textarea.setText(dacsClientContext.getNoticeUris(cmbDacsNats.getSelectedItem().toString()));
                         }
                     }
                 }
@@ -130,7 +129,7 @@ public class DacsNatFrame extends JFrame {
      * @return the number of DACS NATs remaining
      */
     protected void remove(String dacs_natname) {
-        this.user.removeNat(dacs_natname);
+//        this.dacsClientContext.removeNat(dacs_natname);
         this.dacs_natnames.remove(dacs_natname);
         this.cmbDacsNats.removeItem(dacs_natname);
         if (dacs_natnames.size() > 0) {

@@ -1,5 +1,5 @@
 /*
- * DesktopApplication1.java
+ * DacsSwingDemo.java
  */
 
 package com.fedroot.demo.dacs;
@@ -10,13 +10,13 @@ import org.jdesktop.application.SingleFrameApplication;
 /**
  * The main class of the application.
  */
-public class DesktopApplication1 extends SingleFrameApplication {
+public class DacsSwingDemo extends SingleFrameApplication {
 
     /**
      * At startup create and show the main frame of the application.
      */
     @Override protected void startup() {
-        show(new DesktopApplication1View(this));
+        show(new View(this));
     }
 
     /**
@@ -29,16 +29,16 @@ public class DesktopApplication1 extends SingleFrameApplication {
 
     /**
      * A convenient static getter for the application instance.
-     * @return the instance of DesktopApplication1
+     * @return the instance of DacsSwingDemo
      */
-    public static DesktopApplication1 getApplication() {
-        return Application.getInstance(DesktopApplication1.class);
+    public static DacsSwingDemo getApplication() {
+        return Application.getInstance(DacsSwingDemo.class);
     }
 
     /**
      * Main method launching the application.
      */
     public static void main(String[] args) {
-        launch(DesktopApplication1.class, args);
+        launch(DacsSwingDemo.class, args);
     }
 }
