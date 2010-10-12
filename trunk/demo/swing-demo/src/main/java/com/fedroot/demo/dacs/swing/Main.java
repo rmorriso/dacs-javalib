@@ -24,7 +24,7 @@ public class Main {
     
     private static DacsClientContext dacsClientContext = new DacsClientContext();
 
-    private static String feduri = "https://fedroot.com/fedadmin/dacs";
+    private static String feduri = "https://fedroot.com/dacs";
     
     /**
      * 

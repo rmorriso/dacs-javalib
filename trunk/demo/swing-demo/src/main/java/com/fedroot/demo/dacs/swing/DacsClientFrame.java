@@ -11,7 +11,6 @@ package com.fedroot.demo.dacs.swing;
 import fedroot.dacs.entities.Federation;
 import fedroot.dacs.http.DacsClientContext;
 import fedroot.dacs.http.DacsGetRequest;
-import fedroot.dacs.http.DacsStatus;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.FlowLayout;
@@ -26,7 +25,8 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -40,8 +40,6 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.html.HTMLDocument;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 
@@ -54,15 +52,15 @@ public class DacsClientFrame extends JFrame {
     private final Federation federation;
     private DacsClientContext dacsClientContext;
     protected Header contentType;
-    private JComboBox cmbActions, cmbJurisdictions;
-    private TextField tfUrl;
-    private JTextArea taTextResponse;
-    private JTextArea taCookieText;
-    private JTextArea taOtherText;
+    private JComboBox actionsComboBox;
+    private TextField urlTextField;
+    private JTextArea responseTextArea;
     private JEditorPane htmlPane;
-    private JCheckBox jcbDacsCheckonly, jcbEnableEventHandling;
-    /** Log object for this class. */
-    private static final Log LOG = LogFactory.getLog(DacsClientFrame.class);
+    private JCheckBox checkOnlyCheckBox;
+    private JCheckBox enableEventHandlingCheckBox;
+
+    private static final Logger logger = Logger.getLogger(DacsSwingDemo.class.getName());
+
     private static final String[] actions = {
         "List DEMO Jurisdictions",
         "Requires Authentication",
@@ -90,34 +88,35 @@ public class DacsClientFrame extends JFrame {
      */
     public DacsClientFrame(DacsClientContext dacsClientContext, Federation federation)
             throws Exception {
-        LOG.info("Federation " + federation.getFederationName());
+        logger.log(Level.INFO, "Federation {0}", federation.getFederationName());
+        
         this.federation = federation;
         this.dacsClientContext = dacsClientContext;
 //        this.dacsClientContext.setDacs902EventHandler(federation, new Event902Handler(this));
 //        this.dacsClientContext.setDacs905EventHandler(federation, new Event905Handler(this));
 
-        JPanel panAction = new JPanel(new BorderLayout());
-        JPanel panInput_0 = new JPanel(new FlowLayout());
-        JPanel panInput_1 = new JPanel(new FlowLayout());
-        JPanel panInput_2 = new JPanel(new FlowLayout());
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        JPanel gotoUrlPanel = new JPanel(new FlowLayout());
+        JPanel actionPanel = new JPanel(new FlowLayout());
+        JPanel modifiersPanel = new JPanel(new FlowLayout());
 
         /** Enable/Disable DACS Check_only mode */
-        jcbDacsCheckonly = new JCheckBox("Enable DACS Check Only", false);
-        jcbDacsCheckonly.addActionListener(
+        checkOnlyCheckBox = new JCheckBox("Enable DACS Check Only", false);
+        checkOnlyCheckBox.addActionListener(
                 new ActionListener() {
 
                     public void actionPerformed(ActionEvent ae) {
-                        if (jcbDacsCheckonly.isSelected()) {
-                            jcbEnableEventHandling.setSelected(false);
-                            jcbEnableEventHandling.setEnabled(false);
+                        if (checkOnlyCheckBox.isSelected()) {
+                            enableEventHandlingCheckBox.setSelected(false);
+                            enableEventHandlingCheckBox.setEnabled(false);
                         } else {
-                            jcbEnableEventHandling.setEnabled(true);
+                            enableEventHandlingCheckBox.setEnabled(true);
                         }
                     }
                 });
 
         /** Enable/Disable Event Handling */
-        jcbEnableEventHandling = new JCheckBox("Enable Event Handling", false);
+        enableEventHandlingCheckBox = new JCheckBox("Enable Event Handling", false);
 
         final JButton btnGOTO = new JButton("Goto URL");
         btnGOTO.addActionListener(
@@ -125,7 +124,7 @@ public class DacsClientFrame extends JFrame {
 
                     public void actionPerformed(ActionEvent ae) {
                         try {
-                            followUrl(new URI(tfUrl.getText()));
+                            followUrl(new URI(urlTextField.getText().trim()));
                         } catch (URISyntaxException ex) {
                             // TODO implement popup for error messages
                         }
@@ -138,7 +137,7 @@ public class DacsClientFrame extends JFrame {
 
                     public void actionPerformed(ActionEvent ae) {
                         try {
-                            followUrl(new URI(actionUrls[cmbActions.getSelectedIndex()]));
+                            followUrl(new URI(actionUrls[actionsComboBox.getSelectedIndex()]));
                         } catch (URISyntaxException ex) {
                             // TODO implement popup for error messages
                         }
@@ -175,41 +174,41 @@ public class DacsClientFrame extends JFrame {
 
         Container container = this.getContentPane();
 
-        cmbActions = new JComboBox(actions);
-        cmbActions.setToolTipText("Select an Action");
-        cmbActions.setEditable(true);
-        cmbActions.setSelectedIndex(0);
+        actionsComboBox = new JComboBox(actions);
+        actionsComboBox.setToolTipText("Select an Action");
+        actionsComboBox.setEditable(true);
+        actionsComboBox.setSelectedIndex(0);
 
-        JLabel lblAction = new JLabel("Action:");
+        JLabel actionLabel = new JLabel("Action:");
 
-        tfUrl = new TextField(70);
-        tfUrl.setEditable(true);
+        urlTextField = new TextField(70);
+        urlTextField.setEditable(true);
 
-        panInput_0.add(tfUrl);
-        panInput_0.add(btnGOTO);
+        gotoUrlPanel.add(urlTextField);
+        gotoUrlPanel.add(btnGOTO);
 
-        panInput_1.add(lblAction);
-        panInput_1.add(cmbActions);
-        panInput_1.add(btnGO);
-        panInput_1.add(btnLOGIN);
-        panInput_1.add(btnUSERNAMES);
-        panInput_1.add(btnNAT);
+        actionPanel.add(actionLabel);
+        actionPanel.add(actionsComboBox);
+        actionPanel.add(btnGO);
+        actionPanel.add(btnLOGIN);
+        actionPanel.add(btnUSERNAMES);
+        actionPanel.add(btnNAT);
 
-        panAction.add(panInput_0, BorderLayout.NORTH);
-        panAction.add(panInput_1, BorderLayout.SOUTH);
+        mainPanel.add(gotoUrlPanel, BorderLayout.NORTH);
+        mainPanel.add(actionPanel, BorderLayout.SOUTH);
 
-        panInput_2.add(jcbDacsCheckonly);
-        panInput_2.add(jcbEnableEventHandling);
+        modifiersPanel.add(checkOnlyCheckBox);
+        modifiersPanel.add(enableEventHandlingCheckBox);
 
         JSplitPane splitInputPane = new JSplitPane(
                 JSplitPane.VERTICAL_SPLIT,
-                panAction, panInput_2);
+                mainPanel, modifiersPanel);
 
         splitInputPane.setOneTouchExpandable(false);
 
-        taTextResponse = new JTextArea();
-        taTextResponse.setEditable(false);
-        taTextResponse.setCaretPosition(0);
+        responseTextArea = new JTextArea();
+        responseTextArea.setEditable(false);
+        responseTextArea.setCaretPosition(0);
 
         htmlPane = new JEditorPane();
         // htmlPane.setContentType("image/png");
@@ -217,7 +216,7 @@ public class DacsClientFrame extends JFrame {
 
         JSplitPane splitResponsePane = new JSplitPane(
                 JSplitPane.VERTICAL_SPLIT,
-                new JScrollPane(taTextResponse),
+                new JScrollPane(responseTextArea),
                 new JScrollPane(htmlPane));
         splitResponsePane.setOneTouchExpandable(false);
         splitResponsePane.setResizeWeight(0.35);
@@ -251,16 +250,16 @@ public class DacsClientFrame extends JFrame {
             e.printStackTrace();
         }
 
-        taTextResponse.setText(content);
-        taTextResponse.setCaretPosition(0);
-        taTextResponse.requestFocus();
+        responseTextArea.setText(content);
+        responseTextArea.setCaretPosition(0);
+        responseTextArea.requestFocus();
     }
 
     /**
      * execute DacsGetRequest for a URL, handling DACS response status
      * @param uri
      */
-    private synchronized void followUrl(final URI uri) {
+    private synchronized void followUrl(URI uri) {
         final StringBuffer sb = new StringBuffer();
         final BufferedInputStream responsestream;
         DacsGetRequest dacsget = new DacsGetRequest(uri);
@@ -275,7 +274,7 @@ public class DacsClientFrame extends JFrame {
 //            } else if (jcbEnableEventHandling.isSelected()) {
 //                dacsstatus = dacsClientContext.executeCheckFailMethod(dacsget);
 //            } else {
-                dacsstatus = dacsClientContext.executeGetRequest(dacsget);
+            dacsstatus = dacsClientContext.executeGetRequest(dacsget);
 //            }
 
 //            switch (dacsstatus.getStatusLine().getStatusCode()) {
@@ -331,7 +330,7 @@ public class DacsClientFrame extends JFrame {
                                 });
                     }
                 } catch (IOException ex) {
-                    DacsClientFrame.LOG.warn(ex.getMessage());
+                    DacsClientFrame.logger.severe(ex.getMessage());
                     //  ex.printStackTrace();
                 } finally {
                     setDocumentContent(contenttype, sb.toString());
