@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author rmorriso
  */
-@WebServlet(name = "DemoService", urlPatterns = {"/user"})
+@WebServlet(name = "DemoService", urlPatterns = {"/user","/noauth"})
 public class DemoWebService extends WebService {
 
     private static final String PARAM_REQUEST = "request";
@@ -53,11 +53,17 @@ public class DemoWebService extends WebService {
                         out.println(" Federation: " + credential.getFederationName());
                         out.println(" Jurisdiction: " + credential.getJurisdictionName());
                         out.println(" Username: " + credential.getName());
+                    } else {
+                        out.println("No DACS credential was found in session.");
                     }
                     break;
                 case logout:
-                    serviceContext.removeSessionAttribute(SESSION_DACS_CREDENTIAL);
-                    out.println("removed credential " + credential + " from session");
+                    if (credential != null) {
+                        serviceContext.removeSessionAttribute(SESSION_DACS_CREDENTIAL);
+                        out.println("removed credential " + credential + " from session");
+                    } else {
+                        out.println("No DACS credential was found in session.");
+                    }
                     break;
             }
         } else {
