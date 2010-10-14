@@ -47,7 +47,8 @@ import javax.servlet.http.HttpSession;
 initParams = {
     @WebInitParam(name = "dacs_base_uri", value = "https://ca.nfis.org/cgi-bin/dacs"),
     @WebInitParam(name = "dacs_auth_jurisdiction", value = "CA"),
-    @WebInitParam(name = "session_user_role", value = "dacsUserRole")})
+    @WebInitParam(name = "session_user_role", value = "dacsUserRole"),
+    @WebInitParam(name = "auth_required", value = "false")})
 public class DacsFilter implements Filter {
 
     private static final Logger logger = Logger.getLogger("com.fedroot");
@@ -55,6 +56,7 @@ public class DacsFilter implements Filter {
     private static final boolean FINE = false;
     private static String DACS_BASE_URI;
     private static String DACS_AUTH_JURISDICTION;
+    private static boolean DACS_AUTH_REQUIRED;
     private static String SESSION_DACS_CREDENTIAL = "session_dacs_credential";
     // The filter configuration object we are associated with.  If
     // this value is null, this filter instance is not currently
@@ -121,10 +123,13 @@ public class DacsFilter implements Filter {
                 logger.log(Level.FINE, "resolving user against jurisdiction {0} ({1})", new Object[]{jurisdiction.getJName(), jurisdiction.getDacsUri()});
                 credential = DacsUtil.resolveUser(jurisdiction, wrappedRequest);
                 if (credential == null) {
-                    throw new DacsException("Failed to resolve DACS credentials found in request.");
+                    if (DACS_AUTH_REQUIRED) {
+                        throw new DacsException("Failed to resolve DACS credentials found in request.");
+                    }
+                } else {
+                    logger.log(Level.FINE, "resolved username as: {0}", credential);
+                    session.setAttribute(SESSION_DACS_CREDENTIAL, credential);
                 }
-                logger.log(Level.FINE, "resolved username as: {0}", credential);
-                session.setAttribute(SESSION_DACS_CREDENTIAL, credential);
             } catch (DacsException ex) {
                 sendProcessingError("Failed authenticating with DACS: " + ex.getMessage(), response);
             } catch (Exception ex) {
@@ -194,6 +199,7 @@ public class DacsFilter implements Filter {
         if (filterConfig != null) {
             DACS_BASE_URI = filterConfig.getInitParameter("dacs_base_uri");
             DACS_AUTH_JURISDICTION = filterConfig.getInitParameter("dacs_auth_jurisdiction");
+            DACS_AUTH_REQUIRED = filterConfig.getInitParameter("dacs_auth_jurisdiction").equals("true");
         }
     }
 
