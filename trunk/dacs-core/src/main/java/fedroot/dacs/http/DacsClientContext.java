@@ -4,16 +4,12 @@
  * Copyright (c) 2010 Metalogic Software Corporation
  * All rights reserved. See http://fedroot.com/licenses/metalogic.txt for redistribution information.
  */
-
-
 package fedroot.dacs.http;
 
 /**
  *
  * @author Roderick Morrison <rmorriso at fedroot.com>
  */
-
-import fedroot.dacs.client.DacsWebServiceRequest;
 import fedroot.dacs.exceptions.DacsException;
 import fedroot.servlet.WebServiceRequest;
 import java.io.IOException;
@@ -24,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.http.HttpEntity;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
@@ -41,9 +38,9 @@ import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.BasicHttpContext;
-
 
 /**
  * This example demonstrates the use of a local HTTP context populated with
@@ -52,8 +49,8 @@ import org.apache.http.protocol.BasicHttpContext;
 public class DacsClientContext {
 
     private HttpClient httpClient;
+    private HttpContext httpContext;
     private CookieStore cookieStore;
-    private HttpContext localContext;
 
     /**
      * constructor for DacsContext;
@@ -74,36 +71,39 @@ public class DacsClientContext {
         httpClient = new DefaultHttpClient(cm);
         httpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.BROWSER_COMPATIBILITY);
         cookieStore = new BasicCookieStore();
-        localContext = new BasicHttpContext();
+        httpContext = new BasicHttpContext();
         // Bind custom cookie store to the local context
-        localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+        httpContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
     }
-    
+
     public InputStream executeGetRequest(WebServiceRequest webServiceRequest) throws DacsException {
-            DacsGetRequest dacsGetRequest = new DacsGetRequest(webServiceRequest);
-            return dacsGetRequest.getInputStream(httpClient, localContext);
+        DacsGetRequest dacsGetRequest = new DacsGetRequest(webServiceRequest);
+        return dacsGetRequest.getInputStream(httpClient, httpContext);
     }
 
     public HttpResponse executeGetRequest(URI uri) throws DacsException {
         DacsGetRequest dacsGetRequest = new DacsGetRequest(uri);
         HttpGet httpGet = dacsGetRequest.getHttpGet();
         try {
-            return httpClient.execute(httpGet, localContext);
+            return httpClient.execute(httpGet, httpContext);
         } catch (IOException ex) {
             Logger.getLogger(DacsClientContext.class.getName()).log(Level.SEVERE, null, ex);
             throw new DacsException("DACS HTTP Get Request failed: " + ex.getMessage());
         } finally {
-           // TODO need to close connection, or use multithreaded connection manager or SOMETHING!
+            // TODO need to close connection, or use multithreaded connection manager or SOMETHING!
         }
     }
 
     public HttpResponse executeGetRequest(DacsGetRequest dacsGetRequest) throws IOException {
-        return httpClient.execute(dacsGetRequest.getHttpGet(), localContext);
+        return httpClient.execute(dacsGetRequest.getHttpGet(), httpContext);
     }
 
     public HttpResponse executePostRequest(WebServiceRequest webServiceRequest) throws IOException {
         DacsPostRequest dacsPostRequest = new DacsPostRequest(webServiceRequest);
-        return httpClient.execute(dacsPostRequest.getHttpPost(), localContext);
+        HttpResponse response = httpClient.execute(dacsPostRequest.getHttpPost(), httpContext);
+        HttpEntity entity = response.getEntity();
+        if (entity != null) entity.consumeContent();
+        return response;
     }
 
     public List<Cookie> getAllCookies() {
@@ -128,28 +128,42 @@ public class DacsClientContext {
     private DacsCookie getCookieByName(String cookieName) {
         for (Cookie cookie : cookieStore.getCookies()) {
             if (cookie.getName().equals(cookieName)) {
-                return (DacsCookie)cookie;
+                return (DacsCookie) cookie;
             }
         }
         return null;
     }
-    
-    public void addCookie(DacsCookie cookie) {
-            DacsCookie foundCookie = getCookieByName(cookie.getName());
-            if (foundCookie != null) {
-                // do nothing if identical cookie is present in DacsContext
-                if (foundCookie.getValue().equals(cookie.getValue())) {
-                    return;
-                }
-                // cookie with same name but different value present in DacsContext
-                //    -- nuke it and add the new one --
-                // this is relevant when the browser has obtained credentials
-                // outside of FedAdmin app; we assume the browser holds the
-                // definitive version of state
-                    foundCookie.setExpiryDate(new Date(0));
-                    cookieStore.clearExpired(new Date());
+
+    /**
+     * remove cookie from CookieStore by name
+     * @param name name of cookie to remove
+     */
+    public void removeCookieByName(String cookieName) {
+        for (Cookie cookie : cookieStore.getCookies()) {
+            if (cookie.getName().equals(cookieName)) {
+                BasicClientCookie removeCookie = (BasicClientCookie) cookie;
+                removeCookie.setExpiryDate(new Date(0));
             }
-            cookieStore.addCookie(cookie);
+        }
+        cookieStore.clearExpired(new Date());
+    }
+
+    public void addCookie(DacsCookie cookie) {
+        DacsCookie foundCookie = getCookieByName(cookie.getName());
+        if (foundCookie != null) {
+            // do nothing if identical cookie is present in DacsContext
+            if (foundCookie.getValue().equals(cookie.getValue())) {
+                return;
+            }
+            // cookie with same name but different value present in DacsContext
+            //    -- nuke it and add the new one --
+            // this is relevant when the browser has obtained credentials
+            // outside of FedAdmin app; we assume the browser holds the
+            // definitive version of state
+            foundCookie.setExpiryDate(new Date(0));
+            cookieStore.clearExpired(new Date());
+        }
+        cookieStore.addCookie(cookie);
     }
 
     public void addDacsCookies(List<DacsCookie> cookies) {
@@ -166,8 +180,4 @@ public class DacsClientContext {
     public void closeConnection() {
         httpClient.getConnectionManager().shutdown();
     }
-
-    
-
 }
-
