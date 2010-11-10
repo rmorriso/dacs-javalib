@@ -8,7 +8,6 @@ package fedroot.dacs.http;
 
 import fedroot.dacs.exceptions.DacsRuntimeException;
 import java.util.Date;
-import org.apache.http.cookie.ClientCookie;
 import org.apache.http.impl.cookie.BasicClientCookie;
 
 /**
@@ -61,8 +60,10 @@ public class DacsCookie extends BasicClientCookie {
         }
         setPath("/");
 
+        // TODO: set expire date from DACS configuration
         Date expires = new Date();
         expires.setTime(expires.getTime() + 3600);
+        setExpiryDate(expires);
 
         setSecure(secure);
     }
@@ -90,4 +91,5 @@ public class DacsCookie extends BasicClientCookie {
     private static boolean isDacsSelectCookieName(String cookieName) {
         return (cookieName.startsWith("DACS:") && cookieName.endsWith(":SELECT"));
     }
+
 }
