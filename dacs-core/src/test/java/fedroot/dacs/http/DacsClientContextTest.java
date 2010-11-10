@@ -52,10 +52,12 @@ public class DacsClientContextTest extends TestCase {
         List<Cookie> cookies = dacsClientContext.getAllCookies();
         assertEquals(2, cookies.size());
         for (Cookie cookie : cookies) {
+            System.out.println(cookie.getName());
             assertFalse(cookie.isSecure());
             assertFalse(cookie.isExpired(new Date()));
-            System.out.println(cookie.getName());
+            assertFalse(DacsCookie.isDacsCookie(cookie));
         }
+
     }
 
     @Override
