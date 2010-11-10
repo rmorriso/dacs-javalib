@@ -34,7 +34,7 @@ public class DacsCookieName {
     }
 
     /**
-     * a DACS cookie name is of the form DACS:Federation-Name:::SELECTED
+     * a DACS cookie name is of the form DACS:Federation:::SELECTED
      */
     private DacsCookieName(String federationName) throws DacsRuntimeException {
         federationPart = federationName;
@@ -66,6 +66,10 @@ public class DacsCookieName {
         return null;
     }
 
+    public static String getName(String federationName, String jurisdictionName, String username) {
+        return "DACS:" + federationName + "::" + jurisdictionName + ":" + username;
+    }
+    
     public String getCookieName() {
         return cookieName;
     }
