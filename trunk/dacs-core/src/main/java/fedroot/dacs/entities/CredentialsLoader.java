@@ -6,7 +6,10 @@
  */
 package fedroot.dacs.entities;
 
+import com.fedroot.dacs.CommonStatus;
+import com.fedroot.dacs.DacsAuthReply;
 import com.fedroot.dacs.DacsCurrentCredentials;
+import fedroot.dacs.client.DacsAuthenticateRequest;
 import fedroot.dacs.client.DacsCurrentCredentialsRequest;
 import fedroot.dacs.exceptions.DacsException;
 import fedroot.dacs.http.DacsClientContext;
@@ -18,7 +21,6 @@ import fedroot.dacs.http.DacsClientContext;
 public class CredentialsLoader extends WebServiceEntityLoader {
 
     private Credentials credentials;
-    private DacsCurrentCredentialsRequest dacsCurrentCredentialsRequest;
 
     public CredentialsLoader(Jurisdiction jurisdiction, DacsClientContext dacsClientContext) throws DacsException {
         super(new DacsCurrentCredentialsRequest(jurisdiction));
@@ -26,6 +28,22 @@ public class CredentialsLoader extends WebServiceEntityLoader {
         credentials = new Credentials(dacsCurrentCredentials.getFederationName(), dacsCurrentCredentials.getFederationDomain());
         for (DacsCurrentCredentials.Credentials credential : dacsCurrentCredentials.getCredentials()) {
             credentials.addCredential(new Credential(credential.getFederation(), credential.getJurisdiction(), credential.getName(), credential.getRoles(), credential.getAuthStyle(), credential.getCookieName()));
+        }
+    }
+
+    public CredentialsLoader(Jurisdiction jurisdiction, String username, String password, DacsClientContext dacsClientContext) throws DacsException {
+        super(new DacsAuthenticateRequest(jurisdiction, username, password));
+        DacsAuthReply dacsAuthReply = (DacsAuthReply) load(dacsClientContext);
+        CommonStatus commonStatus = dacsAuthReply.getCommonStatus();
+        if (commonStatus != null) {
+            throw new DacsException(commonStatus.getCode(), commonStatus.getMessage());
+        }
+        DacsCurrentCredentials dacsCurrentCredentials = dacsAuthReply.getDacsCurrentCredentials();
+        if (dacsCurrentCredentials.getFederationName() != null) {
+            credentials = new Credentials(dacsCurrentCredentials.getFederationName(), dacsCurrentCredentials.getFederationDomain());
+            for (DacsCurrentCredentials.Credentials credential : dacsCurrentCredentials.getCredentials()) {
+                credentials.addCredential(new Credential(credential.getFederation(), credential.getJurisdiction(), credential.getName(), credential.getRoles(), credential.getAuthStyle(), credential.getCookieName()));
+            }
         }
     }
 
@@ -37,4 +55,5 @@ public class CredentialsLoader extends WebServiceEntityLoader {
     public Credentials getCredentials() {
         return this.credentials;
     }
+
 }
