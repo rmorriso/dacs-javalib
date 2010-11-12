@@ -15,6 +15,8 @@ package fedroot.dacs.exceptions;
  * @author rmorriso
  */
 public class DacsException extends Exception {
+
+    private int statusCode;
     
     /** Creates a new instance of DacsException */
     public DacsException() {
@@ -24,5 +26,16 @@ public class DacsException extends Exception {
     /** Creates a new instance of DacsException */
     public DacsException(String dacsstatusline) {
         super(dacsstatusline);
+    }
+
+    /** Creates a new instance of DacsException */
+    public DacsException(int statusCode, String dacsstatusline) {
+        super(dacsstatusline);
+        this.statusCode = statusCode;
+    }
+
+
+    public int getStatusCode() {
+        return statusCode;
     }
 }

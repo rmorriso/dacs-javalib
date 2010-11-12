@@ -51,6 +51,10 @@ public class Credentials {
         return credentials;
     }
 
+    public boolean hasCredentials() {
+        return credentials.size() > 0;
+    }
+
     public void addCredential(Credential credential) {
         credentials.add(credential);
     }
