@@ -16,6 +16,7 @@ import fedroot.dacs.entities.CredentialsLoader;
 import fedroot.dacs.entities.Federation;
 import fedroot.dacs.entities.FederationLoader;
 import fedroot.dacs.entities.Jurisdiction;
+import fedroot.dacs.exceptions.DacsException;
 import fedroot.dacs.http.DacsClientContext;
 import fedroot.dacs.http.DacsCookieName;
 import java.util.List;
@@ -32,78 +33,82 @@ import org.apache.http.cookie.Cookie;
  */
 public class ExampleRunner {
 
+        private final static Logger logger = Logger.getLogger(ExampleRunner.class.getName());
+        private static FederationLoader federationLoader;
+        private static Federation federation;
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        DacsClientContext dacsClientContext = new DacsClientContext();
         try {
+            DacsClientContext dacsClientContext = new DacsClientContext();
+            federationLoader = new FederationLoader("https://fedroot.com/dacs", dacsClientContext);
+            federation = federationLoader.getFederation();
+
             failedAuthenticationExample(dacsClientContext);
 //            authenticationExample(dacsClientContext);
 //            credentialsExample(dacsClientContext);
 //            federationExample();
 //            getCookiesWithEmail();
         } catch (Exception ex) {
-            Logger.getLogger(ExampleRunner.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
     }
 
     private static void federationExample(DacsClientContext dacsClientContext) throws Exception {
-        FederationLoader federationLoader = new FederationLoader("https://fedroot.com/dacs", dacsClientContext);
-        Federation federation = federationLoader.getFederation();
         Jurisdiction jurisdiction = federation.getJurisdictionByName("TEST");
     }
 
-    private static void authenticationExample(DacsClientContext dacsClientContext) throws Exception {
-        FederationLoader federationLoader = new FederationLoader("https://fedroot.com/dacs", dacsClientContext);
-        Federation federation = federationLoader.getFederation();
-        Jurisdiction test = federation.getJurisdictionByName("TEST");
-        // authenticate as test user "black"
-        String username = "black";
-        String password = "foozle";
-        DacsAuthenticateRequest dacsAuthenticateRequest = new DacsAuthenticateRequest(test, username, password);
-        HttpResponse response = dacsClientContext.executePostRequest(dacsAuthenticateRequest);
-        System.out.println("HTTP response: " + response.getStatusLine());
-        System.out.println("Cookies present in dacsClientContext after authentication:");
-        for (Cookie cookie : dacsClientContext.getDacsCookies(".fedroot.com")) {
-//        for (Cookie cookie : dacsClientContext.getAllCookies()) {
-            System.out.println(cookie.getName());
-        }
-        // now remove a cookie by name
-        dacsClientContext.removeCookieByName(DacsCookieName.getName(federation.getFederationName(), test.getJName(), username));
-        System.out.println("Cookies present in dacsClientContext after removing DACS cookie:");
-        for (Cookie cookie : dacsClientContext.getDacsCookies("fedroot.com")) {
-            System.out.println(cookie.getName());
+    private static void authenticationExample(DacsClientContext dacsClientContext) {
+        try {
+            Jurisdiction test = federation.getJurisdictionByName("TEST");
+            // authenticate as test user "black"
+            String username = "black";
+            String password = "foozle";
+            DacsAuthenticateRequest dacsAuthenticateRequest = new DacsAuthenticateRequest(test, username, password);
+            dacsClientContext.executePostRequest(dacsAuthenticateRequest);
+            //        System.out.println("HTTP response: " + response.getStatusLine());
+            System.out.println("Cookies present in dacsClientContext after authentication:");
+            for (Cookie cookie : dacsClientContext.getDacsCookies(".fedroot.com")) {
+                //        for (Cookie cookie : dacsClientContext.getAllCookies()) {
+                System.out.println(cookie.getName());
+            }
+            // now remove a cookie by name
+            dacsClientContext.removeCookieByName(DacsCookieName.getName(federation.getFederationName(), test.getJName(), username));
+            System.out.println("Cookies present in dacsClientContext after removing DACS cookie:");
+            for (Cookie cookie : dacsClientContext.getDacsCookies("fedroot.com")) {
+                System.out.println(cookie.getName());
+            }
+        } catch (DacsException ex) {
+            logger.log(Level.SEVERE, "Authentication example failed: {0}", ex.getLocalizedMessage());
         }
     }
 
-    private static void failedAuthenticationExample(DacsClientContext dacsClientContext) throws Exception {
-        FederationLoader federationLoader = new FederationLoader("https://fedroot.com/dacs", dacsClientContext);
-        Federation federation = federationLoader.getFederation();
-        Jurisdiction test = federation.getJurisdictionByName("TEST");
-        // authenticate as test user "black"
-        String username = "black";
-        String badPassword = "foozl";
-        String goodPassword = "foozle";
-        DacsAuthenticateRequest dacsAuthenticateRequest = new DacsAuthenticateRequest(test, username, badPassword);
-        HttpResponse response = dacsClientContext.executePostRequest(dacsAuthenticateRequest);
-        System.out.println("HTTP response: " + response.getStatusLine());
-        System.out.println("Cookies present in dacsClientContext after failed authentication:");
-        for (Cookie cookie : dacsClientContext.getDacsCookies(".fedroot.com")) {
-            System.out.println(cookie.getName());
-        }
-        dacsAuthenticateRequest = new DacsAuthenticateRequest(test, username, goodPassword);
-        response = dacsClientContext.executePostRequest(dacsAuthenticateRequest);
-        System.out.println("HTTP response: " + response.getStatusLine());
-        System.out.println("Cookies present in dacsClientContext after successful authentication:");
-        for (Cookie cookie : dacsClientContext.getDacsCookies(".fedroot.com")) {
-            System.out.println(cookie.getName());
+    private static void failedAuthenticationExample(DacsClientContext dacsClientContext) {
+        try {
+            Jurisdiction test = federation.getJurisdictionByName("TEST");
+            // authenticate as test user "black"
+            String username = "black";
+            String badPassword = "foozl";
+            String goodPassword = "foozle";
+            DacsAuthenticateRequest dacsAuthenticateRequest = new DacsAuthenticateRequest(test, username, badPassword);
+            dacsClientContext.executePostRequest(dacsAuthenticateRequest);
+            System.out.println("Cookies present in dacsClientContext after failed authentication:");
+            for (Cookie cookie : dacsClientContext.getDacsCookies(".fedroot.com")) {
+                System.out.println(cookie.getName());
+            }
+            dacsAuthenticateRequest = new DacsAuthenticateRequest(test, username, goodPassword);
+            dacsClientContext.executePostRequest(dacsAuthenticateRequest);
+            System.out.println("Cookies present in dacsClientContext after successful authentication:");
+            for (Cookie cookie : dacsClientContext.getDacsCookies(".fedroot.com")) {
+                System.out.println(cookie.getName());
+            }
+        } catch (DacsException ex) {
+            logger.log(Level.SEVERE, "Failed Authentication example failed: {0}", ex.getLocalizedMessage());
         }
     }
 
     private static void credentialsExample(DacsClientContext dacsClientContext) throws Exception {
-        FederationLoader federationLoader = new FederationLoader("https://fedroot.com/dacs", dacsClientContext);
-        Federation federation = federationLoader.getFederation();
         Jurisdiction test = federation.getJurisdictionByName("TEST");
         CredentialsLoader credentialsLoader = new CredentialsLoader(test, dacsClientContext);
         Credentials credentials = credentialsLoader.getCredentials();
