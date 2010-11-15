@@ -13,6 +13,7 @@ import fedroot.dacs.client.DacsAuthenticateRequest;
 import fedroot.dacs.client.DacsCurrentCredentialsRequest;
 import fedroot.dacs.exceptions.DacsException;
 import fedroot.dacs.http.DacsClientContext;
+import fedroot.servlet.HttpRequestType;
 
 /**
  *
@@ -32,7 +33,7 @@ public class CredentialsLoader extends WebServiceEntityLoader {
     }
 
     public CredentialsLoader(Jurisdiction jurisdiction, String username, String password, DacsClientContext dacsClientContext) throws DacsException {
-        super(new DacsAuthenticateRequest(jurisdiction, username, password));
+        super(new DacsAuthenticateRequest(jurisdiction, username, password), HttpRequestType.POST);
         DacsAuthReply dacsAuthReply = (DacsAuthReply) load(dacsClientContext);
         CommonStatus commonStatus = dacsAuthReply.getCommonStatus();
         if (commonStatus != null) {

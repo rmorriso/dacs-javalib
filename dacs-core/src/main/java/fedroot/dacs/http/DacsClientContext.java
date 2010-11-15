@@ -98,12 +98,17 @@ public class DacsClientContext {
         return httpClient.execute(dacsGetRequest.getHttpGet(), httpContext);
     }
 
-    public HttpResponse executePostRequest(WebServiceRequest webServiceRequest) throws IOException {
+//    public HttpResponse executePostRequest(WebServiceRequest webServiceRequest) throws IOException {
+//        DacsPostRequest dacsPostRequest = new DacsPostRequest(webServiceRequest);
+//        HttpResponse response = httpClient.execute(dacsPostRequest.getHttpPost(), httpContext);
+//        HttpEntity entity = response.getEntity();
+//        if (entity != null) entity.consumeContent();
+//        return response;
+//    }
+
+    public InputStream executePostRequest(WebServiceRequest webServiceRequest) throws DacsException {
         DacsPostRequest dacsPostRequest = new DacsPostRequest(webServiceRequest);
-        HttpResponse response = httpClient.execute(dacsPostRequest.getHttpPost(), httpContext);
-        HttpEntity entity = response.getEntity();
-        if (entity != null) entity.consumeContent();
-        return response;
+        return dacsPostRequest.getInputStream(httpClient, httpContext);
     }
 
     public List<Cookie> getAllCookies() {

@@ -11,6 +11,7 @@ package fedroot.dacs.entities;
 import fedroot.dacs.client.DacsWebServiceRequest;
 import fedroot.dacs.exceptions.DacsException;
 import fedroot.dacs.http.DacsClientContext;
+import fedroot.servlet.HttpRequestType;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
@@ -25,14 +26,23 @@ import javax.xml.bind.Unmarshaller;
 abstract public class WebServiceEntityLoader {
 
     private DacsWebServiceRequest dacsWebServiceRequest;
+    private HttpRequestType httpRequestType;
 
     /**
      * subclasses are expected to initialize the appropriate DacsWebServiceRequest
      */
     public WebServiceEntityLoader(DacsWebServiceRequest dacsWebServiceRequest) {
         this.dacsWebServiceRequest = dacsWebServiceRequest;
+        // default request type is GET
+        this.httpRequestType = HttpRequestType.GET;
     }
     
+    public WebServiceEntityLoader(DacsWebServiceRequest dacsWebServiceRequest, HttpRequestType httpRequestType) {
+        this.dacsWebServiceRequest = dacsWebServiceRequest;
+        // default request type is GET
+        this.httpRequestType = httpRequestType;
+    }
+
 
     /**
      * unmarshall the XML entity in the document returned from DacsWebServiceRequest
@@ -65,7 +75,11 @@ abstract public class WebServiceEntityLoader {
      * @return the XML document returned in the Web service request
      */
     private InputStream getXmlStream(DacsClientContext dacsClientContext)  throws DacsException {
+        if (httpRequestType == HttpRequestType.GET) {
             return dacsClientContext.executeGetRequest(dacsWebServiceRequest);
+            } else {
+            return dacsClientContext.executePostRequest(dacsWebServiceRequest);
+            }
     }
 
 }
