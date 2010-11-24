@@ -386,15 +386,12 @@ public class DacsLoginDialog extends JDialog {
             Jurisdiction jurisdiction = federation.getJurisdictionByName(cmbJurisdictions.getSelectedItem().toString());
             DacsAuthenticateRequest dacsAuthenticateRequest = new DacsAuthenticateRequest(jurisdiction, getName(), getPass());
             try {
-                HttpResponse httpResponse = dacscontext.executePostRequest(dacsAuthenticateRequest);
-                if (httpResponse.getStatusLine().getStatusCode() == 200) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } catch (IOException ex) {
+                dacscontext.executePostRequest(dacsAuthenticateRequest);
+                return true;
+            } catch (DacsException ex) {
                 Logger.getLogger(DacsLoginDialog.class.getName()).log(Level.SEVERE, null, ex);
                 return false;
+
             }
 
         } else {
