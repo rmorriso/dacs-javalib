@@ -1,12 +1,18 @@
 package com.fedroot.demo.dacs.swing;
 
-
 import fedroot.dacs.client.DacsAuthenticateRequest;
+import fedroot.dacs.entities.Credential;
+import fedroot.dacs.entities.Credentials;
+import fedroot.dacs.entities.CredentialsLoader;
 import fedroot.dacs.entities.Federation;
 import fedroot.dacs.entities.Jurisdiction;
+import fedroot.dacs.entities.Role;
+import fedroot.dacs.exceptions.DacsException;
 import fedroot.dacs.http.DacsClientContext;
+import fedroot.dacs.http.DacsCookieName;
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Label;
 import java.awt.TextField;
@@ -14,25 +20,29 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
-import org.apache.http.HttpResponse;
-
 
 /**
  * Get DACS login details
  */
 public class DacsLoginFrame extends JFrame {
-    protected DacsClientContext dacsClientContext;
-    protected final Federation federation;
+
+    private static final Logger logger = Logger.getLogger(DacsLoginFrame.class.getName());
+    private String dacsCookieName;
+    private DacsClientContext dacsClientContext;
+    private final Federation federation;
     private JComboBox cmbJurisdictions;
-    private List<String> jurisdiction_names;
-    protected TextField tfUsername, tfStatus;
-    protected JPasswordField pwfPassword;
+    private List<String> jurisdictionNames;
+    private TextField tfUsername;
+    private TextField tfStatus;
+    private JPasswordField pwfPassword;
     /** The OK button */
-    final protected JButton ok;
+    final private JButton ok;
     /** The cancel button */
-    final protected JButton can;
-    
+    final private JButton can;
+
     /**
      * Construct a DacsLoginFrame
      * 
@@ -44,70 +54,101 @@ public class DacsLoginFrame extends JFrame {
         setTitle("DACS Login to Federation: " + federation.getFederationName());
         this.federation = federation;
         this.dacsClientContext = user;
-        jurisdiction_names = new ArrayList<String>();
+        jurisdictionNames = new ArrayList<String>();
         for (Jurisdiction jurisdiction : federation.getAuthenticatingJurisdictions()) {
-            this.jurisdiction_names.add(jurisdiction.getJName());
+            this.jurisdictionNames.add(jurisdiction.getJName());
         }
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        
+
         //Set up the content pane.
-        Container pane = this.getContentPane();
-        pane.setLayout(new BorderLayout());
-                
-        // Jurisdictions combobox
-        cmbJurisdictions = new JComboBox(this.jurisdiction_names.toArray());
+        Container contentPane = this.getContentPane();
+
+        JPanel inputsPane = new JPanel();
+        inputsPane.setLayout(new BoxLayout(inputsPane, BoxLayout.PAGE_AXIS));
+
+        // Jurisdictions ComboBox
+        cmbJurisdictions = new JComboBox(this.jurisdictionNames.toArray());
+        cmbJurisdictions.setAlignmentX(LEFT_ALIGNMENT);
+
         cmbJurisdictions.setToolTipText("Select a Jurisdiction");
         cmbJurisdictions.setEditable(false);
         cmbJurisdictions.setSelectedIndex(0);
-        
-        JPanel textpane = new JPanel(new FlowLayout());
-        textpane.add(cmbJurisdictions);
-        tfUsername = addTextField("Username", 20, textpane);
-        tfUsername.requestFocus();
-        pwfPassword = addPasswordField("Password", 10, textpane);
 
-        
-        JPanel buttonpane = new JPanel(new FlowLayout());
-        
+        // Username
+        JPanel userPane = new JPanel();
+        userPane.setLayout(new BoxLayout(userPane, BoxLayout.LINE_AXIS));
+        userPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+        userPane.add(Box.createHorizontalGlue());
+        userPane.setAlignmentX(LEFT_ALIGNMENT);
+
+        tfUsername = addTextField("Username: ", 20, userPane);
+        tfUsername.requestFocus();
+
+        // Password
+        JPanel passwordPane = new JPanel();
+        passwordPane.setLayout(new BoxLayout(userPane, BoxLayout.LINE_AXIS));
+        passwordPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+        passwordPane.add(Box.createHorizontalGlue());
+        passwordPane.setAlignmentX(LEFT_ALIGNMENT);
+
+
+        pwfPassword = addPasswordField("Password: ", 10, passwordPane);
+
+        // Controls
+        JPanel buttonPane = new JPanel();
+        buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
+        buttonPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+        buttonPane.add(Box.createHorizontalGlue());
+        buttonPane.setAlignmentX(CENTER_ALIGNMENT);
+
         ok = new JButton("OK");
         can = new JButton("Cancel");
-        buttonpane.add(ok);
-        buttonpane.add(can);
+        buttonPane.add(ok);
+        buttonPane.add(can);
+
+        // add inputs
+        inputsPane.add(cmbJurisdictions);
+        inputsPane.add(userPane);
+        inputsPane.add(passwordPane);
+        inputsPane.add(buttonPane);
+
+
+        // Status line
+        JPanel statusPane = new JPanel(new FlowLayout());
+        statusPane.setAlignmentX(LEFT_ALIGNMENT);
         
-        JPanel statuspane = new JPanel(new FlowLayout());
-        tfStatus = addTextField("Status",  80, statuspane);
-        
+        tfStatus = addTextField("Status", 80, statusPane);
+
         ok.addActionListener(
                 new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                String jur_name = jurisdiction_names.get(cmbJurisdictions.getSelectedIndex());
-                tfStatus.setText("authenticating in " + jur_name);
-                if (authenticate(federation.getJurisdictionByName(jur_name))) {
-                    tfStatus.setText("successfully authenticated in " + jur_name);
-                } else {
-                    tfStatus.setText("authentication failed");
-                };
-                pwfPassword.setText("");
-            }
-        });
-        
+
+                    public void actionPerformed(ActionEvent ae) {
+                        String jurisdictionName = jurisdictionNames.get(cmbJurisdictions.getSelectedIndex());
+                        tfStatus.setText("authenticating in " + jurisdictionName);
+                        if (authenticate(federation.getJurisdictionByName(jurisdictionName))) {
+                            tfStatus.setText("successfully authenticated in " + jurisdictionName);
+                        } else {
+                            tfStatus.setText("authentication failed");
+                        }
+                        ;
+                        pwfPassword.setText("");
+                    }
+                });
+
         can.addActionListener(
                 new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                dispose();
-            }
-        });
-        
-        JPanel inputpane = new JPanel(new BorderLayout());
-        inputpane.add(textpane, BorderLayout.CENTER);
-        inputpane.add(buttonpane, BorderLayout.SOUTH);
-        
-        pane.add(inputpane, BorderLayout.CENTER);
-        pane.add(statuspane, BorderLayout.SOUTH);
+
+                    public void actionPerformed(ActionEvent ae) {
+                        dispose();
+                    }
+                });
+
+        contentPane.add(inputsPane, BorderLayout.CENTER);
+        contentPane.add(statusPane, BorderLayout.SOUTH);
+
         pack();
     }
 
-    
     // handle details of adding a TextField to a container
     private TextField addTextField(String text, int width, Container container) {
         JPanel panInput = new JPanel(new FlowLayout());
@@ -121,21 +162,21 @@ public class DacsLoginFrame extends JFrame {
         container.add(panInput);
         return textfield;
     }
-    
+
     // handle details of adding a JPasswordField to a container
     private JPasswordField addPasswordField(String text, int width, Container container) {
         JPanel panInput = new JPanel(new FlowLayout());
         Label label = new Label(text);
         label.setAlignment(Label.LEFT);
         JPasswordField pwfield = new JPasswordField(width);
-        pwfield .setEditable(true);
+        pwfield.setEditable(true);
         panInput.add(label);
-        panInput.add(pwfield );
+        panInput.add(pwfield);
         panInput.setVisible(true);
         container.add(panInput);
-        return pwfield ;
+        return pwfield;
     }
-    
+
     /*
      * extract username/password text fields, do DACS authentication in jurisdiction
      * @return true on success, else false
@@ -148,18 +189,29 @@ public class DacsLoginFrame extends JFrame {
      * @return 
      */
     protected boolean authenticate(Jurisdiction jurisdiction) {
-        tfUsername.selectAll();
-        String username = tfUsername.getSelectedText();
+//        tfUsername.selectAll();
+//        String username = tfUsername.getSelectedText();
+        String username = tfUsername.getText();
+        username = (username != null ? username.trim() : username);
         pwfPassword.selectAll();
         String password = pwfPassword.getSelectedText();
-        DacsAuthenticateRequest dacsAuthenticateRequest = new DacsAuthenticateRequest(jurisdiction, username, password);
-
+        password = (password != null ? password.trim() : password);
         try {
-            HttpResponse httpResponse = dacsClientContext.executePostRequest(dacsAuthenticateRequest);
-            return (httpResponse.getStatusLine().getStatusCode() == 200);
-        } catch (Exception e) {
-            e.printStackTrace();
+            CredentialsLoader credentialsLoader = new CredentialsLoader(jurisdiction, username, password, dacsClientContext);
+            Credentials credentials = credentialsLoader.getCredentials();
+            if (credentials.hasCredentials()) {
+                logger.log(Level.FINE, "User {0} login succeeded.", username);
+                // save DACS cookie name so we can nuke the cookie for fast logout
+                dacsCookieName = DacsCookieName.getName(federation.getFederationName(), jurisdiction.getJName(), username);
+                return true;
+            } else { // shouldn't get here - a DacsException is thrown when dacs_authenticate fails
+                logger.log(Level.FINE, "User {0} login failed.", username);
+                return false;
+            }
+        } catch (DacsException ex) {
+            logger.log(Level.FINE, "User login exception: {0}.", ex.getMessage());
             return false;
         }
+
     }
 }

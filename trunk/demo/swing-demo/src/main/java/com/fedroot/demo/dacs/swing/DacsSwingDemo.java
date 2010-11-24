@@ -32,7 +32,6 @@ import java.awt.geom.RoundRectangle2D;
 import java.io.BufferedInputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Logger;
 import javax.swing.ActionMap;

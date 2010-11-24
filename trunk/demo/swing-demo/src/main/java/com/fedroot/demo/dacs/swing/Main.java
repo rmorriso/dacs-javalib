@@ -34,9 +34,9 @@ public class Main {
         try {
             FederationLoader federationLoader = new FederationLoader(feduri, dacsClientContext);
             Federation federation = federationLoader.getFederation();
-            DacsClientFrame f = new DacsClientFrame(dacsClientContext, federation);
+            DacsLoginFrame f = new DacsLoginFrame(federation, dacsClientContext);
             f.setTitle("DACS JavaLib Example Thick Client");
-            f.setSize(900, 500);
+//            f.setSize(900, 500);
             f.addWindowListener(
                     new WindowAdapter() {
                 public void windowClosing(WindowEvent e) {
