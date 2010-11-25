@@ -14,6 +14,7 @@ import fedroot.dacs.entities.FederationLoader;
 import fedroot.dacs.http.DacsClientContext;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.swing.JFrame;
 
 /**
  * main class for examples 7, 8, 9, 10 in DJL system documentation;
@@ -34,17 +35,31 @@ public class Main {
         try {
             FederationLoader federationLoader = new FederationLoader(feduri, dacsClientContext);
             Federation federation = federationLoader.getFederation();
-            DacsLoginFrame f = new DacsLoginFrame(federation, dacsClientContext);
-            f.setTitle("DACS JavaLib Example Thick Client");
+            JFrame frame = new JFrame();
+            frame.setTitle("DACS JavaLib Example Thick Client");
+            DacsLoginDialog loginDialog = new DacsLoginDialog(frame);
 //            f.setSize(900, 500);
-            f.addWindowListener(
+            frame.addWindowListener(
                     new WindowAdapter() {
                 public void windowClosing(WindowEvent e) {
                     System.exit(0);
                 }
             }
             );
-            f.setVisible(true);
+            frame.setVisible(true);
+            loginDialog.showDialog();
+
+//            DacsLoginFrame f = new DacsLoginFrame(federation, dacsClientContext);
+//            f.setTitle("DACS JavaLib Example Thick Client");
+////            f.setSize(900, 500);
+//            f.addWindowListener(
+//                    new WindowAdapter() {
+//                public void windowClosing(WindowEvent e) {
+//                    System.exit(0);
+//                }
+//            }
+//            );
+//            f.setVisible(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
