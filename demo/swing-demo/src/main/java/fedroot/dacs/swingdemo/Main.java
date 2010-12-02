@@ -7,7 +7,7 @@
  * All rights reserved. See http://fedroot.com/licenses/metalogic.txt for redistribution information.
  */
 
-package com.fedroot.demo.dacs.swing;
+package fedroot.dacs.swingdemo;
 
 import fedroot.dacs.entities.Federation;
 import fedroot.dacs.entities.FederationLoader;
@@ -23,9 +23,7 @@ import javax.swing.JFrame;
  */
 public class Main {
     
-    private static DacsClientContext dacsClientContext = new DacsClientContext();
-
-    private static String feduri = "https://fedroot.com/dacs";
+    private static final String DACS_BASE_URI = "https://fedroot.com/test/dacs";
     
     /**
      * 
@@ -33,10 +31,12 @@ public class Main {
      */
     public static void main(String[] args) {
         try {
-            FederationLoader federationLoader = new FederationLoader(feduri, dacsClientContext);
-            Federation federation = federationLoader.getFederation();
+            SessionController sessionController = new SessionController(DACS_BASE_URI);
+            
             JFrame frame = new JFrame();
             frame.setTitle("DACS JavaLib Example Thick Client");
+            frame.setSize(500,200);
+            
             DacsLoginDialog loginDialog = new DacsLoginDialog(frame);
 //            f.setSize(900, 500);
             frame.addWindowListener(

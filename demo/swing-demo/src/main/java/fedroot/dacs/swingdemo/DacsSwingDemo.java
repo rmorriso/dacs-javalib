@@ -3,7 +3,7 @@
  * Copyright (C) 2006 Sun Microsystems, Inc. All rights reserved. Use is
  * subject to license terms.
  */
-package com.fedroot.demo.dacs.swing;
+package fedroot.dacs.swingdemo;
 
 import fedroot.dacs.entities.Federation;
 import fedroot.dacs.entities.FederationLoader;

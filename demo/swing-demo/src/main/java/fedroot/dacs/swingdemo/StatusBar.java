@@ -5,7 +5,7 @@
  * subject to license terms.
  */ 
 
-package com.fedroot.demo.dacs.swing;
+package fedroot.dacs.swingdemo;
 
 import org.jdesktop.application.Application;
 import org.jdesktop.application.ResourceMap;
