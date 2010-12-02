@@ -15,7 +15,7 @@
  * See COPYING.TXT for details.
  */
 
-package com.fedroot.demo.dacs.swing;
+package fedroot.dacs.swingdemo;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -65,7 +65,7 @@ public class DacsLoginDialog extends JDialog {
 	 * @since ostermillerutils 1.00.00
 	 */
 	@Override public void setLocale(Locale locale){
-		labels = ResourceBundle.getBundle("com.Ostermiller.util.PasswordDialog",  locale);
+		labels = ResourceBundle.getBundle("PasswordDialog",  locale);
 	}
 
 	/**

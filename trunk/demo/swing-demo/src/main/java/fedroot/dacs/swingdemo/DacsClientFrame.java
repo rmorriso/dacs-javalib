@@ -6,7 +6,7 @@
  * Copyright (c) 2005 Metalogic Software Corporation.
  * All rights reserved. See http://fedroot.com/licenses/metalogic.txt for redistribution information.
  */
-package com.fedroot.demo.dacs.swing;
+package fedroot.dacs.swingdemo;
 
 import fedroot.dacs.entities.Federation;
 import fedroot.dacs.http.DacsClientContext;

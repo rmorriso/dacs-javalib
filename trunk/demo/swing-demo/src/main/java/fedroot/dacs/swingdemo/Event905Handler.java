@@ -8,7 +8,7 @@
  */
 
 
-package com.fedroot.demo.dacs.swing;
+package fedroot.dacs.swingdemo;
 
 import com.fedroot.dacs.DacsNotices;
 import com.fedroot.dacs.swing.DacsNoticePresentationDialog;

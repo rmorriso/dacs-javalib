@@ -1,4 +1,4 @@
-package com.fedroot.demo.dacs.swing;
+package fedroot.dacs.swingdemo;
 
 import fedroot.dacs.http.DacsClientContext;
 import java.awt.BorderLayout;
