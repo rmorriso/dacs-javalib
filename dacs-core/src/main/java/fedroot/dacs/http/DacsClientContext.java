@@ -20,7 +20,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.http.HttpEntity;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
@@ -98,6 +97,16 @@ public class DacsClientContext {
         return httpClient.execute(dacsGetRequest.getHttpGet(), httpContext);
     }
 
+    public HttpResponse executeGetRequest(HttpGet httpGet) throws DacsException {
+        try {
+            return httpClient.execute(httpGet, httpContext);
+        } catch (IOException ex) {
+            Logger.getLogger(DacsClientContext.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DacsException("DACS HTTP Get Request failed: " + ex.getMessage());
+        } finally {
+            // TODO need to close connection, or use multithreaded connection manager or SOMETHING!
+        }
+    }
 //    public HttpResponse executePostRequest(WebServiceRequest webServiceRequest) throws IOException {
 //        DacsPostRequest dacsPostRequest = new DacsPostRequest(webServiceRequest);
 //        HttpResponse response = httpClient.execute(dacsPostRequest.getHttpPost(), httpContext);
