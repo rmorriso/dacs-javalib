@@ -204,7 +204,7 @@ public class Jurisdiction {
      */
     @Override
     public String toString() {
-        return "Jurisdiction: " + getName() + "(" + getAltName() + "), " + getDacsUrl();
+        return getName();
     }
 
 }

@@ -23,7 +23,7 @@ public class FederationLoader extends WebServiceEntityLoader {
 
     public FederationLoader(String dacsUrl, DacsClientContext dacsClientContext) throws DacsException {
         super(new DacsListJurisdictionsRequest(dacsUrl));
-        DacsListJurisdictions dacsListJurisdictions = (DacsListJurisdictions) load(dacsClientContext);
+        DacsListJurisdictions dacsListJurisdictions = (DacsListJurisdictions) load(dacsClientContext, "com.fedroot.dacs");
         federation = new Federation(dacsListJurisdictions.getFederation(), dacsListJurisdictions.getDomain(), dacsListJurisdictions.getFedId(), dacsListJurisdictions.getFedPublicKey());
         for (DacsJurisdiction dacsJurisdiction : dacsListJurisdictions.getJurisdiction()) {
             federation.addJurisdiction(valueOf(dacsJurisdiction));

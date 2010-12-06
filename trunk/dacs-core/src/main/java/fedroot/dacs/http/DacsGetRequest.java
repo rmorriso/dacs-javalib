@@ -13,7 +13,6 @@ package fedroot.dacs.http;
  * @author Roderick Morrison <rmorriso at fedroot.com>
  */
 
-import fedroot.dacs.client.DacsWebServiceRequest;
 import fedroot.dacs.exceptions.DacsException;
 import fedroot.servlet.WebServiceRequest;
 import java.io.IOException;

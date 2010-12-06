@@ -25,7 +25,7 @@ public class CredentialsLoader extends WebServiceEntityLoader {
 
     public CredentialsLoader(Jurisdiction jurisdiction, DacsClientContext dacsClientContext) throws DacsException {
         super(new DacsCurrentCredentialsRequest(jurisdiction));
-        DacsCurrentCredentials dacsCurrentCredentials = (DacsCurrentCredentials) load(dacsClientContext);
+        DacsCurrentCredentials dacsCurrentCredentials = (DacsCurrentCredentials) load(dacsClientContext, "com.fedroot.dacs");
         credentials = new Credentials(dacsCurrentCredentials.getFederationName(), dacsCurrentCredentials.getFederationDomain());
         for (DacsCurrentCredentials.Credentials credential : dacsCurrentCredentials.getCredentials()) {
             credentials.addCredential(new Credential(credential.getFederation(), credential.getJurisdiction(), credential.getName(), credential.getRoles(), credential.getAuthStyle(), credential.getCookieName()));
@@ -34,7 +34,7 @@ public class CredentialsLoader extends WebServiceEntityLoader {
 
     public CredentialsLoader(Jurisdiction jurisdiction, String username, String password, DacsClientContext dacsClientContext) throws DacsException {
         super(new DacsAuthenticateRequest(jurisdiction, username, password), HttpRequestType.POST);
-        DacsAuthReply dacsAuthReply = (DacsAuthReply) load(dacsClientContext);
+        DacsAuthReply dacsAuthReply = (DacsAuthReply) load(dacsClientContext, "com.fedroot.dacs");
         CommonStatus commonStatus = dacsAuthReply.getCommonStatus();
         if (commonStatus != null) {
             throw new DacsException(commonStatus.getCode(), commonStatus.getMessage());

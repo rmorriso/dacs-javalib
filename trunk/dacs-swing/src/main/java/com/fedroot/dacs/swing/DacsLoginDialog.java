@@ -17,11 +17,11 @@
  */
 package com.fedroot.dacs.swing;
 
-import fedroot.dacs.client.DacsAuthenticateRequest;
-import fedroot.dacs.entities.Federation;
 import fedroot.dacs.entities.Jurisdiction;
-import fedroot.dacs.exceptions.DacsException;
-import fedroot.dacs.http.DacsClientContext;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -30,11 +30,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.IOException;
 import java.util.ResourceBundle;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -43,7 +40,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import org.apache.http.HttpResponse;
 
 /**
  * A modal dialog that asks the user for a DACS jurisdiction, username and password.
@@ -52,8 +48,7 @@ import org.apache.http.HttpResponse;
  */
 public class DacsLoginDialog extends JDialog {
 
-    protected Federation federation;
-    protected DacsClientContext dacscontext;
+    protected SessionManager sessionManager;
     /**
      * Locale specific strings displayed to the user.
      *
@@ -67,8 +62,9 @@ public class DacsLoginDialog extends JDialog {
      * @param locale Locale used to for i18n.
      *
      */
+    @Override
     public void setLocale(Locale locale) {
-        labels = ResourceBundle.getBundle("com.fedroot.dacs.swingutil.DacsLoginDialog", locale);
+        labels = ResourceBundle.getBundle("DacsLoginDialog", locale);
     }
     /**
      * Jurisdictions pick list
@@ -76,15 +72,15 @@ public class DacsLoginDialog extends JDialog {
      */
     protected JComboBox cmbJurisdictions;
     /**
-     * Where the name is typed.
+     * Where the username is typed.
      *
      */
-    protected JTextField name;
+    protected JTextField username;
     /**
      * Where the password is typed.
      *
      */
-    protected JPasswordField pass;
+    protected JPasswordField password;
     /**
      * The OK button.
      *
@@ -96,24 +92,24 @@ public class DacsLoginDialog extends JDialog {
      */
     protected JButton cancelButton;
     /**
-     * The label for the field in which the name is typed.
+     * The label for the field in which the username is typed.
      *
      */
-    protected JLabel nameLabel;
+    protected JLabel usernameLabel;
     /**
      * The label for the field in which the password is typed.
      *
      */
-    protected JLabel passLabel;
+    protected JLabel passwordLabel;
 
     /**
      * set DACS Jurisdictions for federation in the Combo Box
      * @param federation the DACS federation for which jurisdictions should be set
      *
      */
-    public void setJurisdictions(Federation federation) {
-        for (Jurisdiction jurisdiction : federation.getAuthenticatingJurisdictions()) {
-            this.cmbJurisdictions.addItem(jurisdiction.getJName());
+    public void setJurisdictions(SessionManager sessionController) {
+        for (Jurisdiction jurisdiction : sessionController.getAuthenticatingJurisdictions()) {
+            this.cmbJurisdictions.addItem(jurisdiction);
         }
         this.cmbJurisdictions.setToolTipText("Select a Jurisdiction");
         this.cmbJurisdictions.setEditable(false);
@@ -121,15 +117,15 @@ public class DacsLoginDialog extends JDialog {
     }
 
     /**
-     * Set the name that appears as the default
+     * Set the username that appears as the default
      * An empty string will be used if this in not specified
      * before the dialog is displayed.
      *
-     * @param name default name to be displayed.
+     * @param username default username to be displayed.
      *
      */
-    public void setName(String name) {
-        this.name.setText(name);
+    public void setUsername(String username) {
+        this.username.setText(username);
     }
 
     /**
@@ -137,10 +133,10 @@ public class DacsLoginDialog extends JDialog {
      * An empty string will be used if this is not specified
      * before the dialog is displayed.
      *
-     * @param pass default password to be displayed.
+     * @param password default password to be displayed.
      */
-    public void setPass(String pass) {
-        this.pass.setText(pass);
+    public void setPassword(String password) {
+        this.password.setText(password);
     }
 
     /**
@@ -168,13 +164,13 @@ public class DacsLoginDialog extends JDialog {
     }
 
     /**
-     * Set the label for the field in which the name is entered.
+     * Set the label for the field in which the username is entered.
      * The default is a localized string.
      *
-     * @param name label for the name field.
+     * @param username label for the username field.
      */
-    public void setNameLabel(String name) {
-        this.nameLabel.setText(name);
+    public void setUsernameLabel(String name) {
+        this.usernameLabel.setText(name);
         pack();
     }
 
@@ -182,21 +178,21 @@ public class DacsLoginDialog extends JDialog {
      * Set the label for the field in which the password is entered.
      * The default is a localized string.
      *
-     * @param pass label for the password field.
+     * @param password label for the password field.
      */
-    public void setPassLabel(String pass) {
-        this.passLabel.setText(pass);
+    public void setPasswordLabel(String pass) {
+        this.passwordLabel.setText(pass);
         pack();
     }
 
     /**
-     * Get the name that was entered into the dialog before
+     * Get the username that was entered into the dialog before
      * the dialog was closed.
      *
-     * @return the name from the name field.
+     * @return the username from the username field.
      */
-    public String getName() {
-        return name.getText();
+    public String getUsername() {
+        return username.getText();
     }
 
     /**
@@ -205,8 +201,8 @@ public class DacsLoginDialog extends JDialog {
      *
      * @return the password from the password field.
      */
-    public String getPass() {
-        return new String(pass.getPassword());
+    public String getPassword() {
+        return new String(password.getPassword());
     }
 
     /**
@@ -233,9 +229,11 @@ public class DacsLoginDialog extends JDialog {
      * @param parent window from which this dialog is launched
      * @param title the title for the dialog box window
      */
-    public DacsLoginDialog(Frame parent, String title, Federation federation, DacsClientContext dacscontext) {
+    public DacsLoginDialog(Frame parent, String title, SessionManager sessionController) {
 
         super(parent, title, true);
+
+        this.sessionManager = sessionController;
 
         setLocale(Locale.getDefault());
 
@@ -246,27 +244,9 @@ public class DacsLoginDialog extends JDialog {
             setLocationRelativeTo(parent);
         }
 
-        this.federation = federation;
-        this.dacscontext = dacscontext;
-        setJurisdictions(federation);
+        setJurisdictions(sessionController);
         pack();
         // super calls dialogInit, so we don't need to do it again.
-    }
-
-    /**
-     * Create this dialog with the given parent and the default title.
-     *
-     * @param parent window from which this dialog is launched
-     */
-    public DacsLoginDialog(Frame parent, Federation federation, DacsClientContext dacscontext) {
-        this(parent, null, federation, dacscontext);
-    }
-
-    /**
-     * Create this dialog with the default title.
-     */
-    public DacsLoginDialog(Federation federation, DacsClientContext dacscontext) {
-        this(null, null, federation, dacscontext);
     }
 
     /**
@@ -280,12 +260,12 @@ public class DacsLoginDialog extends JDialog {
         }
         this.cmbJurisdictions = new JComboBox();
 
-        name = new JTextField("", 12);
-        pass = new JPasswordField("", 12);
+        username = new JTextField("", 12);
+        password = new JPasswordField("", 12);
         okButton = new JButton(labels.getString("dialog.ok"));
         cancelButton = new JButton(labels.getString("dialog.cancel"));
-        nameLabel = new JLabel(labels.getString("dialog.name") + " ");
-        passLabel = new JLabel(labels.getString("dialog.pass") + " ");
+        usernameLabel = new JLabel(labels.getString("dialog.name") + " ");
+        passwordLabel = new JLabel(labels.getString("dialog.pass") + " ");
 
         super.dialogInit();
 
@@ -313,87 +293,80 @@ public class DacsLoginDialog extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Object source = e.getSource();
-                if (source == name) {
-                    // the user pressed enter in the name field.
-                    name.transferFocus();
+                if (source == username) {
+                    // the user pressed enter in the username field.
+                    username.transferFocus();
                 } else {
                     // other actions close the dialog.
-                    pressed_OK = (source == pass || source == okButton);
+                    pressed_OK = (source == password || source == okButton);
                     DacsLoginDialog.this.setVisible(false);
                 }
             }
         };
 
+
+        JPanel jurisdictionPanel = new JPanel(new FlowLayout());
+        jurisdictionPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 5, 20));
+        jurisdictionPanel.add(cmbJurisdictions);
+
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         c.insets.top = 5;
         c.insets.bottom = 5;
-        JPanel pane = new JPanel(gridbag);
-        pane.setBorder(BorderFactory.createEmptyBorder(10, 20, 5, 20));
-        JLabel label;
+
+        JPanel gridPanel = new JPanel(gridbag);
+        gridPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 5, 20));
 
         c.anchor = GridBagConstraints.EAST;
+        gridbag.setConstraints(usernameLabel, c);
+        gridPanel.add(usernameLabel);
 
-        gridbag.setConstraints(cmbJurisdictions, c);
-        pane.add(cmbJurisdictions);
-
-        c.gridy = 1;
-        c.insets.left = 2;
-        c.insets.right = 2;
-        gridbag.setConstraints(nameLabel, c);
-        pane.add(nameLabel);
-
-        gridbag.setConstraints(name, c);
-        name.addActionListener(actionListener);
-        name.addKeyListener(keyListener);
-        pane.add(name);
+        gridbag.setConstraints(username, c);
+        username.addActionListener(actionListener);
+        username.addKeyListener(keyListener);
+        gridPanel.add(username);
 
         c.gridy = 1;
-        gridbag.setConstraints(passLabel, c);
-        pane.add(passLabel);
+        gridbag.setConstraints(passwordLabel, c);
+        gridPanel.add(passwordLabel);
 
-        gridbag.setConstraints(pass, c);
-        pass.addActionListener(actionListener);
-        pass.addKeyListener(keyListener);
-        pane.add(pass);
+        gridbag.setConstraints(password, c);
+        password.addActionListener(actionListener);
+        password.addKeyListener(keyListener);
+        gridPanel.add(password);
 
-        c.gridy = 3;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.CENTER;
-        JPanel panel = new JPanel();
+        JPanel buttonPanel = new JPanel(new FlowLayout());
         okButton.addActionListener(actionListener);
         okButton.addKeyListener(keyListener);
-        panel.add(okButton);
+        buttonPanel.add(okButton);
         cancelButton.addActionListener(actionListener);
         cancelButton.addKeyListener(keyListener);
-        panel.add(cancelButton);
-        gridbag.setConstraints(panel, c);
-        pane.add(panel);
+        buttonPanel.add(cancelButton);
+       
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(jurisdictionPanel, BorderLayout.NORTH);
+        mainPanel.add(gridPanel, BorderLayout.CENTER);
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        getContentPane().add(pane);
-
+        Container container = getContentPane();
+        container.setSize(new Dimension(300,180));
+        container.add(mainPanel);
+        
+        setResizable(false);
         pack();
     }
 
     /**
-     * Shows the dialog and returns true if login was successful
+     * Shows the dialog and returns true if login was successful.
      *
      * @return true if login successful, false if the user canceled.
      */
     public boolean showDialog() {
         setVisible(true);
         if (okPressed()) {
-            Jurisdiction jurisdiction = federation.getJurisdictionByName(cmbJurisdictions.getSelectedItem().toString());
-            DacsAuthenticateRequest dacsAuthenticateRequest = new DacsAuthenticateRequest(jurisdiction, getName(), getPass());
-            try {
-                dacscontext.executePostRequest(dacsAuthenticateRequest);
-                return true;
-            } catch (DacsException ex) {
-                Logger.getLogger(DacsLoginDialog.class.getName()).log(Level.SEVERE, null, ex);
-                return false;
-
-            }
-
+            Jurisdiction jurisdiction = (Jurisdiction) cmbJurisdictions.getSelectedItem();
+            sessionManager.signon(jurisdiction, getUsername(), getPassword());
+            return true;
         } else {
             return false;
         }

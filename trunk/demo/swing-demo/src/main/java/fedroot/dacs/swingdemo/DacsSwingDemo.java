@@ -1,615 +1,307 @@
-
 /*
- * Copyright (C) 2006 Sun Microsystems, Inc. All rights reserved. Use is
- * subject to license terms.
+ * DacsClientFrame.java
+ *
+ * Created on December 6, 2005, 8:46 AM
+ *
+ * Copyright (c) 2010 Metalogic Software Corporation.
+ * All rights reserved. See http://fedroot.com/licenses/metalogic.txt for redistribution information.
  */
 package fedroot.dacs.swingdemo;
 
-import fedroot.dacs.entities.Federation;
-import fedroot.dacs.entities.FederationLoader;
+import com.fedroot.dacs.swing.DacsLoginDialog;
+import com.fedroot.dacs.swing.SessionManager;
+import fedroot.dacs.client.DacsCheckRequest;
+import fedroot.dacs.events.DacsEventNotifier;
+import fedroot.dacs.events.DacsEventNotifier.Status;
 import fedroot.dacs.exceptions.DacsException;
-import fedroot.dacs.http.DacsClientContext;
-import fedroot.dacs.http.DacsGetRequest;
-import java.util.logging.Level;
-import org.jdesktop.application.Action;
-import org.jdesktop.application.Application;
-import org.jdesktop.application.ApplicationContext;
-import org.jdesktop.application.Task;
-import org.jdesktop.application.Task.BlockingScope;
-import org.jdesktop.application.Task.InputBlocker;
-import org.jdesktop.application.TaskMonitor;
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.TextField;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.RoundRectangle2D;
 import java.io.BufferedInputStream;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.ActionMap;
-import javax.swing.InputVerifier;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.Timer;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.MouseInputAdapter;
-import javax.swing.event.MouseInputListener;
-import org.apache.http.HttpResponse;
-import org.jdesktop.application.ApplicationAction;
-import org.jdesktop.application.SingleFrameApplication;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
+import org.apache.http.Header;
 
 /**
- * A demo of the {@code @Action} <i>block</i> options for background
- * task.  It's an example of three of the {@code Action.Block} types:
- * <pre>
- * &#064;Action(block = Task.BlockingScope.ACTION)  
- * public Task blockAction() { ... }
- * 
- * &#064;Action(block = Task.BlockingScope.COMPONENT) 
- * public Task blockComponent() { ... }
- * 
- * &#064;Action(block = Task.BlockingScope.WINDOW) 
- * public Task blockWindow() { ... }
- * 
- * &#064;Action(block = Task.BlockingScope.APPLICATION)
- * public Task blockApplication() { ... }
- * </pre>
- * The first {@code BlockingScope.ACTION} {@code @Action} disables the
- * corresponding {@code Action} while {@code blockAction} method runs.
- * When you press the blockAction button or toolbar-button or menu
- * item you'll observe that all of the components are disabled.  The
- * {@code BlockingScope.COMPONENT} version only disables the component
- * that triggered the action.  The {@code Block.WINDOW} method
- * uses a custom {@link Task.InputBlocker inputBlocker} to 
- * temporarily block input to the by making the window's
- * glass pane visible.  And the {@code Task.BlockingScope.APPLICATION} 
- * version pops up a modal dialog for the action's duration.
- * The blocking dialog's title/message/icon are defined by resources
- * from the ResourceBundle named {@code BlockingExample1}:
- * <pre>
- * BlockingDialog.title = Blocking Application 
- * BlockingDialog.message = Please wait patiently ...
- * Action.BlockingDialog.icon = wait.png
- * </pre>
- * 
- * <p>
- * All of the actions in this example just sleep for about 2 seconds,
- * while periodically updating their Task's message/progress properties.
- * 
- * <p>
- * This class loads resources from the ResourceBundle called
- * {@code BlockingExample1}.  It depends on the example {@code StatusBar} class.
- * 
- * 
- * @author Hans Muller (Hans.Muller@Sun.COM)
- * @see ApplicationContext
- * @see Application
- * @see Action
- * @see Task
- * @see TaskMonitor
- * @see StatusBar
+ * main JFrame from which example DACS-wrapped HTTP requests are launched
+ * @author rmorriso
  */
-public class DacsSwingDemo extends SingleFrameApplication {
+public class DacsSwingDemo {
 
+    protected JFrame mainFrame;
+    protected Header contentType;
+    private JComboBox actionsComboBox;
+    private JTextArea responseTextArea;
+    private JTextArea statusTextArea;
+    private JButton btnGO;
+    private JButton btnLOGIN;
+    private JButton btnLOGOUT;
+    private SessionManager sessionManager;
     private static final Logger logger = Logger.getLogger(DacsSwingDemo.class.getName());
+    private static final String DACS_BASE_URI = "https://fedroot.com/test/dacs";
+    private DacsLoginDialog loginDialog;
+    // TODO - use a ComboBoxModel instead
+    private static final String[] actions = {
+        "No Authentication Required",
+        "Requires Authentication",
+        "Requires DEV Group Membership",
+        "Requires DACS Admin Privilege",
+        "No Rule Applies"
+    };
+    private static final String[] testURLs = {
+        "https://fedroot.com/test/dacs-wrapped/noauth-required.html",
+        "https://fedroot.com/test/dacs-wrapped/auth-required.html",
+        "https://fedroot.com/test/dacs-wrapped/dev-required.html",
+        "https://fedroot.com/test/dacs/dacs_prenv",
+        "https://fedroot.com/test/dacs-wrapped/no-rule.html"
+    };
 
-    private static DacsClientContext dacsClientContext = new DacsClientContext();
-    private static String feduri = "https://fedroot.com/dacs";
-    
-
-
-    private JFrame mainFrame = null;
-    private TextField federationURLTextField = null;
-    private TextField urlTextField = null;
-    private JCheckBox checkOnlyCheckBox = null;
-    private JCheckBox enableEventHandlingCheckBox = null;
-    private StatusBar statusBar = null;
-    private BusyIndicator busyIndicator = null;
-
-   private Federation currentFederation;
-    private boolean checkOnly = false;
-    private boolean enableEventHandling = false;
-
-    @Override
-    protected void startup() {
-        try {
-            FederationLoader federationLoader = new FederationLoader(feduri, dacsClientContext);
-            currentFederation = federationLoader.getFederation();
-            mainFrame = getMainFrame();
-            statusBar = new StatusBar(this, getContext().getTaskMonitor());
-            busyIndicator = new BusyIndicator();
-            mainFrame.setJMenuBar(createMenuBar());
-            mainFrame.add(createControlPanel(), BorderLayout.NORTH);
-            mainFrame.add(createActionsPanel(), BorderLayout.CENTER);
-            mainFrame.add(statusBar, BorderLayout.SOUTH);
-            mainFrame.setGlassPane(busyIndicator);
-            show(mainFrame);
-        } catch (DacsException ex) {
-            Logger.getLogger(DacsSwingDemo.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (Exception ex) {
-            Logger.getLogger(DacsSwingDemo.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    private ActionMap actionMap() {
-        return getContext().getActionMap();
-    }
-
-    private JMenu createMenu(String menuName, String[] actionNames) {
-        JMenu menu = new JMenu();
-        menu.setName(menuName);
-        for (String actionName : actionNames) {
-            JMenuItem menuItem = new JMenuItem();
-            menuItem.setAction(actionMap().get(actionName));
-            menu.add(menuItem);
-        }
-        return menu;
-    }
-
-    private JMenuBar createMenuBar() {
-        String[] menuActionNames = {
-            "openAction",
-            "helpAction",
-            "aboutAction",
-            "quit"
-        };
-        JMenuBar menuBar = new JMenuBar();
-        menuBar.add(createMenu("mainMenu", menuActionNames));
-        return menuBar;
-    }
-
-    // TODO pass in the global text field, etc
-    private JPanel createControlPanel() {
-        JPanel settingsPanel = new JPanel(new BorderLayout());
-        // TODO ad the infoPanel as a listener to the loadFederation action
-
-        JPanel federationPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        JLabel federationUriLabel = new JLabel("Federation URI:");
-        federationPanel.add(federationUriLabel);
-
-        federationURLTextField = new TextField(40);
-        federationURLTextField.setEditable(true);
-
-        JButton loadFederationButton = new JButton(actionMap().get("loadFederation"));
-
-        federationPanel.add(federationURLTextField);
-        federationPanel.add(loadFederationButton);
-
-        JPanel jurisdictionsPanel = new JPanel(new FlowLayout());
-        JLabel jurisdictionsLabel = new JLabel("Jurisdictions");
-        jurisdictionsPanel.add(jurisdictionsLabel);
-
-        JPanel modifiersPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        checkOnlyCheckBox = new JCheckBox(actionMap().get("toggleCheckOnly"));
-        enableEventHandlingCheckBox = new JCheckBox(actionMap().get("toggleEnableEventHandling"));
-        modifiersPanel.add(checkOnlyCheckBox);
-        modifiersPanel.add(enableEventHandlingCheckBox);
-        
-        settingsPanel.add(federationPanel,BorderLayout.NORTH);
-        settingsPanel.add(jurisdictionsPanel, BorderLayout.CENTER);
-        settingsPanel.add(modifiersPanel, BorderLayout.SOUTH);
-
-        return settingsPanel;
-    }
-
-    private JPanel createGotoPanel() {
-
-        JPanel gotoUrlPanel = new JPanel(new FlowLayout());
-
-        JLabel urlLabel = new JLabel("URL:");
-        gotoUrlPanel.add(urlLabel);
-
-        urlTextField = new TextField(70);
-        urlTextField.setEditable(true);
-        gotoUrlPanel.add(urlTextField);
-
-        JButton gotoButton = new JButton(actionMap().get("followUrl"));
-
-//        JButton gotoButton = new JButton();
-//        gotoButton.addActionListener(
-//                new ActionListener() {
-//
-//                    @Override
-//                    public void actionPerformed(ActionEvent ae) {
-//                        try {
-//                            URL url = new URL(urlTextField.getText().trim());
-//                            followUrl(url.toURI(), false, false);
-//                        } catch (Exception ex) {
-//                            showErrorDialog("Invalid or empty URL", ex);
-//                        }
-//                    }
-//                });
-//        gotoButton.setRequestFocusEnabled(false);
-//        gotoButton.setAction(actionMap().get("gotoURL"));
-//        gotoButton.setVerticalTextPosition(JButton.BOTTOM);
-//        gotoButton.setHorizontalTextPosition(JButton.CENTER);
-//        gotoButton.setName("GOTO");
-
-        gotoUrlPanel.add(gotoButton);
-
-        return gotoUrlPanel;
-    }
-
-    private JComponent createActionsPanel() {
-        JButton clientCredentialsButton = new JButton(actionMap().get("clientCredentials"));
-        JButton componentButton = new JButton(actionMap().get("blockComponent"));
-        JButton applicationButton = new JButton(actionMap().get("blockApplication"));
-        JButton windowButton = new JButton(actionMap().get("blockWindow"));
-
-
-        JPanel panel1 = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 50));
-        panel1.add(clientCredentialsButton);
-        panel1.add(componentButton);
-        panel1.add(applicationButton);
-        panel1.add(windowButton);
-
-        JPanel panel2 = new JPanel(new BorderLayout());
-        panel2.add(createGotoPanel(), BorderLayout.NORTH);
-        panel2.add(new JSeparator(), BorderLayout.CENTER);
-        panel2.add(panel1, BorderLayout.SOUTH);
-        panel2.setBorder(new EmptyBorder(0, 2, 0, 2)); // top, left, bottom, right
-        return panel2;
-    }
-
-    /* Progress is interdeterminate for the first 150ms, then
-     * run for another 7500ms, marking progress every 150ms.
+    /**
+     *
+     * @param args
      */
-    private class DoNothingTask extends Task<Void, Void> {
+    public static void main(String[] args) {
+        SessionManager sessionManager = new SessionManager(DACS_BASE_URI);
 
-        DoNothingTask() {
-            super(DacsSwingDemo.this);
-            setUserCanCancel(true);
-        }
-
-        @Override
-        protected Void doInBackground() throws InterruptedException {
-            for (int i = 0; i < 50; i++) {
-                setMessage("Working... [" + i + "]");
-                Thread.sleep(150L);
-                setProgress(i, 0, 49);
-            }
-            Thread.sleep(150L);
-            return null;
-        }
-
-        @Override
-        protected void succeeded(Void ignored) {
-            setMessage("Done");
-        }
-
-        @Override
-        protected void cancelled() {
-            setMessage("Canceled");
-        }
-    }
-
-    /* Progress is interdeterminate for the first 150ms, then
-     * run for another 7500ms, marking progress every 150ms.
-     */
-    private class FollowUrlTask extends Task<Void, Void> {
-
-        FollowUrlTask() {
-            super(DacsSwingDemo.this);
-            setUserCanCancel(true);
-        }
-
-        @Override
-        protected Void doInBackground() throws InterruptedException {
-            try {
-                URL url = new URL(urlTextField.getText().trim());
-                followUrl(url.toURI(), false, false);
-            } catch (Exception ex) {
-                showErrorDialog("Invalid or empty URL", ex);
-            }
-//            for (int i = 0; i < 50; i++) {
-//                setMessage("Working... [" + i + "]");
-//                Thread.sleep(150L);
-//                setProgress(i, 0, 49);
-//            }
-//            Thread.sleep(150L);
-            return null;
-        }
-                @Override
-        protected void succeeded(Void ignored) {
-            setMessage("Done");
-        }
-
-        @Override
-        protected void cancelled() {
-            setMessage("Canceled");
-        }
-    }
-
-    /* Progress is interdeterminate for the first 150ms, then
-     * run for another 7500ms, marking progress every 150ms.
-     */
-    private class LoadFederationTask extends Task<Void, Void> {
-
-        LoadFederationTask() {
-            super(DacsSwingDemo.this);
-            setUserCanCancel(true);
-        }
-
-        @Override
-        protected Void doInBackground() throws InterruptedException {
-            String federationURI = federationURLTextField.getText().trim();
-            try {
-                URL url = new URL(federationURI);
-
-                FederationLoader federationLoader = new FederationLoader(federationURI, dacsClientContext);
-                currentFederation = federationLoader.getFederation();
-                // TODO make main frame an event listener for current federation changed events
-                getMainFrame().setTitle("Browsing Federation " + currentFederation.getFederationName());
-            } catch (DacsException ex) {
-                showErrorDialog("Failed to load federation at URL " + federationURI, ex);
-                Logger.getLogger(DacsSwingDemo.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (MalformedURLException ex) {
-                showErrorDialog("Invalid or empty URL", ex);
-            }
-//            for (int i = 0; i < 50; i++) {
-//                setMessage("Working... [" + i + "]");
-//                Thread.sleep(150L);
-//                setProgress(i, 0, 49);
-//            }
-//            Thread.sleep(150L);
-            return null;
-        }
-
-
-        @Override
-        protected void succeeded(Void ignored) {
-            setMessage("Loaded federation " + currentFederation.getFederationName());
-        }
-
-        @Override
-        protected void cancelled() {
-            setMessage("Canceled");
-        }
-    }
-
-    @Action(block = BlockingScope.ACTION)
-    public Task openAction() {
-        return new DoNothingTask();
-    }
-
-    @Action(block = BlockingScope.ACTION)
-    public Task helpAction() {
-        return new DoNothingTask();
-    }
-
-    @Action(block = BlockingScope.ACTION)
-    public Task aboutAction() {
-        return new DoNothingTask();
-    }
-
-    @Action(block = BlockingScope.COMPONENT)
-    public Task followUrl() {
-        Task task = new FollowUrlTask();
-        return task;
-    }
-
-   @Action(block = BlockingScope.COMPONENT)
-    public Task loadFederation() {
-        Task task = new LoadFederationTask();
-        return task;
-    }
-
-    @Action(block = BlockingScope.APPLICATION)
-    public Task blockApplication() {
-        Task task = new DoNothingTask();
-        task.setInputBlocker(new BusyIndicatorInputBlocker(task));
-        return task;
-    }
-
-    @Action(selectedProperty = "checkOnly") public void toggleCheckOnly() {
-    }
-
-    @Action(selectedProperty = "enableEventHandling") public void toggleEnableEventHandling() {
-    }
-
-    public boolean isCheckOnly() {
-        return checkOnly;
-    }
-
-    public void setCheckOnly(boolean selected) {
-        boolean oldValue = this.checkOnly;
-        this.checkOnly = selected;
-        firePropertyChange("checkOnly", oldValue, this.checkOnly);
-        ApplicationAction cba = (ApplicationAction)checkOnlyCheckBox.getAction();
-//        String msg =
-//            String.format("%s.setSelected(%s)\n", getClass().getName(), this.selected) +
-//            String.format("checkBox.getAction().isSelected() %s\n", cba.isSelected()) +
-//            String.format("checkBox.isSelected() %s\n", checkBox.isSelected()) +
-//            String.format("radioButton.isSelected() %s\n", radioButton.isSelected());
-//        textArea.append(msg + "\n");
-    }
-
-    public boolean isEnableEventHandling() {
-        return enableEventHandling;
-    }
-
-    public void setEnableEventHandling(boolean selected) {
-        boolean oldValue = this.checkOnly;
-        this.enableEventHandling = selected;
-        firePropertyChange("enableEventHandling", oldValue, this.enableEventHandling);
-        ApplicationAction cba = (ApplicationAction)enableEventHandlingCheckBox.getAction();
-//        String msg =
-//            String.format("%s.setSelected(%s)\n", getClass().getName(), this.selected) +
-//            String.format("checkBox.getAction().isSelected() %s\n", cba.isSelected()) +
-//            String.format("checkBox.isSelected() %s\n", checkBox.isSelected()) +
-//            String.format("radioButton.isSelected() %s\n", radioButton.isSelected());
-//        textArea.append(msg + "\n");
+        DacsSwingDemo dacsSwingDemo = new DacsSwingDemo("DACS JavaLib Example Thick Client", sessionManager);
+        dacsSwingDemo.start();
     }
 
     /**
-     * execute DacsGetRequest for a URL, handling DACS response status
-     * @param uri
+     * 
+     * @param title the title of the top level window
+     * @param sessionManager a DACS aware session manager for login, logout, making HTTP requests, saving session state
+     * @throws java.lang.Exception 
      */
-    // TODO move followURL to fedutils
-    private synchronized void followUrl(URI uri, boolean checkOnly, boolean enableEventHandling) {
-        final StringBuffer sb = new StringBuffer();
-        final BufferedInputStream responsestream;
-        DacsGetRequest dacsget = new DacsGetRequest(uri);
-        // not used: uncomment for HTTP basic auth processing
-        // dacsget.setDoAuthentication(true);
-        // needed when event handling is not used
-        // TODO: do this in dacsContext now??? dacsget.setFollowRedirects(true);
-        try {
-            HttpResponse dacsstatus;
-//            if (jcbDacsCheckonly.isSelected()) {
-//                dacsstatus = dacsClientContext.executeCheckOnlyMethod(dacsget);
-//            } else if (jcbEnableEventHandling.isSelected()) {
-//                dacsstatus = dacsClientContext.executeCheckFailMethod(dacsget);
-//            } else {
-            dacsstatus = dacsClientContext.executeGetRequest(dacsget);
-//            }
+    public DacsSwingDemo(String title, final SessionManager sessionManager) {
 
-//            switch (dacsstatus.getStatusLine().getStatusCode()) {
-//                case DacsStatus.SC_DACS_ACCESS_GRANTED: //check mode
-//                case DacsStatus.SC_OK: // normal mode
-//                    String contenttype = dacsget.getHttpGet().getFirstHeader("Content-Type").getValue();
-//                    loadPage(contenttype, dacsget.getInputStream(dacsClientContext.)
-//                    break;
-//                case DacsStatus.SC_DACS_ACCESS_DENIED: // check mode
-//                    LOG.info(DacsStatus.getStatusText(dacsstatus.));
-//                    contenttype = dacsget.getResponseHeader("Content-Type").getValue();
-//                    loadPage(contenttype, dacsget.getResponseBodyAsStream());
-//                    break;
-//                case DacsStatus.SC_DACS_ACCESS_ERROR: // check mode
-//                    LOG.info(DacsStatus.getStatusText(dacsstatus));
-//                    break;
-//                default:
-//                    LOG.info("DacsGetRequest returned status: " + DacsStatus.getStatusText(dacsstatus));
-//                    break;
-//            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+        logger.log(Level.FINEST, "Launching MainFrame ");
 
-    private void showErrorDialog(String message, Exception e) {
-        String title = "Error";
-        int type = JOptionPane.ERROR_MESSAGE;
-        message = "Error: " + message;
-        JOptionPane.showMessageDialog(getMainFrame(), message, title, type);
-    }
+        mainFrame = new JFrame(title);
+        Dimension minSize = new Dimension(600, 400);
+        mainFrame.setMinimumSize(minSize);
+        mainFrame.setLocationRelativeTo(null);
+        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-    public static void main(String[] args) {
-        Application.launch(DacsSwingDemo.class, args);
-    }
+        this.sessionManager = sessionManager;
 
-    /* This component is intended to be used as a GlassPane.  It's
-     * start method makes this component visible, consumes mouse
-     * and keyboard input, and displays a spinning activity indicator 
-     * animation.  The stop method makes the component not visible.
-     * The code for rendering the animation was lifted from 
-     * org.jdesktop.swingx.painter.BusyPainter.  I've made some
-     * simplifications to keep the example small.
-     */
-    private static class BusyIndicator extends JComponent implements ActionListener {
+        loginDialog = new DacsLoginDialog(mainFrame, "Login", sessionManager);
 
-        private int frame = -1;  // animation frame index
-        private final int nBars = 8;
-        private final float barWidth = 6;
-        private final float outerRadius = 28;
-        private final float innerRadius = 12;
-        private final int trailLength = 4;
-        private final float barGray = 200f;  // shade of gray, 0-255
-        private final Timer timer = new Timer(65, this); // 65ms = animation rate
+        DacsEventNotifier.Listener dacsEventListener = new DacsEventNotifier.Listener() {
 
-        BusyIndicator() {
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            MouseInputListener blockMouseEvents = new MouseInputAdapter() {
-            };
-            addMouseMotionListener(blockMouseEvents);
-            addMouseListener(blockMouseEvents);
-            InputVerifier retainFocusWhileVisible = new InputVerifier() {
-
-                public boolean verify(JComponent c) {
-                    return !c.isVisible();
+            @Override
+            public void status(Status status, String message) {
+                // TODO replace this with updates to the status line text at the bottom of the frame
+                switch (status) {
+                    case signon:
+                        btnLOGIN.setEnabled(false);
+                        btnLOGOUT.setEnabled(true);
+                        break;
+                    case signout:
+                        btnLOGIN.setEnabled(true);
+                        btnLOGOUT.setEnabled(false);
+                        break;
                 }
-            };
-            setInputVerifier(retainFocusWhileVisible);
-        }
+                setStatusText(message);
+            }
 
-        public void actionPerformed(ActionEvent ignored) {
-            frame += 1;
-            repaint();
-        }
+            @Override
+            public void notify(DacsException ex, DacsCheckRequest checkRequest) {
+                switch (ex.getStatusCode()) {
+                    case 900:
+                        JOptionPane.showMessageDialog(mainFrame, ex.getMessage(), "900 Error", JOptionPane.WARNING_MESSAGE);
+                        break;
+                    case 901:
+                        JOptionPane.showMessageDialog(mainFrame, ex.getMessage(), "901 Error", JOptionPane.WARNING_MESSAGE);
+                        break;
+                    case 902:
+//                        JOptionPane.showMessageDialog(mainFrame, ex.getMessage(), "902 Error", JOptionPane.WARNING_MESSAGE );
+                        if (loginDialog.showDialog()) {
+                            // login successful - try the request again
+                            loadPage("text/html", testURLs[actionsComboBox.getSelectedIndex()]);
+                        }
+                        break;
+                    case 903:
+                        JOptionPane.showMessageDialog(mainFrame, ex.getMessage(), "903 Error", JOptionPane.WARNING_MESSAGE);
+                        break;
+                    case 904:
+                        JOptionPane.showMessageDialog(mainFrame, ex.getMessage(), "904 Error", JOptionPane.WARNING_MESSAGE);
+                        break;
+                }
 
-        void start() {
-            setVisible(true);
-            requestFocusInWindow();
-            timer.start();
-        }
+            }
+        };
 
-        void stop() {
-            setVisible(false);
-            timer.stop();
-        }
+        sessionManager.addDacsEventListener(dacsEventListener);
 
-        @Override
-        protected void paintComponent(Graphics g) {
-            RoundRectangle2D bar = new RoundRectangle2D.Float(
-                    innerRadius, -barWidth / 2, outerRadius, barWidth, barWidth, barWidth);
-            // x,         y,          width,       height,   arc width,arc height
-            double angle = Math.PI * 2.0 / (double) nBars; // between bars
-            Graphics2D g2d = (Graphics2D) g;
-            g2d.translate(getWidth() / 2, getHeight() / 2);
-            g2d.setRenderingHint(
-                    RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            for (int i = 0; i < nBars; i++) {
-                // compute bar i's color based on the frame index
-                Color barColor = new Color((int) barGray, (int) barGray, (int) barGray);
-                if (frame != -1) {
-                    for (int t = 0; t < trailLength; t++) {
-                        if (i == ((frame - t + nBars) % nBars)) {
-                            float tlf = (float) trailLength;
-                            float pct = 1.0f - ((tlf - t) / tlf);
-                            int gray = (int) ((barGray - (pct * barGray)) + 0.5f);
-                            barColor = new Color(gray, gray, gray);
+        init(mainFrame);
+
+    }
+
+    private void init(JFrame mainFrame) {
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        JPanel actionPanel = new JPanel(new FlowLayout());
+        JPanel outputPanel = new JPanel(new BorderLayout());
+
+
+        btnGO = new JButton("GO");
+        btnGO.addActionListener(
+                new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent ae) {
+                        loadPage("text/html", testURLs[actionsComboBox.getSelectedIndex()]);
+                    }
+                });
+
+        btnLOGIN = new JButton("Login");
+        btnLOGIN.addActionListener(
+                new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent ae) {
+                        loginDialog.showDialog();
+                    }
+                });
+
+
+        btnLOGOUT = new JButton("Logout");
+        btnLOGOUT.addActionListener(
+                new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent ae) {
+                        sessionManager.signout();
+                    }
+                });
+        //initially user is not signed in - btnLOGOUT will be enabled upon successful login
+        btnLOGOUT.setEnabled(false);
+
+        actionsComboBox = new JComboBox(actions);
+        actionsComboBox.setToolTipText("Select an Action");
+        actionsComboBox.setEditable(true);
+        actionsComboBox.setSelectedIndex(0);
+
+        JLabel actionLabel = new JLabel("Action:");
+
+        actionPanel.add(actionLabel);
+        actionPanel.add(actionsComboBox);
+        actionPanel.add(btnGO);
+        actionPanel.add(btnLOGIN);
+        actionPanel.add(btnLOGOUT);
+
+        responseTextArea = new JTextArea();
+        responseTextArea.setEditable(false);
+        responseTextArea.setCaretPosition(0);
+
+        outputPanel.add(new JScrollPane(responseTextArea), BorderLayout.CENTER);
+
+        statusTextArea = new JTextArea();
+        statusTextArea.setEditable(false);
+        statusTextArea.setCaretPosition(0);
+        statusTextArea.setRows(1);
+        statusTextArea.setFont(new Font("Serif", Font.ITALIC, 14));
+
+        outputPanel.add(statusTextArea, BorderLayout.SOUTH);
+
+        mainPanel.add(actionPanel, BorderLayout.NORTH);
+        mainPanel.add(outputPanel, BorderLayout.CENTER);
+
+        Container container = mainFrame.getContentPane();
+        container.add(mainPanel);
+
+        mainFrame.pack();
+    }
+
+    public void start() {
+        mainFrame.setVisible(true);
+    }
+
+    /**
+     * Sets the text from the HTTP response to be displayed.
+     *
+     * @param text the text to display
+     */
+
+    private void setResponseText(String text) {
+        responseTextArea.setText(text);
+        responseTextArea.setCaretPosition(0);
+        responseTextArea.requestFocus();
+    }
+
+    /**
+     * Sets the text from the HTTP response to be displayed.
+     *
+     * @param text the text to display
+     */
+
+    private void setStatusText(String text) {
+        statusTextArea.setText(" " + text);
+        statusTextArea.setCaretPosition(0);
+    }
+
+    /**
+     * Loads contents of the input stream in a separate thread.
+     * @param is input stream to be rendered as HTML
+     */
+    private void loadPage(final String contenttype, final String url) {
+        // create a new thread to load the URL from
+        final StringBuffer stringBuffer = new StringBuffer();
+        new Thread() {
+            @Override
+            public void run() {
+                {
+                    InputStream inputStream = null;
+                    try {
+                        inputStream = sessionManager.getInputStream(url);
+                        Reader reader = new InputStreamReader(new BufferedInputStream(inputStream));
+                        int character;
+                        while ((character = reader.read()) != -1) {
+                            stringBuffer.append((char) character);
+                        }
+      //                inputStream.close();
+                        if (inputStream != null) {
+                            SwingUtilities.invokeLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    setResponseText(stringBuffer.toString());
+//                                    setDocumentContent(contenttype, stringBuffer.toString());
+                                }
+                            });
+                        }
+                    } catch (DacsException ex) { // note: we EXPECT DacsExceptions
+                        logger.log(Level.FINEST, ex.getMessage());
+                    } catch (IOException ex) {
+                        logger.log(Level.SEVERE, ex.getMessage());
+                    } finally {
+//                        setDocumentContent(contenttype, stringBuffer.toString());
+                        try {
+                            if (inputStream != null) inputStream.close();
+                        } catch (IOException ex) {
+                            Logger.getLogger(DacsSwingDemo.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 }
-                // draw the bar
-                g2d.setColor(barColor);
-                g2d.fill(bar);
-                g2d.rotate(angle);
             }
-        }
-    }
-
-    private class BusyIndicatorInputBlocker extends InputBlocker {
-
-        BusyIndicatorInputBlocker(Task task) {
-            super(task, Task.BlockingScope.WINDOW, busyIndicator);
-        }
-
-        @Override
-        protected void block() {
-            busyIndicator.start();
-        }
-
-        @Override
-        protected void unblock() {
-            busyIndicator.stop();
-        }
+        }.start();
     }
 }

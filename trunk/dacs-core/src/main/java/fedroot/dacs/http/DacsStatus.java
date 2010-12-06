@@ -6,7 +6,6 @@
  * Copyright (c) 2005 Metalogic Software Corporation.
  * All rights reserved. See http://fedroot.com/licenses/metalogic.txt for redistribution information.
  */
-
 package fedroot.dacs.http;
 
 /**
@@ -25,27 +24,24 @@ package fedroot.dacs.http;
  * 
  * @version $Id: HttpStatus.java 155418 2005-02-26 13:01:52Z dirkv $
  */
-public class DacsStatus  {
-   
- // -------------------------------------------------------- Class Variables
+public class DacsStatus {
 
+    // -------------------------------------------------------- Class Variables
     /** Reason phrases lookup table. */
     private static final String[][] REASON_PHRASES = new String[][]{
         new String[0],
-        new String[3],  // 1xx
-        new String[8],  // 2xx
-        new String[8],  // 3xx
+        new String[3], // 1xx
+        new String[8], // 2xx
+        new String[8], // 3xx
         new String[25], // 4xx
-        new String[8],  // 5xx
+        new String[8], // 5xx
         new String[0],
-        new String[100],  // 7xx
+        new String[100], // 7xx
         new String[0],
-        new String[99]   // 9xx
+        new String[99] // 9xx
     };
 
-
     // --------------------------------------------------------- Public Methods
-
     /**
      * Get the reason phrase for a particular status code.
      * 
@@ -65,16 +61,14 @@ public class DacsStatus  {
         }
         int classIndex = statusCode / 100;
         int codeIndex = statusCode - classIndex * 100;
-        if (classIndex < 1 || classIndex > (REASON_PHRASES.length - 1) 
-            || codeIndex < 0 || codeIndex > (REASON_PHRASES[classIndex].length - 1)) {
+        if (classIndex < 1 || classIndex > (REASON_PHRASES.length - 1)
+                || codeIndex < 0 || codeIndex > (REASON_PHRASES[classIndex].length - 1)) {
             return null;
         }
         return REASON_PHRASES[classIndex][codeIndex];
     }
 
-
     // -------------------------------------------------------- Private Methods
-
     /**
      * Store the given reason phrase, by status code.
      * @param statusCode The status code to lookup
@@ -84,21 +78,15 @@ public class DacsStatus  {
         int classIndex = statusCode / 100;
         REASON_PHRASES[classIndex][statusCode - classIndex * 100] = reasonPhrase;
     }
-
-
     // -------------------------------------------------------------- Constants
-
     // --- 1xx Informational ---
-
     /** <tt>100 Continue</tt> (HTTP/1.1 - RFC 2616) */
     public static final int SC_CONTINUE = 100;
     /** <tt>101 Switching Protocols</tt> (HTTP/1.1 - RFC 2616)*/
     public static final int SC_SWITCHING_PROTOCOLS = 101;
     /** <tt>102 Processing</tt> (WebDAV - RFC 2518) */
     public static final int SC_PROCESSING = 102;
-
     // --- 2xx Success ---
-
     /** <tt>200 OK</tt> (HTTP/1.0 - RFC 1945) */
     public static final int SC_OK = 200;
     /** <tt>201 Created</tt> (HTTP/1.0 - RFC 1945) */
@@ -118,9 +106,7 @@ public class DacsStatus  {
      * OK</tt> (HTTP/1.1 - draft-ietf-http-v11-spec-rev-01?)
      */
     public static final int SC_MULTI_STATUS = 207;
-
     // --- 3xx Redirection ---
-
     /** <tt>300 Mutliple Choices</tt> (HTTP/1.1 - RFC 2616) */
     public static final int SC_MULTIPLE_CHOICES = 300;
     /** <tt>301 Moved Permanently</tt> (HTTP/1.0 - RFC 1945) */
@@ -135,9 +121,7 @@ public class DacsStatus  {
     public static final int SC_USE_PROXY = 305;
     /** <tt>307 Temporary Redirect</tt> (HTTP/1.1 - RFC 2616) */
     public static final int SC_TEMPORARY_REDIRECT = 307;
-
     // --- 4xx Client Error ---
-
     /** <tt>400 Bad Request</tt> (HTTP/1.1 - RFC 2616) */
     public static final int SC_BAD_REQUEST = 400;
     /** <tt>401 Unauthorized</tt> (HTTP/1.0 - RFC 1945) */
@@ -174,7 +158,6 @@ public class DacsStatus  {
     public static final int SC_REQUESTED_RANGE_NOT_SATISFIABLE = 416;
     /** <tt>417 Expectation Failed</tt> (HTTP/1.1 - RFC 2616) */
     public static final int SC_EXPECTATION_FAILED = 417;
-
     /**
      * Static constant for a 418 error.
      * <tt>418 Unprocessable Entity</tt> (WebDAV drafts?)
@@ -182,7 +165,6 @@ public class DacsStatus  {
      */
     // not used
     // public static final int SC_UNPROCESSABLE_ENTITY = 418;
-
     /**
      * Static constant for a 419 error.
      * <tt>419 Insufficient Space on Resource</tt>
@@ -203,9 +185,7 @@ public class DacsStatus  {
     public static final int SC_LOCKED = 423;
     /** <tt>424 Failed Dependency</tt> (WebDAV - RFC 2518) */
     public static final int SC_FAILED_DEPENDENCY = 424;
-
     // --- 5xx Server Error ---
-
     /** <tt>500 Server Error</tt> (HTTP/1.0 - RFC 1945) */
     public static final int SC_INTERNAL_SERVER_ERROR = 500;
     /** <tt>501 Not Implemented</tt> (HTTP/1.0 - RFC 1945) */
@@ -220,7 +200,6 @@ public class DacsStatus  {
     public static final int SC_HTTP_VERSION_NOT_SUPPORTED = 505;
     /** <tt>507 Insufficient Storage</tt> (WebDAV - RFC 2518) */
     public static final int SC_INSUFFICIENT_STORAGE = 507;
-
     // -------- 7xx DACS status codes
     /** <tt>797 Access denied</tt> */
     public static final int SC_DACS_ACCESS_DENIED = 797;
@@ -228,7 +207,6 @@ public class DacsStatus  {
     public static final int SC_DACS_ACCESS_GRANTED = 798;
     /** <tt>799 Access error</tt> */
     public static final int SC_DACS_ACCESS_ERROR = 799;
-    
     // -------- 9xx DACS access denied codes
     /** <tt>900 No applicable rule</tt> */
     public static final int DACS_NO_RULE = 900;
@@ -248,7 +226,6 @@ public class DacsStatus  {
     public static final int DACS_DEFAULT = 999;
 
     // ----------------------------------------------------- Static Initializer
-
     /** Set up status code to "reason phrase" map. */
     static {
         // HTTP 1.0 Server status codes -- see RFC 1945
@@ -282,64 +259,63 @@ public class DacsStatus  {
         addStatusCodeMap(SC_USE_PROXY, "Use Proxy");
         addStatusCodeMap(SC_PAYMENT_REQUIRED, "Payment Required");
         addStatusCodeMap(SC_NOT_ACCEPTABLE, "Not Acceptable");
-        addStatusCodeMap(SC_PROXY_AUTHENTICATION_REQUIRED, 
-            "Proxy Authentication Required");
-        addStatusCodeMap(SC_REQUEST_TIMEOUT, 
-            "Request Timeout");
+        addStatusCodeMap(SC_PROXY_AUTHENTICATION_REQUIRED,
+                "Proxy Authentication Required");
+        addStatusCodeMap(SC_REQUEST_TIMEOUT,
+                "Request Timeout");
 
         addStatusCodeMap(SC_SWITCHING_PROTOCOLS, "Switching Protocols");
         addStatusCodeMap(SC_NON_AUTHORITATIVE_INFORMATION,
-                         "Non Authoritative Information");
+                "Non Authoritative Information");
         addStatusCodeMap(SC_RESET_CONTENT, "Reset Content");
         addStatusCodeMap(SC_PARTIAL_CONTENT, "Partial Content");
         addStatusCodeMap(SC_GATEWAY_TIMEOUT, "Gateway Timeout");
         addStatusCodeMap(SC_HTTP_VERSION_NOT_SUPPORTED,
-                         "Http Version Not Supported");
+                "Http Version Not Supported");
         addStatusCodeMap(SC_GONE,
-                         "Gone");
+                "Gone");
         addStatusCodeMap(SC_LENGTH_REQUIRED,
-                         "Length Required");
+                "Length Required");
         addStatusCodeMap(SC_REQUESTED_RANGE_NOT_SATISFIABLE,
-                         "Requested Range Not Satisfiable");
+                "Requested Range Not Satisfiable");
         addStatusCodeMap(SC_EXPECTATION_FAILED,
-                         "Expectation Failed");
+                "Expectation Failed");
 
         // WebDAV Server-specific status codes
         addStatusCodeMap(SC_PROCESSING, "Processing");
         addStatusCodeMap(SC_MULTI_STATUS, "Multi-Status");
         addStatusCodeMap(SC_UNPROCESSABLE_ENTITY, "Unprocessable Entity");
         addStatusCodeMap(SC_INSUFFICIENT_SPACE_ON_RESOURCE,
-                         "Insufficient Space On Resource");
+                "Insufficient Space On Resource");
         addStatusCodeMap(SC_METHOD_FAILURE, "Method Failure");
         addStatusCodeMap(SC_LOCKED, "Locked");
-        addStatusCodeMap(SC_INSUFFICIENT_STORAGE , "Insufficient Storage");
+        addStatusCodeMap(SC_INSUFFICIENT_STORAGE, "Insufficient Storage");
         addStatusCodeMap(SC_FAILED_DEPENDENCY, "Failed Dependency");
-        
-        
+
+
         // DACS status codes
-        addStatusCodeMap(SC_DACS_ACCESS_DENIED, 
+        addStatusCodeMap(SC_DACS_ACCESS_DENIED,
                 "DACS has denied access");
-        addStatusCodeMap(SC_DACS_ACCESS_GRANTED, 
+        addStatusCodeMap(SC_DACS_ACCESS_GRANTED,
                 "DACS has granted access");
-        addStatusCodeMap(SC_DACS_ACCESS_ERROR, 
+        addStatusCodeMap(SC_DACS_ACCESS_ERROR,
                 "DACS has generated an error during access control processing");
-        
-        
+
+
         // DACS access denied codes
-        addStatusCodeMap(DACS_NO_RULE, 
+        addStatusCodeMap(DACS_NO_RULE,
                 "All rules were examined but no rule applies to the service request");
-        addStatusCodeMap(DACS_BY_RULE, 
+        addStatusCodeMap(DACS_BY_RULE,
                 "The closest matching rule does not grant the service request");
-        addStatusCodeMap(DACS_NO_AUTH, 
+        addStatusCodeMap(DACS_NO_AUTH,
                 "No valid credentials were provided and either a) no rules applies or b) the rule does not grant the service request");
         addStatusCodeMap(DACS_REVOKED,
-                         "Credentials were explicitly revoked");
-        addStatusCodeMap(DACS_BY_REDIRECT, 
+                "Credentials were explicitly revoked");
+        addStatusCodeMap(DACS_BY_REDIRECT,
                 "A rule has explicitly redirected the user");
-        addStatusCodeMap(DACS_ACK_NEEDED, 
+        addStatusCodeMap(DACS_ACK_NEEDED,
                 "One or more notices associated with the request must be acknowledged");
-        addStatusCodeMap(DACS_UNKNOWN, 
+        addStatusCodeMap(DACS_UNKNOWN,
                 "An error occurred during processing");
-    }  
-    
+    }
 }
