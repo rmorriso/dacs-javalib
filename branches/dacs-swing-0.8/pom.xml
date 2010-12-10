@@ -4,7 +4,7 @@
   <groupId>com.fedroot</groupId>
   <artifactId>dacs-swing</artifactId>
   <packaging>jar</packaging>
-  <version>0.8-SNAPSHOT</version>
+  <version>0.8</version>
   <name>dacs-swing</name>
   <url>http://maven.apache.org</url>
     <build>
@@ -30,7 +30,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>dacs-core</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>0.5</version>
     </dependency>
   </dependencies>
 </project>

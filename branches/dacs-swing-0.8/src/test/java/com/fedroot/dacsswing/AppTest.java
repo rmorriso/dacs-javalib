@@ -1,4 +1,4 @@
-package com.fedroot.swingdemo;
+package com.fedroot.dacsswing;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

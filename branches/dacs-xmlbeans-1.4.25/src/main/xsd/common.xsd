@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: common.dtd 635 2005-10-26 19:19:29Z brachman $ -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://fedroot.com/dacs/v1.4"
+  xmlns:dacs="http://fedroot.com/dacs/v1.4" 
+  elementFormDefault="qualified">
+  
+  <xs:element name="common_status">
+    <xs:complexType>
+      <xs:attribute name="context" use="required" type="xs:int"/>
+      <xs:attribute name="code" use="required" type="xs:int"/>
+      <xs:attribute name="message" use="required" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<dacs_list_jurisdictions xmlns="http://fedroot.com/dacs/v1.4" 
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+ xsi:schemaLocation="http://fedroot.com/dacs dacs_list_jurisdictions.xsd" 
+ federation="FEDROOT" 
+ domain="fedroot.com" 
+ fed_id=" 2-Jul-2007@07:45:04,694b26e409ce70ea734e88e6271781b3c0d2515b" 
+ fed_public_key="LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUlHZk1BMEdDU3FHU0liM0RRRUJBUVVBQTRHTkFEQ0JpUUtCZ1FDK01GbzBNL1U3NFl3aWRYWXN4N0RCYzJzbwpIbVUyWGorQUVSVktraU0xN3AvY1F6T0FPYlBJK3NyL3hndDAzdXBrbUhJRTM3NzRURFEzSzV3QUE5VkY2azJ2CkMzMFhsRTdzYnJ4Y2FwT212ZmNTL1BrNkVydWJPbnZGdXJFQkZMZjN5VmJMUVFSY0xJTHFjMnI1L1k5bGRKTkMKSm5vVmlERkNDQkxaMVdwNkR3SURBUUFCCi0tLS0tRU5EIFBVQkxJQyBLRVktLS0tLQo=">
+ <jurisdiction jname="FEDHOME" name="Home" alt_name="Fedroot Home Jurisdiction" dacs_url="https://fedroot.com/dacs" authenticates="no" prompts="no" auxiliary="local"/>
+ <jurisdiction jname="FEDADMIN" name="FedAdmin" alt_name="DACS Federation Admin Application" dacs_url="https://fedroot.com/fedadmin/dacs" authenticates="no" prompts="no" auxiliary="local"/>
+ <jurisdiction jname="DEV" name="FedDev" alt_name="Fedroot Developer Site" dacs_url="https://fedroot.com/dev/dacs" authenticates="no" prompts="no" auxiliary="local"/>
+ <jurisdiction jname="DSS" name="Distributed Systems Software" alt_name="Distributed Systems Software" dacs_url="https://dss.fedroot.com/cgi-bin/dacs" authenticates="yes" prompts="no" auxiliary="local"/>
+ <jurisdiction jname="METALOGIC" name="Metalogic Software" alt_name="Metalogic Software" dacs_url="https://fedroot.com/metalogic/dacs" authenticates="yes" prompts="no" auxiliary="local"/>
+ <jurisdiction jname="BLOG" name="Blojsom" alt_name="Blojsom Blog Application" dacs_url="https://fedroot.com/blojsom/dacs" authenticates="no" prompts="no" auxiliary="local"/>
+ <jurisdiction jname="MAPSERVER" name="Mapserver Application" alt_name="Fedroot Mapserver Jurisdiction" dacs_url="https://fedroot.com/mapserver/dacs" authenticates="no" prompts="no" auxiliary="local"/>
+ <jurisdiction jname="SVN" name="Subversion Application" alt_name="Fedroot Subversion Jurisdiction" dacs_url="https://fedroot.com/svn/dacs" authenticates="no" prompts="no" auxiliary="local"/>
+ <jurisdiction jname="GOOGLE" name="Google" alt_name="Google" dacs_url="https://demo.fedroot.com/google/dacs" authenticates="yes" prompts="no" auxiliary="local"/>
+ <jurisdiction jname="OPENID" name="OpenID" alt_name="OpenID Applications" dacs_url="https://demo.fedroot.com/openid/dacs" authenticates="no" prompts="no" auxiliary="local"/>
+ <jurisdiction jname="DEMO" name="FedDemo" alt_name="FedRoot Demo Jurisdiction" dacs_url="https://demo.fedroot.com/dacs" authenticates="no" prompts="no" auxiliary="local" public_key="LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUlHZk1BMEdDU3FHU0liM0RRRUJBUVVBQTRHTkFEQ0JpUUtCZ1FDMUpCbTcycVp1aFVLKzhRNGp0UjA1T2xEeQowUzVoS1hpaEhzRjdUaXcweDUwMTNTUmRpcGl4L3h4ZTRsbDRWQjh0ME1hcTdNSERXVEJkUVkrRDhlVE9acm1ICm5YbGZ3WlN5Y0JLRVlvZ3NwdFdRTXpBa3NXb2t3aGpvalBiSHhjRTRqUXBrWlhsR3VJY3RnZXdjd1ZHRHVlTzYKcGJqZ3RkSTFlRWNwKzlwR2JRSURBUUFCCi0tLS0tRU5EIFBVQkxJQyBLRVktLS0tLQo="/>
+ <jurisdiction jname="TEST" name="FedTest" alt_name="Fedroot Test Jurisdiction" dacs_url="https://demo.fedroot.com/test/dacs" authenticates="no" prompts="no" auxiliary="local"/>
+ <jurisdiction jname="TESTALT" name="FedTest" alt_name="Fedroot Test Jurisdiction" dacs_url="https://demo.fedroot.com/testalt/dacs" authenticates="no" prompts="no" auxiliary="local"/>
+ <jurisdiction jname="WIKI" name="Wiki" alt_name="Wiki Application" dacs_url="https://fedroot.com/wiki/dacs" authenticates="no" prompts="no" auxiliary="local"/>
+</dacs_list_jurisdictions>

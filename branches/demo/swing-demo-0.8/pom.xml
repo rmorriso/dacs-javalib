@@ -4,7 +4,7 @@
   <groupId>com.fedroot</groupId>
   <artifactId>swing-demo</artifactId>
   <packaging>jar</packaging>
-  <version>0.8-SNAPSHOT</version>
+  <version>0.8</version>
   <name>swing-demo</name>
   <url>http://maven.apache.org</url>
     <build>
@@ -30,7 +30,7 @@
     <dependency>
       <groupId>com.fedroot</groupId>
       <artifactId>dacs-core</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>0.5</version>
     </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -51,17 +51,29 @@
         <dependency>
             <groupId>com.fedroot</groupId>
             <artifactId>ostermiller</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>dacs-xmlbeans</artifactId>
-            <version>1.4.25-SNAPSHOT</version>
+            <version>1.4.25</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>dacs-swing</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.fedroot</groupId>
+            <artifactId>fedroot-common</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
+    <repositories>
+        <repository>
+            <id>fedroot</id>
+            <name>Fedroot Code Repository</name>
+            <url>https://fedroot.com/nexus/content/repositories/fedroot</url>
+        </repository>
+    </repositories>
 </project>
