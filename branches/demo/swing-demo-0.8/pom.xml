@@ -38,11 +38,6 @@
             <version>4.1-alpha2</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>dacs-swing</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>net.java.dev.appframework</groupId>
             <artifactId>appframework</artifactId>
             <version>1.03</version>
