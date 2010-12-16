@@ -10,6 +10,8 @@
 package fedroot.dacs;
 
 import fedroot.dacs.exceptions.DacsRuntimeException;
+import fedroot.servlet.ParameterValidator;
+import fedroot.servlet.ParameterValidator.ValidationType;
 import org.apache.http.cookie.Cookie;
 
 /**
@@ -117,5 +119,11 @@ public class DACS {
         } else {
             throw new DacsRuntimeException("invalid DACS cookie: " + name);
         }
+    }
+
+    public static ParameterValidator getDacsCheckParameterValidator() {
+        ParameterValidator dacsCheckParameterValidator = new ParameterValidator(ValidationType.ANY);
+        dacsCheckParameterValidator.addParameter(CommonArgs.DACS_ACS.toString());
+        return dacsCheckParameterValidator;
     }
 }

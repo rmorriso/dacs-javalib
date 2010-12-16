@@ -14,6 +14,8 @@ import fedroot.dacs.client.DacsCheckRequest;
 import fedroot.dacs.events.DacsEventNotifier;
 import fedroot.dacs.events.DacsEventNotifier.Status;
 import fedroot.dacs.exceptions.DacsException;
+import fedroot.dacs.swingdemo.webservice.HelloWebServiceRequest;
+import fedroot.servlet.HttpRequestType;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -36,8 +38,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
 import org.apache.http.Header;
 
 /**
@@ -51,12 +53,19 @@ public class DacsSwingDemo {
     private JComboBox actionsComboBox;
     private JTextArea responseTextArea;
     private JTextArea statusTextArea;
+    private JTextField usernameTextField;
+    private JTextField languageTextField;
     private JButton btnGO;
     private JButton btnLOGIN;
     private JButton btnLOGOUT;
+    private JButton btnPOST;
+
     private SessionManager sessionManager;
     private static final Logger logger = Logger.getLogger(DacsSwingDemo.class.getName());
+
     private static final String DACS_BASE_URI = "https://fedroot.com/test/dacs";
+    private static final String WEB_SERVICE_URI = "https://fedroot.com/test/hello-service/greet";
+
     private DacsLoginDialog loginDialog;
     // TODO - use a ComboBoxModel instead
     private static final String[] actions = {
@@ -133,10 +142,8 @@ public class DacsSwingDemo {
                         JOptionPane.showMessageDialog(mainFrame, ex.getMessage(), "901 Error", JOptionPane.WARNING_MESSAGE);
                         break;
                     case 902:
-//                        JOptionPane.showMessageDialog(mainFrame, ex.getMessage(), "902 Error", JOptionPane.WARNING_MESSAGE );
-                        if (loginDialog.showDialog()) {
-                            // login successful - try the request again
-                            loadPage("text/html", testURLs[actionsComboBox.getSelectedIndex()]);
+                        if (loginDialog.showDialog()) { // login successful - try the request again
+                                loadDacsCheckRequest(checkRequest);
                         }
                         break;
                     case 903:
@@ -159,9 +166,12 @@ public class DacsSwingDemo {
     private void init(JFrame mainFrame) {
 
         JPanel mainPanel = new JPanel(new BorderLayout());
-        JPanel actionPanel = new JPanel(new FlowLayout());
+        JPanel actionPanel = new JPanel(new BorderLayout());
+        JPanel actionRow1 = new JPanel(new FlowLayout());
+        JPanel actionRow2 = new JPanel(new FlowLayout());
         JPanel outputPanel = new JPanel(new BorderLayout());
 
+        // instantiate Row 1 Components of Action Panel
 
         btnGO = new JButton("GO");
         btnGO.addActionListener(
@@ -169,7 +179,8 @@ public class DacsSwingDemo {
 
                     @Override
                     public void actionPerformed(ActionEvent ae) {
-                        loadPage("text/html", testURLs[actionsComboBox.getSelectedIndex()]);
+                        DacsCheckRequest dacsCheckRequest = new DacsCheckRequest(testURLs[actionsComboBox.getSelectedIndex()]);
+                        loadDacsCheckRequest(dacsCheckRequest);
                     }
                 });
 
@@ -196,6 +207,29 @@ public class DacsSwingDemo {
         //initially user is not signed in - btnLOGOUT will be enabled upon successful login
         btnLOGOUT.setEnabled(false);
 
+        // instantiate Row 2 Components of Action Panel
+
+        usernameTextField = new JTextField(sessionManager.getUsername(), 20);
+        usernameTextField.setEditable(true);
+        usernameTextField.setText(sessionManager.getUsername());
+        usernameTextField.setToolTipText("username to be greeted");
+
+        languageTextField = new JTextField("", 5);
+        languageTextField.setEditable(true);
+        languageTextField.setToolTipText("greeting language");
+
+        btnPOST = new JButton("POST");
+        btnPOST.addActionListener(
+                new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent ae) {
+                        HelloWebServiceRequest helloWebServiceRequest = new HelloWebServiceRequest(WEB_SERVICE_URI, usernameTextField.getText(), languageTextField.getText());
+                        helloWebServiceRequest.setHttpRequestType(HttpRequestType.POST);
+                        loadDacsCheckRequest(helloWebServiceRequest);
+                    }
+                });
+
         actionsComboBox = new JComboBox(actions);
         actionsComboBox.setToolTipText("Select an Action");
         actionsComboBox.setEditable(true);
@@ -203,11 +237,18 @@ public class DacsSwingDemo {
 
         JLabel actionLabel = new JLabel("Action:");
 
-        actionPanel.add(actionLabel);
-        actionPanel.add(actionsComboBox);
-        actionPanel.add(btnGO);
-        actionPanel.add(btnLOGIN);
-        actionPanel.add(btnLOGOUT);
+        actionRow1.add(actionLabel);
+        actionRow1.add(actionsComboBox);
+        actionRow1.add(btnGO);
+        actionRow1.add(btnLOGIN);
+        actionRow1.add(btnLOGOUT);
+        
+        actionRow2.add(usernameTextField);
+        actionRow2.add(languageTextField);
+        actionRow2.add(btnPOST);
+
+        actionPanel.add(actionRow1, BorderLayout.NORTH);
+        actionPanel.add(actionRow2, BorderLayout.SOUTH);
 
         responseTextArea = new JTextArea();
         responseTextArea.setEditable(false);
@@ -259,11 +300,12 @@ public class DacsSwingDemo {
         statusTextArea.setCaretPosition(0);
     }
 
+
     /**
      * Loads contents of the input stream in a separate thread.
-     * @param is input stream to be rendered as HTML
+     * @param dacsCheckRequst the DACS-modified Web Service Request to load
      */
-    private void loadPage(final String contenttype, final String url) {
+    private void loadDacsCheckRequest(final DacsCheckRequest dacsCheckRequest) {
         // create a new thread to load the URL from
         final StringBuffer stringBuffer = new StringBuffer();
         new Thread() {
@@ -272,19 +314,17 @@ public class DacsSwingDemo {
                 {
                     InputStream inputStream = null;
                     try {
-                        inputStream = sessionManager.getInputStream(url);
+                        inputStream = sessionManager.getInputStream(dacsCheckRequest);
                         Reader reader = new InputStreamReader(new BufferedInputStream(inputStream));
                         int character;
                         while ((character = reader.read()) != -1) {
                             stringBuffer.append((char) character);
                         }
-      //                inputStream.close();
                         if (inputStream != null) {
                             SwingUtilities.invokeLater(new Runnable() {
                                 @Override
                                 public void run() {
                                     setResponseText(stringBuffer.toString());
-//                                    setDocumentContent(contenttype, stringBuffer.toString());
                                 }
                             });
                         }
@@ -293,7 +333,6 @@ public class DacsSwingDemo {
                     } catch (IOException ex) {
                         logger.log(Level.SEVERE, ex.getMessage());
                     } finally {
-//                        setDocumentContent(contenttype, stringBuffer.toString());
                         try {
                             if (inputStream != null) inputStream.close();
                         } catch (IOException ex) {

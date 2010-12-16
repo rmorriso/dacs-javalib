@@ -1,5 +1,5 @@
 /*
- * HtmlLoader.java
+ * DacsCheckLoader.java
  * Created on Jan 16, 2010 5:48:01 PM.
  * Copyright (c) 2010 Metalogic Software Corporation
  * All rights reserved. See http://fedroot.com/licenses/metalogic.txt for redistribution information.
@@ -11,7 +11,6 @@ import com.fedroot.dacs.DacsAcs;
 import fedroot.dacs.client.DacsCheckRequest;
 import fedroot.dacs.exceptions.DacsException;
 import fedroot.dacs.http.DacsClientContext;
-import fedroot.servlet.HttpRequestType;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
@@ -24,20 +23,18 @@ import javax.xml.bind.Unmarshaller;
  *
  * @author Roderick Morrison <rmorriso at fedroot.com>
  */
-public class HtmlLoader {
+public class DacsCheckLoader {
 
-    private static final Logger logger = Logger.getLogger(HtmlLoader.class.getName());
+    private static final Logger logger = Logger.getLogger(DacsCheckLoader.class.getName());
 
     private DacsCheckRequest webServiceRequest;
-    private HttpRequestType httpRequestType;
 
     /**
      * subclasses are expected to initialize the appropriate DacsWebServiceRequest
      */
-    public HtmlLoader(DacsCheckRequest webServiceRequest) {
+
+    public DacsCheckLoader(DacsCheckRequest webServiceRequest) {
         this.webServiceRequest = webServiceRequest;
-        // default request type is GET
-        this.httpRequestType = HttpRequestType.GET;
     }
 
     /**
@@ -87,10 +84,17 @@ public class HtmlLoader {
      * @return the XML document returned in the Web service request
      */
     private InputStream getXmlStream(DacsClientContext dacsClientContext) throws DacsException {
-        if (httpRequestType == HttpRequestType.GET) {
-            return dacsClientContext.executeGetRequest(webServiceRequest);
-        } else {
-            return dacsClientContext.executePostRequest(webServiceRequest);
+        switch (webServiceRequest.getHttpRequestType()) {
+            case GET:
+                return dacsClientContext.executeGetRequest(webServiceRequest);
+            case POST:
+                return dacsClientContext.executePostRequest(webServiceRequest);
+            case DELETE:
+            case HEAD:
+            case PUT:
+            case RACE:
+            default:
+                return null;
         }
     }
 
