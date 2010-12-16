@@ -33,33 +33,53 @@
 
 package fedroot.dacs.swingdemo.webservice;
 
+import fedroot.dacs.client.DacsCheckRequest;
+import fedroot.servlet.ParameterValidator;
 import fedroot.servlet.ParameterValidators;
 import fedroot.servlet.ServiceParameters;
-import fedroot.servlet.WebServiceRequest;
 
 
 /**
  *
  * @author rmorriso
  */
-public class TestWebServiceRequest extends WebServiceRequest {
+public class HelloWebServiceRequest extends DacsCheckRequest {
+
+    public enum args { username, language };
+
+    private String username;
+    private String language;
     
-    public TestWebServiceRequest(String uri) {
+    public HelloWebServiceRequest(String uri, String username, String language) {
         super(uri);
+        this.username = username;
+        this.language = language;
     }
 
     @Override
     public ServiceParameters getServiceParameters() {
-        return null;
+        ServiceParameters serviceParameters = super.getServiceParameters();
+        serviceParameters.addParameter(args.username, username);
+        serviceParameters.addParameter(args.language, language);
+        return serviceParameters;
     }
 
     /**
      * return ParameterValidators for use by clients that implement
-     * the UserAccountRequest request service
+     * the DacsAuthenticateRequest service
      * @return
      */
     @Override
     public ParameterValidators getParameterValidators() {
-        return null;
+        ParameterValidators parameterValidators = super.getParameterValidators();
+        // username is mandatory
+        ParameterValidator usernameValidator = new ParameterValidator(ParameterValidator.ValidationType.ALL);
+        usernameValidator.addParameter(args.username.toString());
+        parameterValidators.addValidator(usernameValidator);
+        // language is optional
+        ParameterValidator languageValidator = new ParameterValidator(ParameterValidator.ValidationType.ANY);
+        languageValidator.addParameter(args.language.toString());
+        parameterValidators.addValidator(languageValidator);
+        return parameterValidators;
     }
 }

@@ -38,11 +38,7 @@ public class DacsCheckRequest extends WebServiceRequest {
     @Override
     public ServiceParameters getServiceParameters() {
        ServiceParameters serviceParameters = new ServiceParameters();
-       if (checkOnly) {
-           serviceParameters.addParameter(args.DACS_ACS, "-check_only%20-format+XMLSCHEMA");
-       } else {
-           serviceParameters.addParameter(args.DACS_ACS, "-check_fail%20-format+XMLSCHEMA");
-       }
+       serviceParameters.addParameter(args.DACS_ACS, getDacsAcs());
        return serviceParameters;
     }
 
@@ -60,4 +56,13 @@ public class DacsCheckRequest extends WebServiceRequest {
         return parameterValidators;
     }
 
+    private String getDacsAcs() {
+        switch (getHttpRequestType()) {
+            case GET:
+                return (checkOnly ? "-check_only%20-format+XMLSCHEMA" : "-check_fail%20-format+XMLSCHEMA");
+            case PUT:
+            default:
+                return  (checkOnly ? "-check_only -format XMLSCHEMA" : "-check_fail -format XMLSCHEMA");
+        }
+    }
 }

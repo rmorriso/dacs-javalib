@@ -11,7 +11,7 @@ import fedroot.dacs.entities.Credentials;
 import fedroot.dacs.entities.CredentialsLoader;
 import fedroot.dacs.entities.Federation;
 import fedroot.dacs.entities.FederationLoader;
-import fedroot.dacs.entities.HtmlLoader;
+import fedroot.dacs.entities.DacsCheckLoader;
 import fedroot.dacs.entities.Jurisdiction;
 import fedroot.dacs.entities.Role;
 import fedroot.dacs.events.DacsEventNotifier;
@@ -34,6 +34,7 @@ public class SessionManager {
     private DacsEventNotifier dacsEventNotifier;
     private DacsClientContext dacsClientContext;
     private Federation federation;
+    private Jurisdiction jurisdiction;
     private String username;
     private List<Role> roles;
     private String cookieName;
@@ -69,17 +70,22 @@ public class SessionManager {
 
     public void signon(Jurisdiction jurisdiction, String username, String password) {
         try {
+            if (this.jurisdiction != null) {
+                logger.log(Level.INFO,"Multiple conccurent signon is not supported. Forcing signout.");
+                signout();
+            }
             // authenticate in given jurisdiction as username
             DacsAuthenticateRequest dacsAuthenticateRequest = new DacsAuthenticateRequest(jurisdiction, username, password);
             dacsClientContext.executePostRequest(dacsAuthenticateRequest);
             CredentialsLoader credentialsLoader = new CredentialsLoader(jurisdiction, dacsClientContext);
             Credentials credentials = credentialsLoader.getCredentials();
+            this.jurisdiction = jurisdiction;
             for (Credential credential : credentials.getCredentials()) {
-                this.username = credential.getName();
-                this.roles = credential.getRoles();
+                this.setUsername(credential.getName());
+                this.setRoles(credential.getRoles());
                 this.cookieName = credential.getCookieName();
             }
-            dacsEventNotifier.status(Status.signon, "user signin: " + username + (roles == null ? "" : " with roles " + roles));
+            dacsEventNotifier.status(Status.signon, "user signin: " + username + (getRoles() == null ? "" : " with roles " + getRoles()));
         } catch (DacsException ex) {
 //            dacsEventNotifier.notify(ex);
             logger.log(Level.INFO, ex.getMessage());
@@ -88,23 +94,68 @@ public class SessionManager {
 
     public void signout() {
         dacsClientContext.removeCookieByName(cookieName);
-        dacsEventNotifier.status(Status.signout, "signout: " + username);
-        logger.log(Level.FINE, "user signout: {0}", username);
+        dacsEventNotifier.status(Status.signout, "signout: " + getUsername());
+        reset(); // wipe current values
+        logger.log(Level.FINE, "user signout: {0}", getUsername());
     }
 
-    /**
-     * execute WebServiceRequest
-     * @param uri
-     */
-    public synchronized InputStream getInputStream(String url) throws IOException, DacsException {
-        DacsCheckRequest dacsCheckRequest = new DacsCheckRequest(url);
+    public synchronized InputStream getInputStream(DacsCheckRequest dacsCheckRequest) throws IOException, DacsException {
         try {
-            HtmlLoader htmlLoader = new HtmlLoader(dacsCheckRequest);
+            DacsCheckLoader htmlLoader = new DacsCheckLoader(dacsCheckRequest);
             return htmlLoader.getInputStream(dacsClientContext);
         } catch (DacsException ex) {
             dacsEventNotifier.notify(ex, dacsCheckRequest);
             throw ex;
         }
+    }
+
+    /**
+     * @return the jurisdiction
+     */
+    public Jurisdiction getJurisdiction() {
+        return jurisdiction;
+    }
+
+    /**
+     * @param jurisdiction the jurisdiction to set
+     */
+    public void setJurisdiction(Jurisdiction jurisdiction) {
+        this.jurisdiction = jurisdiction;
+    }
+
+    /**
+     * @return the username
+     */
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * @param username the username to set
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    /**
+     * @return the roles
+     */
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    /**
+     * @param roles the roles to set
+     */
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
+    private void reset() {
+        this.jurisdiction = null;
+        this.username = null;
+        this.roles = null;
+        this.cookieName = null;
     }
 
 }
