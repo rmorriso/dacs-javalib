@@ -52,6 +52,11 @@
             <artifactId>dacs-swing</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.fedroot</groupId>
+            <artifactId>fedroot-common</artifactId>
+            <version>1.1</version>
+        </dependency>
     </dependencies>
     <repositories>
         <repository>
