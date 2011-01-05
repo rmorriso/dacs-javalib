@@ -46,7 +46,7 @@ public class DacsCheckLoader {
      */
     public InputStream getInputStream(DacsClientContext dacsClientContext) throws DacsException, IOException {
         InputStream inputStream = getXmlStream(dacsClientContext);
-        try {
+        try { // if access is denied by DACS response contains and DACS ACS document
             JAXBContext jc = JAXBContext.newInstance(DacsAcs.class);
             Unmarshaller um = jc.createUnmarshaller();
             DacsAcs dacsAcs = (DacsAcs) um.unmarshal(inputStream);
@@ -70,12 +70,13 @@ public class DacsCheckLoader {
                 }
             } catch (IOException ex) {
                 logger.log(Level.SEVERE, ex.getMessage());
+            } finally {
+                return null;
             }
-        } catch (JAXBException ex) {
+        } catch (JAXBException ex) { // failed to parse DACS ACS document - access was allowed
             inputStream.reset();
             return inputStream;
         }
-        return inputStream;
     }
 
     /**
