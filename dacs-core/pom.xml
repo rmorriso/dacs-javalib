@@ -1,10 +1,11 @@
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.fedroot</groupId>
     <artifactId>dacs-core</artifactId>
     <packaging>jar</packaging>
-    <version>0.6-SNAPSHOT</version>
+    <version>0.61-SNAPSHOT</version>
     <name>dacs-core</name>
     <url>http://maven.apache.org</url>
     <build>
@@ -67,7 +68,7 @@
             <name>Repository hosting the jee6 artifacts</name>
             <url>https://fedroot.com/nexus/content/repositories/fedroot</url>
         </repository>
-        </repositories>
+    </repositories>
     <dependencies>
         <dependency>
             <groupId>com.fedroot</groupId>
@@ -78,6 +79,12 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
             <version>4.1-beta1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+            <version>4.1-beta1</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
@@ -94,7 +101,7 @@
         <dependency>
             <groupId>com.fedroot</groupId>
             <artifactId>fedroot-common</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <version>1.11-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>
