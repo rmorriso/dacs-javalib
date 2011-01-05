@@ -6,7 +6,6 @@
  * Copyright (c) 2010 Metalogic Software Corporation.
  * All rights reserved. See http://fedroot.com/licenses/metalogic.txt for redistribution information.
  */
-
 package fedroot.dacs.client;
 
 import fedroot.servlet.ParameterValidator;
@@ -14,19 +13,20 @@ import fedroot.servlet.ParameterValidators;
 import fedroot.servlet.ServiceParameters;
 import fedroot.servlet.WebServiceRequest;
 
-
 /**
  *
  * @author rmorriso
  */
 public class DacsCheckRequest extends WebServiceRequest {
 
-    public enum args { DACS_ACS };
+    public enum args {
 
+        DACS_ACS
+    };
     private boolean checkOnly;
 
     public DacsCheckRequest(String uri) {
-        this(uri,false);
+        this(uri, false);
     }
 
     public DacsCheckRequest(String uri, boolean checkOnly) {
@@ -34,12 +34,11 @@ public class DacsCheckRequest extends WebServiceRequest {
         this.checkOnly = checkOnly;
     }
 
-
     @Override
     public ServiceParameters getServiceParameters() {
-       ServiceParameters serviceParameters = new ServiceParameters();
-       serviceParameters.addParameter(args.DACS_ACS, getDacsAcs());
-       return serviceParameters;
+        ServiceParameters serviceParameters = new ServiceParameters();
+        serviceParameters.addParameter(args.DACS_ACS, getDacsAcs());
+        return serviceParameters;
     }
 
     /**
@@ -60,9 +59,13 @@ public class DacsCheckRequest extends WebServiceRequest {
         switch (getHttpRequestType()) {
             case GET:
                 return (checkOnly ? "-check_only%20-format+XMLSCHEMA" : "-check_fail%20-format+XMLSCHEMA");
-            case PUT:
+            case POST:
             default:
-                return  (checkOnly ? "-check_only -format XMLSCHEMA" : "-check_fail -format XMLSCHEMA");
+                if (getEnclosureType().equals("multipart/form-data")) { // work around DACS multipart parsing problem
+                    return (checkOnly ? "-check_only%20-format+XMLSCHEMA" : "-check_fail%20-format+XMLSCHEMA");
+                } else { // "application/x-www-form-urlencoded" etc
+                    return (checkOnly ? "-check_only -format XMLSCHEMA" : "-check_fail -format XMLSCHEMA");
+                }
         }
     }
 }
