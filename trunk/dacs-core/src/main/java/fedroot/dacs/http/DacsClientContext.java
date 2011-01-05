@@ -38,6 +38,8 @@ import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.impl.cookie.BasicClientCookie;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.BasicHttpContext;
 
@@ -59,6 +61,11 @@ public class DacsClientContext {
      * hostname = cookie domainname.
      */
     public DacsClientContext() {
+        this(new BasicHttpParams());
+    }
+
+    public DacsClientContext(HttpParams httpParams) {
+
         SchemeRegistry schemeRegistry = new SchemeRegistry();
         schemeRegistry.register(
                 new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
@@ -66,9 +73,11 @@ public class DacsClientContext {
                 new Scheme("https", 443, SSLSocketFactory.getSocketFactory()));
 
         ClientConnectionManager cm = new ThreadSafeClientConnManager(schemeRegistry);
+        if (httpParams.getParameter(ClientPNames.COOKIE_POLICY) == null) {
+            httpParams.setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.BROWSER_COMPATIBILITY);
+        }
+        httpClient = new DefaultHttpClient(cm, httpParams);
 
-        httpClient = new DefaultHttpClient(cm);
-        httpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.BROWSER_COMPATIBILITY);
         cookieStore = new BasicCookieStore();
         httpContext = new BasicHttpContext();
         // Bind custom cookie store to the local context
