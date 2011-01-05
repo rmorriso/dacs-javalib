@@ -14,6 +14,7 @@ import fedroot.dacs.client.DacsCheckRequest;
 import fedroot.dacs.events.DacsEventNotifier;
 import fedroot.dacs.events.DacsEventNotifier.Status;
 import fedroot.dacs.exceptions.DacsException;
+import fedroot.dacs.swingdemo.webservice.FileUploadRequest;
 import fedroot.dacs.swingdemo.webservice.HelloWebServiceRequest;
 import fedroot.servlet.HttpRequestType;
 import java.awt.BorderLayout;
@@ -24,6 +25,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -31,6 +33,7 @@ import java.io.Reader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -55,6 +58,7 @@ public class DacsSwingDemo {
     private JTextArea statusTextArea;
     private JTextField usernameTextField;
     private JTextField languageTextField;
+    private JCheckBox multipartCheckBox;
     private JButton btnGO;
     private JButton btnLOGIN;
     private JButton btnLOGOUT;
@@ -64,7 +68,10 @@ public class DacsSwingDemo {
     private static final Logger logger = Logger.getLogger(DacsSwingDemo.class.getName());
 
     private static final String DACS_BASE_URI = "https://fedroot.com/test/dacs";
-    private static final String WEB_SERVICE_URI = "https://fedroot.com/test/hello-service/greet";
+    private static final String FILE_SERVICE_URI = "https://fedroot.com/test/file-service/upload";
+//    private static final String FILE_SERVICE_URI = "http://trigomorrison.net/cgi-bin/printrequest";
+    private static final String HELLO_SERVICE_URI = "https://fedroot.com/test/hello-service/greet";
+    private static final String FILE = "/Users/rmorriso/Development/devel/dacs-javalib/trunk/demo/swing-demo/lorem.pdf";
 
     private DacsLoginDialog loginDialog;
     // TODO - use a ComboBoxModel instead
@@ -105,7 +112,7 @@ public class DacsSwingDemo {
         logger.log(Level.FINEST, "Launching MainFrame ");
 
         mainFrame = new JFrame(title);
-        Dimension minSize = new Dimension(600, 400);
+        Dimension minSize = new Dimension(680, 400);
         mainFrame.setMinimumSize(minSize);
         mainFrame.setLocationRelativeTo(null);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -218,15 +225,24 @@ public class DacsSwingDemo {
         languageTextField.setEditable(true);
         languageTextField.setToolTipText("greeting language");
 
+        multipartCheckBox = new JCheckBox();
+
         btnPOST = new JButton("POST");
         btnPOST.addActionListener(
                 new ActionListener() {
 
                     @Override
                     public void actionPerformed(ActionEvent ae) {
-                        HelloWebServiceRequest helloWebServiceRequest = new HelloWebServiceRequest(WEB_SERVICE_URI, usernameTextField.getText(), languageTextField.getText());
-                        helloWebServiceRequest.setHttpRequestType(HttpRequestType.POST);
-                        loadDacsCheckRequest(helloWebServiceRequest);
+                        if (multipartCheckBox.isSelected()) {
+                            File lorem = new File(FILE);
+                            FileUploadRequest fileUploadRequest = new FileUploadRequest(FILE_SERVICE_URI, usernameTextField.getText(), "uploadFile", lorem);
+                            fileUploadRequest.setHttpRequestType(HttpRequestType.POST, "multipart/form-data");
+                            loadDacsCheckRequest(fileUploadRequest);
+                        } else {
+                            HelloWebServiceRequest helloWebServiceRequest = new HelloWebServiceRequest(HELLO_SERVICE_URI, usernameTextField.getText(), languageTextField.getText());
+                            helloWebServiceRequest.setHttpRequestType(HttpRequestType.POST, "application/x-www-form-urlencoded");
+                            loadDacsCheckRequest(helloWebServiceRequest);
+                        }
                     }
                 });
 
@@ -242,10 +258,14 @@ public class DacsSwingDemo {
         actionRow1.add(btnGO);
         actionRow1.add(btnLOGIN);
         actionRow1.add(btnLOGOUT);
-        
+
+        actionRow2.add(new JLabel("Name:"));
         actionRow2.add(usernameTextField);
+        actionRow2.add(new JLabel("Language:"));
         actionRow2.add(languageTextField);
         actionRow2.add(btnPOST);
+        actionRow2.add(multipartCheckBox);
+        actionRow2.add(new JLabel("Include File"));
 
         actionPanel.add(actionRow1, BorderLayout.NORTH);
         actionPanel.add(actionRow2, BorderLayout.SOUTH);
