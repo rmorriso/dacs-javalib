@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.http.params.HttpParams;
 
 /**
  *
@@ -56,6 +57,23 @@ public class SessionManager {
         }
     }
 
+    public SessionManager(String dacsBaseUri, HttpParams httpParams) {
+        dacsEventNotifier = new DacsEventNotifier();
+
+        try {
+            dacsClientContext = new DacsClientContext(httpParams);
+            FederationLoader federationLoader = new FederationLoader(dacsBaseUri, dacsClientContext);
+            logger.log(Level.INFO, "loading federation from {0}", dacsBaseUri);
+            federation = federationLoader.getFederation();
+            logger.log(Level.INFO, "loaded federation {0}", federation.getFederationName());
+
+            // TODO derive log level from Application runtime configuration
+            logger.setLevel(Level.INFO);
+        } catch (DacsException ex) {
+            Logger.getLogger(SessionManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     /**
      * @return add object
      */
@@ -70,8 +88,8 @@ public class SessionManager {
 
     public void signon(Jurisdiction jurisdiction, String username, String password) {
         try {
-            if (this.jurisdiction != null) {
-                logger.log(Level.INFO,"Multiple conccurent signon is not supported. Forcing signout.");
+            if (this.username != null) {
+                logger.log(Level.INFO,"Multiple concurrent signon is not supported. Forcing signout.");
                 signout();
             }
             // authenticate in given jurisdiction as username
@@ -101,8 +119,8 @@ public class SessionManager {
 
     public synchronized InputStream getInputStream(DacsCheckRequest dacsCheckRequest) throws IOException, DacsException {
         try {
-            DacsCheckLoader htmlLoader = new DacsCheckLoader(dacsCheckRequest);
-            return htmlLoader.getInputStream(dacsClientContext);
+            DacsCheckLoader dacsCheckLoader = new DacsCheckLoader(dacsCheckRequest);
+            return dacsCheckLoader.getInputStream(dacsClientContext);
         } catch (DacsException ex) {
             dacsEventNotifier.notify(ex, dacsCheckRequest);
             throw ex;
