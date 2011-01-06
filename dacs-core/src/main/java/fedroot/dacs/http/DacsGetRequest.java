@@ -14,7 +14,6 @@ package fedroot.dacs.http;
  */
 
 import fedroot.dacs.exceptions.DacsException;
-import fedroot.servlet.WebServiceRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -42,10 +41,6 @@ public class DacsGetRequest {
 
     private HttpGet httpGet;
 
-    public DacsGetRequest(WebServiceRequest webServiceRequest) {
-        this.httpGet = new HttpGet(webServiceRequest.getURI());
-    }
-
     public DacsGetRequest(URI uri) {
         this.httpGet = new HttpGet(uri);
     }
@@ -54,7 +49,7 @@ public class DacsGetRequest {
         return this.httpGet;
     }
 
-    ResponseHandler<InputStream> responseHandler = new ResponseHandler<InputStream>() {
+    static final ResponseHandler<InputStream> streamHandler = new ResponseHandler<InputStream>() {
         @Override
         public InputStream handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
             HttpEntity entity = response.getEntity();
@@ -67,7 +62,7 @@ public class DacsGetRequest {
         }
     };
 
-    ResponseHandler<String> handler = new ResponseHandler<String>() {
+    static final ResponseHandler<String> stringHandler = new ResponseHandler<String>() {
         @Override
         public String handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
             HttpEntity entity = response.getEntity();
@@ -82,7 +77,7 @@ public class DacsGetRequest {
 
     public InputStream getInputStream(HttpClient httpClient, HttpContext httpContext) throws DacsException {
         try {
-            return httpClient.execute(httpGet, responseHandler, httpContext);
+            return httpClient.execute(httpGet, streamHandler, httpContext);
         } catch (IOException ex) {
             Logger.getLogger(DacsGetRequest.class.getName()).log(Level.SEVERE, null, ex);
             throw new DacsException("DACS HTTP Get Request failed: " + ex.getMessage());
@@ -93,7 +88,7 @@ public class DacsGetRequest {
 
     public String getString(HttpClient httpClient, HttpContext httpContext) throws DacsException {
         try {
-            return httpClient.execute(httpGet, handler, httpContext);
+            return httpClient.execute(httpGet, stringHandler, httpContext);
         } catch (IOException ex) {
             Logger.getLogger(DacsGetRequest.class.getName()).log(Level.SEVERE, null, ex);
             throw new DacsException("DACS HTTP Get Request failed: " + ex.getMessage());

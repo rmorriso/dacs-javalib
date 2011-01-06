@@ -11,6 +11,7 @@ import com.fedroot.dacs.DacsAcs;
 import fedroot.dacs.client.DacsCheckRequest;
 import fedroot.dacs.exceptions.DacsException;
 import fedroot.dacs.http.DacsClientContext;
+import fedroot.dacs.http.DacsResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
@@ -27,25 +28,27 @@ public class DacsCheckLoader {
 
     private static final Logger logger = Logger.getLogger(DacsCheckLoader.class.getName());
 
-    private DacsCheckRequest webServiceRequest;
+    private DacsCheckRequest dacsCheckRequest;
 
     /**
      * subclasses are expected to initialize the appropriate DacsWebServiceRequest
      */
 
-    public DacsCheckLoader(DacsCheckRequest webServiceRequest) {
-        this.webServiceRequest = webServiceRequest;
+    public DacsCheckLoader(DacsCheckRequest dacsCheckRequest) {
+        this.dacsCheckRequest = dacsCheckRequest;
     }
 
     /**
      * unmarshall the XML entity in the document returned from WebServiceRequest
      * note this is intolerant to ill-formed XML in the response document
      * @param dacsClientContext the DacsClientContext to execute the WebServiceRequest
-     * @return the XML entity
+     * @return the DacsResponse
      * @throws DacsException
      */
-    public InputStream getInputStream(DacsClientContext dacsClientContext) throws DacsException, IOException {
-        InputStream inputStream = getXmlStream(dacsClientContext);
+
+    public DacsResponse getDacsResponse(DacsClientContext dacsClientContext) throws DacsException, IOException {
+        DacsResponse dacsResponse = dacsClientContext.getDacsResponse(dacsCheckRequest);
+        InputStream inputStream = dacsResponse.getInputStream();
         try { // if access is denied by DACS response contains and DACS ACS document
             JAXBContext jc = JAXBContext.newInstance(DacsAcs.class);
             Unmarshaller um = jc.createUnmarshaller();
@@ -75,27 +78,7 @@ public class DacsCheckLoader {
             }
         } catch (JAXBException ex) { // failed to parse DACS ACS document - access was allowed
             inputStream.reset();
-            return inputStream;
-        }
-    }
-
-    /**
-     * Returns the XML stream required to instantiate this entity.
-     * @param dacsClientContext the dacsClientContext to issue the Web service request
-     * @return the XML document returned in the Web service request
-     */
-    private InputStream getXmlStream(DacsClientContext dacsClientContext) throws DacsException {
-        switch (webServiceRequest.getHttpRequestType()) {
-            case GET:
-                return dacsClientContext.executeGetRequest(webServiceRequest);
-            case POST:
-                return dacsClientContext.executePostRequest(webServiceRequest);
-            case DELETE:
-            case HEAD:
-            case PUT:
-            case RACE:
-            default:
-                return null;
+            return dacsResponse;
         }
     }
 

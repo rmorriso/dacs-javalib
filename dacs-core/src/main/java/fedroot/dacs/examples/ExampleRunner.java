@@ -45,9 +45,9 @@ public class ExampleRunner {
             federationLoader = new FederationLoader("https://fedroot.com/dacs", dacsClientContext);
             federation = federationLoader.getFederation();
 
-            failedAuthenticationExample(dacsClientContext);
-//            authenticationExample(dacsClientContext);
-//            credentialsExample(dacsClientContext);
+//            failedAuthenticationExample(dacsClientContext);
+            authenticationExample(dacsClientContext);
+            credentialsExample(dacsClientContext);
 //            federationExample();
 //            getCookiesWithEmail();
         } catch (Exception ex) {

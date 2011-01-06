@@ -10,6 +10,9 @@ package fedroot.dacs.http;
  *
  * @author Roderick Morrison <rmorriso at fedroot.com>
  */
+import com.fedroot.dacs.AccessDenied;
+import com.fedroot.dacs.DacsAcs;
+import fedroot.dacs.client.DacsCheckRequest;
 import fedroot.dacs.exceptions.DacsException;
 import fedroot.servlet.WebServiceRequest;
 import java.io.IOException;
@@ -20,8 +23,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -53,8 +60,10 @@ public class DacsClientContext {
     private HttpContext httpContext;
     private CookieStore cookieStore;
 
+    private static final Logger logger = Logger.getLogger(DacsClientContext.class.getName());
+
     /**
-     * constructor for DacsContext;
+     * constructor for DacsClientContext;
      * initializes HttpClient that will be used for this DacsContext,
      * sets legacy BROWSER_COMPATIBILITY mode to emulate typical browser behaviour.
      * In particular this is relied upon to ensure that cookies are sent when
@@ -84,51 +93,57 @@ public class DacsClientContext {
         httpContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
     }
 
-    public InputStream executeGetRequest(WebServiceRequest webServiceRequest) throws DacsException {
-        DacsGetRequest dacsGetRequest = new DacsGetRequest(webServiceRequest);
-        return dacsGetRequest.getInputStream(httpClient, httpContext);
+    public DacsResponse executeGetRequest(WebServiceRequest webServiceRequest) throws DacsException {
+        return executeGetRequest(webServiceRequest.getURI());
     }
 
-    public HttpResponse executeGetRequest(URI uri) throws DacsException {
+    public DacsResponse executeGetRequest(URI uri) throws DacsException {
         DacsGetRequest dacsGetRequest = new DacsGetRequest(uri);
-        HttpGet httpGet = dacsGetRequest.getHttpGet();
-        try {
-            return httpClient.execute(httpGet, httpContext);
-        } catch (IOException ex) {
-            Logger.getLogger(DacsClientContext.class.getName()).log(Level.SEVERE, null, ex);
-            throw new DacsException("DACS HTTP Get Request failed: " + ex.getMessage());
-        } finally {
-            // TODO need to close connection, or use multithreaded connection manager or SOMETHING!
-        }
+        return execute(dacsGetRequest, httpClient, httpContext);
     }
 
-    public HttpResponse executeGetRequest(DacsGetRequest dacsGetRequest) throws IOException {
-        return httpClient.execute(dacsGetRequest.getHttpGet(), httpContext);
+    public DacsResponse executeGetRequest(DacsGetRequest dacsGetRequest) throws DacsException {
+        return execute(dacsGetRequest, httpClient, httpContext);
     }
 
-    public HttpResponse executeGetRequest(HttpGet httpGet) throws DacsException {
-        try {
-            return httpClient.execute(httpGet, httpContext);
-        } catch (IOException ex) {
-            Logger.getLogger(DacsClientContext.class.getName()).log(Level.SEVERE, null, ex);
-            throw new DacsException("DACS HTTP Get Request failed: " + ex.getMessage());
-        } finally {
-            // TODO need to close connection, or use multithreaded connection manager or SOMETHING!
-        }
-    }
-//    public HttpResponse executePostRequest(WebServiceRequest webServiceRequest) throws IOException {
-//        DacsPostRequest dacsPostRequest = new DacsPostRequest(webServiceRequest);
-//        HttpResponse response = httpClient.execute(dacsPostRequest.getHttpPost(), httpContext);
-//        HttpEntity entity = response.getEntity();
-//        if (entity != null) entity.consumeContent();
-//        return response;
-//    }
-
-    public InputStream executePostRequest(WebServiceRequest webServiceRequest) throws DacsException {
+    public DacsResponse executePostRequest(WebServiceRequest webServiceRequest) throws DacsException {
         DacsPostRequest dacsPostRequest = new DacsPostRequest(webServiceRequest);
-        return dacsPostRequest.getInputStream(httpClient, httpContext);
+        return execute(dacsPostRequest, httpClient, httpContext);
     }
 
+    public DacsResponse execute(DacsGetRequest dacsGetRequest, HttpClient httpClient, HttpContext httpContext) throws DacsException {
+        try {
+            return new DacsResponse(httpClient.execute(dacsGetRequest.getHttpGet(), httpContext));
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, null, ex);
+            throw new DacsException(ex.getLocalizedMessage());
+        }
+    }
+
+    public DacsResponse execute(DacsPostRequest dacsPostRequest, HttpClient httpClient, HttpContext httpContext) throws DacsException {
+        try {
+            return new DacsResponse(httpClient.execute(dacsPostRequest.getHttpPost(), httpContext));
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, null, ex);
+            throw new DacsException(ex.getLocalizedMessage());
+        }
+    }
+
+    public DacsResponse getDacsResponse(WebServiceRequest webServiceRequest) throws DacsException {
+        switch (webServiceRequest.getHttpRequestType()) {
+            case GET:
+                return executeGetRequest(webServiceRequest);
+            case POST:
+                return executePostRequest(webServiceRequest);
+            case DELETE:
+            case HEAD:
+            case PUT:
+            case RACE:
+            default:
+                return null;
+        }
+    }
+    
     public List<Cookie> getAllCookies() {
         return cookieStore.getCookies();
     }
