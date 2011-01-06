@@ -28,7 +28,7 @@ public class DacsResponse {
     public DacsResponse(HttpResponse httpResponse) throws DacsException {
         this.httpResponse = httpResponse;
         if (httpResponse.getEntity() != null) {
-            try { // we need a BufferedHttpEntity so we can reset it after a DacsCheckRequest
+            try { // we use a BufferedHttpEntity so we can reset the input stream  after a DacsCheckRequest
                 this.inputStream = new BufferedHttpEntity(httpResponse.getEntity()).getContent();
             } catch (IOException ex) {
                 logger.log(Level.SEVERE, null, ex);
