@@ -8,6 +8,7 @@ package fedroot.dacs.entities;
 
 import fedroot.dacs.exceptions.DacsException;
 import fedroot.dacs.http.DacsClientContext;
+import fedroot.dacs.http.DacsResponse;
 import fedroot.servlet.HttpRequestType;
 import fedroot.servlet.WebServiceRequest;
 import java.io.IOException;
@@ -33,14 +34,12 @@ abstract public class WebServiceEntityLoader {
      * subclasses are expected to initialize the appropriate DacsWebServiceRequest
      */
     public WebServiceEntityLoader(WebServiceRequest webServiceRequest) {
-        this.webServiceRequest = webServiceRequest;
         // default request type is GET
-        this.httpRequestType = HttpRequestType.GET;
+        this(webServiceRequest, HttpRequestType.GET);
     }
 
     public WebServiceEntityLoader(WebServiceRequest webServiceRequest, HttpRequestType httpRequestType) {
         this.webServiceRequest = webServiceRequest;
-        // default request type is GET
         this.httpRequestType = httpRequestType;
     }
 
@@ -53,7 +52,8 @@ abstract public class WebServiceEntityLoader {
      */
     protected Object load(DacsClientContext dacsClientContext, String contextPath) throws DacsException {
         Object entity = null;
-        InputStream inputStream = getXmlStream(dacsClientContext);
+        DacsResponse dacsResponse = dacsClientContext.getDacsResponse(webServiceRequest);
+        InputStream inputStream = dacsResponse.getInputStream();
         try {
             JAXBContext jc = JAXBContext.newInstance(contextPath);
             Unmarshaller um = jc.createUnmarshaller();
@@ -72,19 +72,4 @@ abstract public class WebServiceEntityLoader {
         return entity;
     }
 
-
-
-
-    /**
-     * Returns the XML stream required to instantiate this entity.
-     * @param dacsClientContext the dacsClientContext to issue the Web service request
-     * @return the XML document returned in the Web service request
-     */
-    protected InputStream getXmlStream(DacsClientContext dacsClientContext) throws DacsException {
-        if (httpRequestType == HttpRequestType.GET) {
-            return dacsClientContext.executeGetRequest(webServiceRequest);
-        } else {
-            return dacsClientContext.executePostRequest(webServiceRequest);
-        }
-    }
 }

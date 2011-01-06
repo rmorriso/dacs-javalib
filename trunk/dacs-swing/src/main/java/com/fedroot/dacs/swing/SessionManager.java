@@ -18,8 +18,8 @@ import fedroot.dacs.events.DacsEventNotifier;
 import fedroot.dacs.events.DacsEventNotifier.Status;
 import fedroot.dacs.exceptions.DacsException;
 import fedroot.dacs.http.DacsClientContext;
+import fedroot.dacs.http.DacsResponse;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -117,15 +117,35 @@ public class SessionManager {
         logger.log(Level.FINE, "user signout: {0}", getUsername());
     }
 
-    public synchronized InputStream getInputStream(DacsCheckRequest dacsCheckRequest) throws IOException, DacsException {
+//    public synchronized InputStream getInputStream(DacsCheckRequest dacsCheckRequest) throws IOException, DacsException {
+//        try {
+//            DacsCheckLoader dacsCheckLoader = new DacsCheckLoader(dacsCheckRequest);
+//            return dacsCheckLoader.getInputStream(dacsClientContext);
+//        } catch (DacsException ex) {
+//            dacsEventNotifier.notify(ex, dacsCheckRequest);
+//            throw ex;
+//        }
+//    }
+
+    public synchronized DacsResponse getDacsResponse(DacsCheckRequest dacsCheckRequest) throws IOException, DacsException {
         try {
             DacsCheckLoader dacsCheckLoader = new DacsCheckLoader(dacsCheckRequest);
-            return dacsCheckLoader.getInputStream(dacsClientContext);
+            return dacsCheckLoader.getDacsResponse(dacsClientContext);
         } catch (DacsException ex) {
             dacsEventNotifier.notify(ex, dacsCheckRequest);
             throw ex;
         }
     }
+
+//    public synchronized HttpResponse getHttpResponse(DacsCheckRequest dacsCheckRequest) throws IOException, DacsException {
+//        try {
+//            DacsCheckLoader dacsCheckLoader = new DacsCheckLoader(dacsCheckRequest);
+//            return dacsCheckLoader.getInputStream(dacsClientContext);
+//        } catch (DacsException ex) {
+//            dacsEventNotifier.notify(ex, dacsCheckRequest);
+//            throw ex;
+//        }
+//    }
 
     /**
      * @return the jurisdiction

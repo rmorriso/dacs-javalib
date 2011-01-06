@@ -14,6 +14,7 @@ import fedroot.dacs.client.DacsCheckRequest;
 import fedroot.dacs.events.DacsEventNotifier;
 import fedroot.dacs.events.DacsEventNotifier.Status;
 import fedroot.dacs.exceptions.DacsException;
+import fedroot.dacs.swingdemo.webservice.FileDownloadRequest;
 import fedroot.dacs.swingdemo.webservice.FileUploadRequest;
 import fedroot.dacs.swingdemo.webservice.HelloWebServiceRequest;
 import fedroot.servlet.HttpRequestType;
@@ -26,14 +27,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -58,21 +61,21 @@ public class DacsSwingDemo {
     private JTextArea statusTextArea;
     private JTextField usernameTextField;
     private JTextField languageTextField;
-    private JCheckBox multipartCheckBox;
     private JButton btnGO;
     private JButton btnLOGIN;
     private JButton btnLOGOUT;
-    private JButton btnPOST;
-
+    private JButton btnGREET;
+    private JButton btnDOWNLOAD;
+    private JButton btnUPLOAD;
     private SessionManager sessionManager;
+    private File saveToFile;
+
     private static final Logger logger = Logger.getLogger(DacsSwingDemo.class.getName());
-
     private static final String DACS_BASE_URI = "https://fedroot.com/test/dacs";
-    private static final String FILE_SERVICE_URI = "https://fedroot.com/test/file-service/upload";
-//    private static final String FILE_SERVICE_URI = "http://trigomorrison.net/cgi-bin/printrequest";
+    private static final String FILE_DOWNLOAD_URI = "https://fedroot.com/test/file-service/download";
+    private static final String FILE_UPLOAD_URI = "https://fedroot.com/test/file-service/upload";
     private static final String HELLO_SERVICE_URI = "https://fedroot.com/test/hello-service/greet";
-    private static final String FILE = "/Users/rmorriso/Development/devel/dacs-javalib/trunk/demo/swing-demo/lorem.pdf";
-
+    private static final String UPLOAD_FILE = "/Users/rmorriso/Development/devel/dacs-javalib/trunk/demo/swing-demo/lorem.pdf";
     private DacsLoginDialog loginDialog;
     // TODO - use a ComboBoxModel instead
     private static final String[] actions = {
@@ -96,6 +99,7 @@ public class DacsSwingDemo {
      */
     public static void main(String[] args) {
         SessionManager sessionManager = new SessionManager(DACS_BASE_URI);
+
 
         DacsSwingDemo dacsSwingDemo = new DacsSwingDemo("DACS JavaLib Example Thick Client", sessionManager);
         dacsSwingDemo.start();
@@ -150,7 +154,11 @@ public class DacsSwingDemo {
                         break;
                     case 902:
                         if (loginDialog.showDialog()) { // login successful - try the request again
+                            if (getSaveToFile() == null) {
                                 loadDacsCheckRequest(checkRequest);
+                            } else {
+                               loadDacsCheckRequest(checkRequest, getSaveToFile());
+                            }
                         }
                         break;
                     case 903:
@@ -176,6 +184,7 @@ public class DacsSwingDemo {
         JPanel actionPanel = new JPanel(new BorderLayout());
         JPanel actionRow1 = new JPanel(new FlowLayout());
         JPanel actionRow2 = new JPanel(new FlowLayout());
+        JPanel actionRow3 = new JPanel(new FlowLayout());
         JPanel outputPanel = new JPanel(new BorderLayout());
 
         // instantiate Row 1 Components of Action Panel
@@ -225,24 +234,41 @@ public class DacsSwingDemo {
         languageTextField.setEditable(true);
         languageTextField.setToolTipText("greeting language");
 
-        multipartCheckBox = new JCheckBox();
-
-        btnPOST = new JButton("POST");
-        btnPOST.addActionListener(
+        btnGREET = new JButton("Greet");
+        btnGREET.addActionListener(
                 new ActionListener() {
 
                     @Override
                     public void actionPerformed(ActionEvent ae) {
-                        if (multipartCheckBox.isSelected()) {
-                            File lorem = new File(FILE);
-                            FileUploadRequest fileUploadRequest = new FileUploadRequest(FILE_SERVICE_URI, usernameTextField.getText(), "uploadFile", lorem);
-                            fileUploadRequest.setHttpRequestType(HttpRequestType.POST, "multipart/form-data");
-                            loadDacsCheckRequest(fileUploadRequest);
-                        } else {
-                            HelloWebServiceRequest helloWebServiceRequest = new HelloWebServiceRequest(HELLO_SERVICE_URI, usernameTextField.getText(), languageTextField.getText());
-                            helloWebServiceRequest.setHttpRequestType(HttpRequestType.POST, "application/x-www-form-urlencoded");
-                            loadDacsCheckRequest(helloWebServiceRequest);
-                        }
+                        HelloWebServiceRequest helloWebServiceRequest = new HelloWebServiceRequest(HELLO_SERVICE_URI, usernameTextField.getText(), languageTextField.getText());
+                        helloWebServiceRequest.setHttpRequestType(HttpRequestType.POST, "application/x-www-form-urlencoded");
+                        loadDacsCheckRequest(helloWebServiceRequest);
+                    }
+                });
+
+        btnDOWNLOAD = new JButton("File Download");
+        btnDOWNLOAD.addActionListener(
+                new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent ae) {
+                        File lorem = new File(UPLOAD_FILE);
+                        FileDownloadRequest fileDownloadRequest = new FileDownloadRequest(FILE_DOWNLOAD_URI, sessionManager.getUsername(), "lorem.pdf");
+                        setSaveToFile("/tmp/lorem.pdf");
+                        loadDacsCheckRequest(fileDownloadRequest, getSaveToFile());
+                    }
+                });
+
+        btnUPLOAD = new JButton("File Upload");
+        btnUPLOAD.addActionListener(
+                new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent ae) {
+                        File lorem = new File(UPLOAD_FILE);
+                        FileUploadRequest fileUploadRequest = new FileUploadRequest(FILE_UPLOAD_URI, sessionManager.getUsername(), "uploadFile", lorem);
+                        fileUploadRequest.setHttpRequestType(HttpRequestType.POST, "multipart/form-data");
+                        loadDacsCheckRequest(fileUploadRequest);
                     }
                 });
 
@@ -263,12 +289,14 @@ public class DacsSwingDemo {
         actionRow2.add(usernameTextField);
         actionRow2.add(new JLabel("Language:"));
         actionRow2.add(languageTextField);
-        actionRow2.add(btnPOST);
-        actionRow2.add(multipartCheckBox);
-        actionRow2.add(new JLabel("Include File"));
+        actionRow2.add(btnGREET);
+
+        actionRow3.add(btnDOWNLOAD);
+        actionRow3.add(btnUPLOAD);
 
         actionPanel.add(actionRow1, BorderLayout.NORTH);
-        actionPanel.add(actionRow2, BorderLayout.SOUTH);
+        actionPanel.add(actionRow2, BorderLayout.CENTER);
+        actionPanel.add(actionRow3, BorderLayout.SOUTH);
 
         responseTextArea = new JTextArea();
         responseTextArea.setEditable(false);
@@ -302,7 +330,6 @@ public class DacsSwingDemo {
      *
      * @param text the text to display
      */
-
     private void setResponseText(String text) {
         responseTextArea.setText(text);
         responseTextArea.setCaretPosition(0);
@@ -314,12 +341,10 @@ public class DacsSwingDemo {
      *
      * @param text the text to display
      */
-
     private void setStatusText(String text) {
         statusTextArea.setText(" " + text);
         statusTextArea.setCaretPosition(0);
     }
-
 
     /**
      * Loads contents of the input stream in a separate thread.
@@ -329,12 +354,13 @@ public class DacsSwingDemo {
         // create a new thread to load the URL from
         final StringBuffer stringBuffer = new StringBuffer();
         new Thread() {
+
             @Override
             public void run() {
                 {
                     InputStream inputStream = null;
                     try {
-                        inputStream = sessionManager.getInputStream(dacsCheckRequest);
+                        inputStream = sessionManager.getDacsResponse(dacsCheckRequest).getInputStream();
                         Reader reader = new InputStreamReader(new BufferedInputStream(inputStream));
                         int character;
                         while ((character = reader.read()) != -1) {
@@ -342,6 +368,7 @@ public class DacsSwingDemo {
                         }
                         if (inputStream != null) {
                             SwingUtilities.invokeLater(new Runnable() {
+
                                 @Override
                                 public void run() {
                                     setResponseText(stringBuffer.toString());
@@ -354,7 +381,9 @@ public class DacsSwingDemo {
                         logger.log(Level.SEVERE, ex.getMessage());
                     } finally {
                         try {
-                            if (inputStream != null) inputStream.close();
+                            if (inputStream != null) {
+                                inputStream.close();
+                            }
                         } catch (IOException ex) {
                             Logger.getLogger(DacsSwingDemo.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -362,5 +391,82 @@ public class DacsSwingDemo {
                 }
             }
         }.start();
+    }
+
+    /**
+     * Loads contents of the input stream in a separate thread.
+     * @param dacsCheckRequst the DACS-modified Web Service Request to load
+     */
+    private void loadDacsCheckRequest(final DacsCheckRequest dacsCheckRequest, final File file) {
+        try {
+            final OutputStream outputStream = new FileOutputStream(file);
+
+            new Thread() {
+
+                @Override
+                public void run() {
+                    {
+                        InputStream inputStream = null;
+                        try {
+                            inputStream = sessionManager.getDacsResponse(dacsCheckRequest).getInputStream();
+                            Reader reader = new InputStreamReader(new BufferedInputStream(inputStream));
+                            int character;
+                            while ((character = reader.read()) != -1) {
+                                outputStream.write((char) character);
+                            }
+                            if (inputStream != null) {
+                                SwingUtilities.invokeLater(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        setResponseText("Downloaded " + file.getName());
+                                    }
+                                });
+                            }
+                        } catch (DacsException ex) { // note: we EXPECT DacsExceptions
+                            logger.log(Level.FINEST, ex.getMessage());
+                        } catch (IOException ex) {
+                            logger.log(Level.SEVERE, ex.getMessage());
+                        } finally {
+                            try {
+                                if (inputStream != null) {
+                                    inputStream.close();
+                                }
+                                if (outputStream != null) {
+                                    outputStream.close();
+                                }
+                            } catch (IOException ex) {
+                               logger.log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    }
+                }
+            }.start();
+        } catch (FileNotFoundException ex) {
+            setResponseText("File not found: " + file.getName());
+        } finally {
+
+        }
+    }
+
+    /**
+     * @return the saveToFile
+     */
+    public File getSaveToFile() {
+        return saveToFile;
+    }
+
+    /**
+     * @param saveToFile the saveToFile to set
+     */
+    public void setSaveToFile(String filename) {
+        this.saveToFile = new File(filename);
+    }
+
+    /**
+     * @param saveToFile the saveToFile to set
+     */
+    public void resetSaveToFile() {
+        this.saveToFile = null;
     }
 }

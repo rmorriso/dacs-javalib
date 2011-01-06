@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.List;
 import junit.framework.TestCase;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.utils.URIUtils;
 import org.apache.http.cookie.Cookie;
 
@@ -38,17 +37,17 @@ public class DacsClientContextTest extends TestCase {
     public void testExecuteGetRequest() throws Exception {
         URI uri = URIUtils.createURI("https", "fedroot.com", -1, "/dacs/dacs_version", "FORMAT=XML", null);
         DacsGetRequest dacsGetRequest = new DacsGetRequest(uri);
-        HttpResponse httpResponse = dacsClientContext.executeGetRequest(dacsGetRequest);
-        HttpEntity httpEntity = httpResponse.getEntity();
+        DacsResponse dacsResponse = dacsClientContext.executeGetRequest(dacsGetRequest);
+        HttpEntity httpEntity = dacsResponse.getHttpResponse().getEntity();
         assertNotNull(httpEntity);
-        assertEquals(200, httpResponse.getStatusLine().getStatusCode());
+        assertEquals(200, dacsResponse.getHttpResponse().getStatusLine().getStatusCode());
         assertEquals("Content-Type: text/xml", httpEntity.getContentType().toString());
     }
 
     public void testGetAllCookies() throws Exception {
         URI uri = URIUtils.createURI("http", "www.google.com", -1, "/search", "q=httpclient&btnG=Google+Search&aq=f&oq=", null);
         DacsGetRequest dacsGetRequest = new DacsGetRequest(uri);
-        HttpResponse httpResponse = dacsClientContext.executeGetRequest(dacsGetRequest);
+        DacsResponse dacsResponse = dacsClientContext.executeGetRequest(dacsGetRequest);
         List<Cookie> cookies = dacsClientContext.getAllCookies();
         assertEquals(2, cookies.size());
         for (Cookie cookie : cookies) {
