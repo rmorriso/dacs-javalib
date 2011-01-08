@@ -81,7 +81,7 @@ public class DacsPostRequest {
         MultipartEntity multipartEntity = new MultipartEntity();
 
         for (NameFilePair nameFilePair : webServiceRequest.getNameFilePairs()) {
-            multipartEntity.addPart(nameFilePair.getName(), new FileBody(nameFilePair.getFile()));
+            multipartEntity.addPart(nameFilePair.getName(), nameFilePair.getFileBody());
         }
         multipartPost.setEntity(multipartEntity);
         return multipartPost;
@@ -104,7 +104,7 @@ public class DacsPostRequest {
                 multipartEntity.addPart(nameValuePair.getName(), new StringBody(new String(nameValuePair.getValue().getBytes(), Charset.forName("US-ASCII")), Charset.forName("US-ASCII")));
             }
             for (NameFilePair nameFilePair : webServiceRequest.getNameFilePairs()) {
-                multipartEntity.addPart(nameFilePair.getName(), new FileBody(nameFilePair.getFile()));
+                multipartEntity.addPart(nameFilePair.getName(), nameFilePair.getFileBody());
             }
             multipartPost.setEntity(multipartEntity);
             return multipartPost;
