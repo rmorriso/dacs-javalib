@@ -104,5 +104,12 @@
             <version>1.11</version>
         </dependency>
     </dependencies>
+    <repositories>
+        <repository>
+            <id>fedroot</id>
+            <name>Fedroot Code Repository</name>
+            <url>https://fedroot.com/nexus/content/repositories/fedroot</url>
+        </repository>
+    </repositories>
 </project>
 

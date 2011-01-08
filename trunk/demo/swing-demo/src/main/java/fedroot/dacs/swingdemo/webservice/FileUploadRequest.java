@@ -38,6 +38,7 @@ import fedroot.servlet.ParameterValidator;
 import fedroot.servlet.ParameterValidators;
 import fedroot.servlet.ServiceParameters;
 import java.io.File;
+import org.apache.http.entity.mime.content.FileBody;
 
 
 /**
@@ -49,21 +50,26 @@ public class FileUploadRequest extends DacsCheckRequest {
     public enum args { username };
 
     private String username;
-    private String fileParam;
-    private File file;
+    private String filename1;
+    private File file1;
+    private String filename2;
+    private File file2;
     
-    public FileUploadRequest(String uri, String username, String fileParam, File file) {
+    public FileUploadRequest(String uri, String username, String filename1, File file1, String filename2, File file2) {
         super(uri);
         this.username = username;
-        this.fileParam = fileParam;
-        this.file = file;
+        this.filename1 = filename1;
+        this.file1 = file1;
+        this.filename2 = filename2;
+        this.file2 = file2;
     }
 
     @Override
     public ServiceParameters getServiceParameters() {
         ServiceParameters serviceParameters = super.getServiceParameters();
         serviceParameters.addParameter(args.username, username);
-        serviceParameters.addFile(fileParam, file);
+        serviceParameters.addFileBody(filename1, new FileBody(file1));
+        serviceParameters.addFileBody(filename2, new FileBody(file2));
         return serviceParameters;
     }
 

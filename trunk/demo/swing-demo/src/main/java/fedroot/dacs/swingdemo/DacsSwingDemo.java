@@ -26,13 +26,14 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.Reader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -71,11 +72,15 @@ public class DacsSwingDemo {
     private File saveToFile;
 
     private static final Logger logger = Logger.getLogger(DacsSwingDemo.class.getName());
+
+    private static final int DEFAULT_BUFFER_SIZE = 10240; // ..bytes = 10KB.
+
     private static final String DACS_BASE_URI = "https://fedroot.com/test/dacs";
     private static final String FILE_DOWNLOAD_URI = "https://fedroot.com/test/file-service/download";
     private static final String FILE_UPLOAD_URI = "https://fedroot.com/test/file-service/upload";
     private static final String HELLO_SERVICE_URI = "https://fedroot.com/test/hello-service/greet";
-    private static final String UPLOAD_FILE = "/Users/rmorriso/Development/devel/dacs-javalib/trunk/demo/swing-demo/lorem.pdf";
+    private static final String UPLOAD_FILE_1 = "/Users/rmorriso/Development/devel/dacs-javalib/trunk/demo/swing-demo/lorem.pdf";
+    private static final String UPLOAD_FILE_2 = "/Users/rmorriso/Development/devel/dacs-javalib/trunk/demo/swing-demo/ipsum.pdf";
     private DacsLoginDialog loginDialog;
     // TODO - use a ComboBoxModel instead
     private static final String[] actions = {
@@ -252,8 +257,7 @@ public class DacsSwingDemo {
 
                     @Override
                     public void actionPerformed(ActionEvent ae) {
-                        File lorem = new File(UPLOAD_FILE);
-                        FileDownloadRequest fileDownloadRequest = new FileDownloadRequest(FILE_DOWNLOAD_URI, sessionManager.getUsername(), "lorem.pdf");
+                        FileDownloadRequest fileDownloadRequest = new FileDownloadRequest(FILE_DOWNLOAD_URI, usernameTextField.getText(), "lorem.pdf");
                         setSaveToFile("/tmp/lorem.pdf");
                         loadDacsCheckRequest(fileDownloadRequest, getSaveToFile());
                     }
@@ -265,8 +269,9 @@ public class DacsSwingDemo {
 
                     @Override
                     public void actionPerformed(ActionEvent ae) {
-                        File lorem = new File(UPLOAD_FILE);
-                        FileUploadRequest fileUploadRequest = new FileUploadRequest(FILE_UPLOAD_URI, sessionManager.getUsername(), "uploadFile", lorem);
+                        File lorem = new File(UPLOAD_FILE_1);
+                        File ipsum = new File(UPLOAD_FILE_2);
+                        FileUploadRequest fileUploadRequest = new FileUploadRequest(FILE_UPLOAD_URI, usernameTextField.getText(), "lorem", lorem, "ipsum", ipsum);
                         fileUploadRequest.setHttpRequestType(HttpRequestType.POST, "multipart/form-data");
                         loadDacsCheckRequest(fileUploadRequest);
                     }
@@ -394,25 +399,27 @@ public class DacsSwingDemo {
     }
 
     /**
-     * Loads contents of the input stream in a separate thread.
-     * @param dacsCheckRequst the DACS-modified Web Service Request to load
+     * Loads contents of the input stream to file in a separate thread.
+     * @param file the file to write to
+     * @param dacsCheckRequest the DACS-modified Web Service Request to load
      */
     private void loadDacsCheckRequest(final DacsCheckRequest dacsCheckRequest, final File file) {
         try {
-            final OutputStream outputStream = new FileOutputStream(file);
+            final DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(file));
 
             new Thread() {
 
                 @Override
                 public void run() {
                     {
-                        InputStream inputStream = null;
+                        ByteArrayInputStream inputStream = null;
                         try {
-                            inputStream = sessionManager.getDacsResponse(dacsCheckRequest).getInputStream();
-                            Reader reader = new InputStreamReader(new BufferedInputStream(inputStream));
-                            int character;
-                            while ((character = reader.read()) != -1) {
-                                outputStream.write((char) character);
+                            int length = 0;
+                            byte[] bbuf = new byte[DEFAULT_BUFFER_SIZE];
+                            inputStream = (ByteArrayInputStream) sessionManager.getDacsResponse(dacsCheckRequest).getInputStream();
+                            
+                            while ((inputStream != null) && ((length = inputStream.read(bbuf)) != -1)) {
+                                dataOutputStream.write(bbuf, 0, length);
                             }
                             if (inputStream != null) {
                                 SwingUtilities.invokeLater(new Runnable() {
@@ -432,8 +439,8 @@ public class DacsSwingDemo {
                                 if (inputStream != null) {
                                     inputStream.close();
                                 }
-                                if (outputStream != null) {
-                                    outputStream.close();
+                                if (dataOutputStream != null) {
+                                    dataOutputStream.close();
                                 }
                             } catch (IOException ex) {
                                logger.log(Level.SEVERE, null, ex);
