@@ -117,15 +117,6 @@ public class SessionManager {
         logger.log(Level.FINE, "user signout: {0}", getUsername());
     }
 
-//    public synchronized InputStream getInputStream(DacsCheckRequest dacsCheckRequest) throws IOException, DacsException {
-//        try {
-//            DacsCheckLoader dacsCheckLoader = new DacsCheckLoader(dacsCheckRequest);
-//            return dacsCheckLoader.getInputStream(dacsClientContext);
-//        } catch (DacsException ex) {
-//            dacsEventNotifier.notify(ex, dacsCheckRequest);
-//            throw ex;
-//        }
-//    }
 
     public synchronized DacsResponse getDacsResponse(DacsCheckRequest dacsCheckRequest) throws IOException, DacsException {
         try {
@@ -137,15 +128,6 @@ public class SessionManager {
         }
     }
 
-//    public synchronized HttpResponse getHttpResponse(DacsCheckRequest dacsCheckRequest) throws IOException, DacsException {
-//        try {
-//            DacsCheckLoader dacsCheckLoader = new DacsCheckLoader(dacsCheckRequest);
-//            return dacsCheckLoader.getInputStream(dacsClientContext);
-//        } catch (DacsException ex) {
-//            dacsEventNotifier.notify(ex, dacsCheckRequest);
-//            throw ex;
-//        }
-//    }
 
     /**
      * @return the jurisdiction
