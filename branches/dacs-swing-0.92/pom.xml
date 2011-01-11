@@ -21,6 +21,13 @@
             </plugin>
         </plugins>
     </build>
+    <repositories>
+        <repository>
+            <id>fedroot</id>
+            <name>Fedroot Code Repository</name>
+            <url>https://fedroot.com/nexus/content/repositories/fedroot</url>
+        </repository>
+    </repositories>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -29,9 +36,19 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.1-alpha2</version>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>dacs-core</artifactId>
             <version>0.62</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fedroot</groupId>
+            <artifactId>dacs-xmlbeans</artifactId>
+            <version>1.4.25</version>
         </dependency>
     </dependencies>
 </project>
