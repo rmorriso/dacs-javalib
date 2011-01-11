@@ -10,28 +10,18 @@ package fedroot.dacs.http;
  *
  * @author Roderick Morrison <rmorriso at fedroot.com>
  */
-import com.fedroot.dacs.AccessDenied;
-import com.fedroot.dacs.DacsAcs;
-import fedroot.dacs.client.DacsCheckRequest;
 import fedroot.dacs.exceptions.DacsException;
 import fedroot.servlet.WebServiceRequest;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.params.CookiePolicy;
 import org.apache.http.client.protocol.ClientContext;
