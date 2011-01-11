@@ -5,7 +5,7 @@
     <groupId>com.fedroot</groupId>
     <artifactId>swing-demo</artifactId>
     <packaging>jar</packaging>
-    <version>0.92-SNAPSHOT</version>
+    <version>0.93-SNAPSHOT</version>
     <name>swing-demo</name>
     <url>http://maven.apache.org</url>
     <build>

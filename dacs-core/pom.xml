@@ -5,7 +5,7 @@
     <groupId>com.fedroot</groupId>
     <artifactId>dacs-core</artifactId>
     <packaging>jar</packaging>
-    <version>0.62-SNAPSHOT</version>
+    <version>0.63-SNAPSHOT</version>
     <name>dacs-core</name>
     <url>http://maven.apache.org</url>
     <build>
@@ -79,7 +79,7 @@
         <dependency>
             <groupId>com.fedroot</groupId>
             <artifactId>fedroot-common</artifactId>
-            <version>1.12-SNAPSHOT</version>
+            <version>1.13-SNAPSHOT</version>
         </dependency>
         <dependency>
         <groupId>com.fedroot</groupId>
