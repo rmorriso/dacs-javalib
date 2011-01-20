@@ -16,7 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
+ * an example stateful DACS-wrapped Web service living behind a DacsFilter
+ * the DacsFilter extracts the DACS credentials from the HttpRequest and sets
+ * a SessionManager in the session
  * @author rmorriso
  */
 @WebServlet(name = "DemoService", urlPatterns = {"/user","/noauth"})
