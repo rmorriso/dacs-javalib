@@ -35,7 +35,7 @@ public class DacsClientContextTest extends TestCase {
     }
 
     public void testExecuteGetRequest() throws Exception {
-        URI uri = URIUtils.createURI("https", "fedroot.com", -1, "/dacs/dacs_version", "FORMAT=XML", null);
+        URI uri = URIUtils.createURI("https", "fedroot.com", -1, "/dacs/dacs_current_credentials", "FORMAT=XML", null);
         DacsGetRequest dacsGetRequest = new DacsGetRequest(uri);
         DacsResponse dacsResponse = dacsClientContext.executeGetRequest(dacsGetRequest);
         HttpEntity httpEntity = dacsResponse.getHttpResponse().getEntity();
