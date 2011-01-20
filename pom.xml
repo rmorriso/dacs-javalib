@@ -4,7 +4,7 @@
     <groupId>com.fedroot</groupId>
     <artifactId>dacs-xmlbeans</artifactId>
     <packaging>jar</packaging>
-    <version>1.4.25a-SNAPSHOT</version>
+    <version>1.4.25</version>
     <name>dacs-xmlbeans</name>
     <url>http://maven.apache.org</url>
     <build>
