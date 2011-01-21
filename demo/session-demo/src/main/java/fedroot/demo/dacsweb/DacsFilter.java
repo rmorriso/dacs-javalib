@@ -62,7 +62,6 @@ public class DacsFilter implements Filter {
     private static final Logger logger = Logger.getLogger(DacsFilter.class.getName());
     private static final boolean FINE = false;
     private static String DACS_BASE_URI;
-    private static String DACS_AUTH_JURISDICTION;
     private static boolean DACS_AUTH_REQUIRED;
     private static String SESSION_MANAGER = "session_manager";
     private static FederationLoader federationLoader;
