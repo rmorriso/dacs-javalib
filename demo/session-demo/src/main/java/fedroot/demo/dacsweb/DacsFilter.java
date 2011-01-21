@@ -13,6 +13,7 @@ import fedroot.dacs.entities.FederationLoader;
 import fedroot.dacs.entities.Jurisdiction;
 import fedroot.dacs.exceptions.DacsException;
 import fedroot.dacs.http.DacsClientContext;
+import fedroot.dacs.servlet.SessionManager;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -59,13 +60,14 @@ initParams = {
 public class DacsFilter implements Filter {
 
     private static final Logger logger = Logger.getLogger(DacsFilter.class.getName());
-
     private static final boolean FINE = false;
-
     private static String DACS_BASE_URI;
     private static String DACS_AUTH_JURISDICTION;
     private static boolean DACS_AUTH_REQUIRED;
-    private static String SESSION_DACS_CREDENTIAL = "session_dacs_credential";
+    private static String SESSION_MANAGER = "session_manager";
+    private static FederationLoader federationLoader;
+    private static DacsClientContext dacsClientContext;
+    private static Federation federation;
     // The filter configuration object we are associated with.  If
     // this value is null, this filter instance is not currently
     // configured. 
@@ -123,24 +125,26 @@ public class DacsFilter implements Filter {
             logger.log(Level.FINE, "header: {0}", headers.nextElement());
         }
 
-        Credential credential = (Credential) session.getAttribute(SESSION_DACS_CREDENTIAL);
-        if (credential == null) {
+        SessionManager sessionManager = (SessionManager) session.getAttribute(SESSION_MANAGER);
+        if (sessionManager == null) {
             try {
-                DacsClientContext dacsClientContext = new DacsClientContext();
-                FederationLoader federationLoader = new FederationLoader(DACS_BASE_URI, dacsClientContext);
-                logger.log(Level.FINE, "loading federation from {0}", DACS_BASE_URI);
-                Federation federation = federationLoader.getFederation();
-                logger.log(Level.FINE, "loaded federation {0}", federation.getFederationName());
-                Jurisdiction jurisdiction = federation.getJurisdictionByName(DACS_AUTH_JURISDICTION);
-                logger.log(Level.FINE, "resolving user against jurisdiction {0} ({1})", new Object[]{jurisdiction.getJName(), jurisdiction.getDacsUri()});
-                credential = DacsUtil.resolveUser(jurisdiction, wrappedRequest);
-                if (credential == null) {
-                    if (DACS_AUTH_REQUIRED) {
-                        throw new DacsException("Failed to resolve DACS credentials found in request.");
+                for (Jurisdiction jurisdiction : federation.getAuthenticatingJurisdictions()) {
+                    logger.log(Level.FINE, "resolving user against jurisdiction {0} ({1})", new Object[]{jurisdiction.getJName(), jurisdiction.getDacsUri()});
+                    Credential credential = DacsUtil.resolveUser(jurisdiction, wrappedRequest);
+                    if (credential == null) {
+                        if (DACS_AUTH_REQUIRED) {
+                            throw new DacsException("Failed to resolve DACS credentials found in request.");
+                        } else {
+                            logger.log(Level.FINE, "creating session for anonymous user");
+                            sessionManager = new SessionManager(DACS_BASE_URI);
+                            session.setAttribute(SESSION_MANAGER, sessionManager);
+                        }
+                    } else {
+                        logger.log(Level.FINE, "resolved username as: {0}", credential);
+                        sessionManager = new SessionManager(DACS_BASE_URI);
+
+                        session.setAttribute(SESSION_MANAGER, credential);
                     }
-                } else {
-                    logger.log(Level.FINE, "resolved username as: {0}", credential);
-                    session.setAttribute(SESSION_DACS_CREDENTIAL, credential);
                 }
             } catch (DacsException ex) {
                 sendProcessingError("Failed authenticating with DACS: " + ex.getMessage(), response);
@@ -148,7 +152,7 @@ public class DacsFilter implements Filter {
                 sendProcessingError("Unknown error occured: " + ex.getMessage(), response);
             }
         } else {
-            logger.log(Level.FINE, "found username in session as: {0}", credential);
+            logger.log(Level.FINE, "found session for user: {0}", sessionManager.getUsername());
         }
 
         Throwable problem = null;
@@ -209,9 +213,18 @@ public class DacsFilter implements Filter {
     public void init(FilterConfig filterConfig) {
         this.filterConfig = filterConfig;
         if (filterConfig != null) {
-            DACS_BASE_URI = filterConfig.getInitParameter("dacs_base_uri");
-            DACS_AUTH_JURISDICTION = filterConfig.getInitParameter("dacs_auth_jurisdiction");
-            DACS_AUTH_REQUIRED = filterConfig.getInitParameter("dacs_auth_jurisdiction").equals("true");
+            try {
+                DACS_BASE_URI = filterConfig.getInitParameter("dacs_base_uri");
+                DACS_AUTH_JURISDICTION = filterConfig.getInitParameter("dacs_auth_jurisdiction");
+                DACS_AUTH_REQUIRED = filterConfig.getInitParameter("dacs_auth_jurisdiction").equals("true");
+                dacsClientContext = new DacsClientContext();
+                federationLoader = new FederationLoader(DACS_BASE_URI, dacsClientContext);
+                logger.log(Level.FINE, "loading federation from {0}", DACS_BASE_URI);
+                federation = federationLoader.getFederation();
+                logger.log(Level.FINE, "loaded federation {0}", federation.getFederationName());
+            } catch (DacsException ex) {
+                logger.log(Level.SEVERE, ex.getMessage());
+            }
         }
     }
 
@@ -232,8 +245,8 @@ public class DacsFilter implements Filter {
 
     private void sendProcessingError(String error, ServletResponse response) {
         ServletOutputStream outputStream = null;
-            PrintStream ps = null;
-            PrintWriter pw = null;
+        PrintStream ps = null;
+        PrintWriter pw = null;
         try {
             response.setContentType("text/plain");
             ps = new PrintStream(response.getOutputStream());

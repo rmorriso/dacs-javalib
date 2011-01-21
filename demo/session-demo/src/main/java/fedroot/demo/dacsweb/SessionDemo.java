@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 public class SessionDemo extends WebService {
 
     private static final String PARAM_REQUEST = "request";
-    private static String SESSION_DACS_CREDENTIAL = "session_dacs_credential";
+    private static String SESSION_MANAGER = "session_manager";
 
 
 
@@ -48,7 +48,7 @@ public class SessionDemo extends WebService {
         PrintWriter out = response.getWriter();
         RequestType requestType = RequestType.info;
         String requestString = serviceContext.getParameters().getString(PARAM_REQUEST);
-        Credential credential = (Credential) serviceContext.getSessionAttribute(SESSION_DACS_CREDENTIAL);
+        Credential credential = (Credential) serviceContext.getSessionAttribute(SESSION_MANAGER);
         if (requestString != null) {
             requestType = RequestType.valueOf(requestString.trim());
             switch (requestType) {
@@ -64,7 +64,7 @@ public class SessionDemo extends WebService {
                     break;
                 case logout:
                     if (credential != null) {
-                        serviceContext.removeSessionAttribute(SESSION_DACS_CREDENTIAL);
+                        serviceContext.removeSessionAttribute(SESSION_MANAGER);
                         out.println("removed credential " + credential + " from session");
                     } else {
                         out.println("No DACS credential was found in session.");
