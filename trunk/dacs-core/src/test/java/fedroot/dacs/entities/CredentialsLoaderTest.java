@@ -44,7 +44,7 @@ public class CredentialsLoaderTest extends TestCase {
     public void testGetCredentials() {
         try {
             assertEquals(1, credentials.getCredentials().size());
-            Credential black = credentials.getEffectiveCredential();
+            Credential black = credentials.getEffectiveCredentials();
             assertEquals("black", black.getName());
             assertEquals(2,black.getRoles().size());
             assertTrue(black.getRoles().contains(new Role("farmer")));

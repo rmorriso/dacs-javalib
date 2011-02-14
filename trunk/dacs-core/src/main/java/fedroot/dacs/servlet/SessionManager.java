@@ -1,9 +1,14 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * SessionManager.java
+ *
+ * Created on December 17, 2010, 8:43 AM
+ *
+ * Copyright (c) 2010-2011 Metalogic Software Corporation.
+ * All rights reserved. See http://fedroot.com/licenses/metalogic.txt for redistribution information.
  */
 package fedroot.dacs.servlet;
 
+import fedroot.dacs.DacsUtil;
 import fedroot.dacs.client.DacsAuthenticateRequest;
 import fedroot.dacs.client.DacsCheckRequest;
 import fedroot.dacs.entities.Credential;
@@ -24,6 +29,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.http.params.HttpParams;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -34,7 +40,6 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 public class SessionManager {
 
     private static final Logger logger = Logger.getLogger(SessionManager.class.getName());
-
     private DacsEventNotifier dacsEventNotifier;
     private DacsClientContext dacsClientContext;
     private Federation federation;
@@ -42,6 +47,8 @@ public class SessionManager {
     private String username;
     private List<Role> roles;
     private String cookieName;
+    private Credentials credentials;
+    private Credential selectedCredential;
     private boolean allowMultipleCredentials = false;
 
     public SessionManager(String dacsBaseUri) {
@@ -78,6 +85,12 @@ public class SessionManager {
         }
     }
 
+    public SessionManager(Federation federation) {
+        dacsEventNotifier = new DacsEventNotifier();
+        dacsClientContext = new DacsClientContext();
+        this.federation = federation;
+    }
+
     /**
      * @return add object
      */
@@ -92,16 +105,18 @@ public class SessionManager {
 
     public void signon(Jurisdiction jurisdiction, String username, String password) {
         try {
-            if (this.username != null) {
-                logger.log(Level.INFO,"Multiple concurrent signon is not supported. Forcing signout.");
+            if (credentials != null && credentials.hasCredentials() && !allowMultipleCredentials) {
+                logger.log(Level.WARNING, "Multiple concurrent signon is not supported. Forcing signout.");
                 signout();
             }
+            this.jurisdiction = jurisdiction;
+
             // authenticate in given jurisdiction as username
             DacsAuthenticateRequest dacsAuthenticateRequest = new DacsAuthenticateRequest(jurisdiction, username, password);
             dacsClientContext.executePostRequest(dacsAuthenticateRequest);
             CredentialsLoader credentialsLoader = new CredentialsLoader(jurisdiction, dacsClientContext);
-            Credentials credentials = credentialsLoader.getCredentials();
-            this.jurisdiction = jurisdiction;
+            credentials = credentialsLoader.getCredentials();
+
             for (Credential credential : credentials.getCredentials()) {
                 this.setUsername(credential.getName());
                 this.setRoles(credential.getRoles());
@@ -121,21 +136,43 @@ public class SessionManager {
         logger.log(Level.FINE, "user signout: {0}", getUsername());
     }
 
-
     /**
-     * associate existing DACS credentials with this session
-     * @param dacsCookie the DACS credentials to associate
+     * sets the <code>effective credential</code> from the DACS cookie(s) found
+     * in an HTTP servlet request;
+     * looks for cookies with a valid DACS cookie name in @param request, then
+     * creates and attaches a corresponding HttpClient cookie in dacsClientContext.
+     * The resulting DacsClientContext is used to execute a DacsCurrentCredentials
+     * web service request.
+     *
+     * In some DACS deployments it is permissible for a user
+     * session to carry multiple DACS credentials, but in those cases one such
+     * credential must be the <i>selected</i> credential. A DacsException is thrown
+     * if multiple DACS cookies are present without an an accompanying selection.
+     * @return the credential carried the selected DACS cookie found in
+     * @param request or null if none is found
      */
-
-    public void associateCredentials(DacsCookie dacsCookie) {
+    public Credential resolveCredentials(HttpServletRequest request) throws DacsException {
         if (allowMultipleCredentials) {
             throw new NotImplementedException();
         } else {
-            signout();
-            dacsClientContext.addCookie(dacsCookie);
+            List<DacsCookie> dacsCookies = DacsUtil.getDacsCookies(federation, DacsUtil.getCookieHeaders(request));
+            if (dacsCookies != null) {
+                dacsClientContext.addDacsCookies(dacsCookies);
+                // use the first authenticating jurisdiction to load credentials
+                // bound in the DACS cookies
+                for (Jurisdiction authenticatingJurisdiction : federation.getAuthenticatingJurisdictions()) {
+                    CredentialsLoader credentialsLoader = new CredentialsLoader(authenticatingJurisdiction, dacsClientContext);
+                    Credentials credentials = credentialsLoader.getCredentials();
+                    setSelectedCredential(credentials != null ? credentials.getEffectiveCredentials() : null);
+                    break;
+                }
+            } else {
+                setSelectedCredential(null);
+            }
+            return getSelectedCredential();
         }
     }
-    
+
     public synchronized DacsResponse getDacsResponse(DacsCheckRequest dacsCheckRequest) throws IOException, DacsException {
         try {
             DacsCheckLoader dacsCheckLoader = new DacsCheckLoader(dacsCheckRequest);
@@ -145,7 +182,6 @@ public class SessionManager {
             throw ex;
         }
     }
-
 
     /**
      * @return the jurisdiction
@@ -195,5 +231,20 @@ public class SessionManager {
         this.roles = null;
         this.cookieName = null;
     }
+
+    /**
+     * @return the selectedCredential
+     */
+    public Credential getSelectedCredential() {
+        return selectedCredential;
+    }
+
+    /**
+     * @param selectedCredential the selectedCredential to set
+     */
+    public void setSelectedCredential(Credential selectedCredential) {
+        this.selectedCredential = selectedCredential;
+    }
+
 
 }

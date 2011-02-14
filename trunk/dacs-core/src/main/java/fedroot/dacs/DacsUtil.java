@@ -53,7 +53,7 @@ public class DacsUtil {
             dacsClientContext.addDacsCookies(dacsCookies);
             CredentialsLoader credentialsLoader = new CredentialsLoader(jurisdiction, dacsClientContext);
             Credentials credentials = credentialsLoader.getCredentials();
-            return (credentials != null ? credentials.getEffectiveCredential() : null);
+            return (credentials != null ? credentials.getEffectiveCredentials() : null);
         }
         return null;
     }
@@ -63,6 +63,14 @@ public class DacsUtil {
         return (effectiveCredential != null ? effectiveCredential.getName() : null);
     }
 
+    /**
+     * get DACS cookies matching @param domain found in @param request
+     * Note that this method fails in Servlet 3.x and above due to non-standard
+     * DACS cookie name syntax - use getDacsCookies(Federation, Enumeration) instead
+     * @param domain
+     * @param request
+     * @return
+     */
     public static List<DacsCookie> getDacsCookies(String domain, HttpServletRequest request) {
         javax.servlet.http.Cookie[] jcookies = request.getCookies();
         if (jcookies == null) {
@@ -90,6 +98,12 @@ public class DacsUtil {
         }
     }
 
+    /**
+     * get DACS cookies matching @param federation in @param cookieHeaders
+     * @param domain
+     * @param request
+     * @return
+     */
     public static List<DacsCookie> getDacsCookies(Federation federation, Enumeration cookieHeaders) {
         String federationName = federation.getFederationName();
         String federationDomain = federation.getFederationDomain();

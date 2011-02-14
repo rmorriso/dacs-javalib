@@ -5,6 +5,7 @@
 package fedroot.demo.dacsweb;
 
 import fedroot.dacs.entities.Credential;
+import fedroot.dacs.servlet.SessionManager;
 import fedroot.servlet.ParameterValidator;
 import fedroot.servlet.ServiceContext;
 import fedroot.servlet.WebService;
@@ -21,18 +22,16 @@ import javax.servlet.http.HttpServletResponse;
  * a SessionManager in the session
  * @author rmorriso
  */
-@WebServlet(name = "SessionDemo", urlPatterns = {"/user","/noauth"})
+@WebServlet(name = "SessionDemo", urlPatterns = {"/user"})
 public class SessionDemo extends WebService {
 
     private static final String PARAM_REQUEST = "request";
     private static String SESSION_MANAGER = "session_manager";
 
-
-
     // TODO do value checking for parameters in ParameterValidation (data type and enumerated value sets)
     private enum RequestType {
 
-        info, logout
+        federation_details, info, logout
     }
 
     @Override
@@ -46,34 +45,45 @@ public class SessionDemo extends WebService {
     @Override
     protected void printResponse(HttpServletResponse response, ServiceContext serviceContext) throws Exception {
         PrintWriter out = response.getWriter();
+        HttpServletRequest request = serviceContext.getRequest();
         RequestType requestType = RequestType.info;
         String requestString = serviceContext.getParameters().getString(PARAM_REQUEST);
-        Credential credential = (Credential) serviceContext.getSessionAttribute(SESSION_MANAGER);
-        if (requestString != null) {
-            requestType = RequestType.valueOf(requestString.trim());
-            switch (requestType) {
-                case info:
-                    if (credential != null) {
-                        out.println("DACS credential found in session:");
-                        out.println(" Federation: " + credential.getFederationName());
-                        out.println(" Jurisdiction: " + credential.getJurisdictionName());
-                        out.println(" Username: " + credential.getName());
-                    } else {
-                        out.println("No DACS credential was found in session.");
-                    }
-                    break;
-                case logout:
-                    if (credential != null) {
-                        serviceContext.removeSessionAttribute(SESSION_MANAGER);
-                        out.println("removed credential " + credential + " from session");
-                    } else {
-                        out.println("No DACS credential was found in session.");
-                    }
-                    break;
+        SessionManager sessionManager = (SessionManager) serviceContext.getSessionAttribute(SESSION_MANAGER);
+
+        if (sessionManager != null) {
+            if (requestString != null) {
+                requestType = RequestType.valueOf(requestString.trim());
+                switch (requestType) {
+                    case federation_details:
+
+                        break;
+                    case info:
+                        out.println("Info from SessionManager found in session:");
+                        Credential credential = sessionManager.getSelectedCredential();
+                        if (credential != null) {
+                            out.println(" Federation: " + credential.getFederationName());
+                            out.println(" Jurisdiction: " + credential.getJurisdictionName());
+                            out.println(" Username: " + credential.getName());
+                        } else {
+                            out.println("No effective DACS credential is set in SessionManager.");
+                        }
+                        break;
+                    case logout:
+                        if (sessionManager != null) {
+                            serviceContext.removeSessionAttribute(SESSION_MANAGER);
+                            out.println("removed SessionManager " + sessionManager + " from session");
+                        } else {
+                            out.println("No SessionManager was found in session.");
+                        }
+                        break;
+                }
+            } else {
+                throw new IllegalArgumentException("request must be one of " + "info or logout");
             }
         } else {
-            throw new IllegalArgumentException("request must be one of " + "info or logout");
+            out.println("No SessionManager found in session");
         }
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

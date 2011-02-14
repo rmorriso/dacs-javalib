@@ -1,7 +1,7 @@
 /*
  * DacsCookie.java
  * Created on Jan 15, 2010 8:24:49 PM.
- * Copyright (c) 2010 Metalogic Software Corporation
+ * Copyright (c) 2010-2011 Metalogic Software Corporation
  * All rights reserved. See http://fedroot.com/licenses/metalogic.txt for redistribution information.
  */
 package fedroot.dacs.http;
@@ -26,6 +26,12 @@ public class DacsCookie extends BasicClientCookie {
         if (!isDacsCookie(cookie)) {
             throw new DacsRuntimeException("invalid DACS cookie: " + cookie.getName());
         }
+
+        // the domain of a DACS federation never refers to a single host
+        // if there is no leading dot we add one to the domain,
+        // so a cookie with domain "foo.com" becomes a DACS
+        // cookie with domain ".foo.com" causing user agents to send the cookie
+        // to hosts foo.com, bar.foo.com, baz.foo.com etc
         
         setVersion(1);
         if (domain.startsWith(".")) {

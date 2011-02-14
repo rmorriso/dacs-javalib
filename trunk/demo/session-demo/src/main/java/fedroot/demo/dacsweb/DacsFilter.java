@@ -1,16 +1,14 @@
 /*
- * DacsClientContext.java
+ * DacsFilter.java
  * Created on Jan 15, 2010 8:02:49 PM.
  * Copyright (c) 2010 Metalogic Software Corporation
  * All rights reserved. See http://fedroot.com/licenses/metalogic.txt for redistribution information.
  */
 package fedroot.demo.dacsweb;
 
-import fedroot.dacs.DacsUtil;
 import fedroot.dacs.entities.Credential;
 import fedroot.dacs.entities.Federation;
 import fedroot.dacs.entities.FederationLoader;
-import fedroot.dacs.entities.Jurisdiction;
 import fedroot.dacs.exceptions.DacsException;
 import fedroot.dacs.http.DacsClientContext;
 import fedroot.dacs.servlet.SessionManager;
@@ -19,6 +17,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -53,10 +52,9 @@ import javax.servlet.http.HttpSession;
 //    @WebInitParam(name = "auth_required", value = "false")})
 //    @WebFilter(filterName = "DacsFilter", urlPatterns = "/*",
 initParams = {
-    @WebInitParam(name = "dacs_base_uri", value = "https://fedroot.com/test/dacs"),
-    @WebInitParam(name = "dacs_auth_jurisdiction", value = "TEST"),
+    @WebInitParam(name = "dacs_base_uri", value = "https://test.nfis.org/dacs"),
     @WebInitParam(name = "session_user_role", value = "dacsUserRole"),
-    @WebInitParam(name = "auth_required", value = "false")})
+    @WebInitParam(name = "auth_required", value = "true")})
 public class DacsFilter implements Filter {
 
     private static final Logger logger = Logger.getLogger(DacsFilter.class.getName());
@@ -126,30 +124,22 @@ public class DacsFilter implements Filter {
 
         SessionManager sessionManager = (SessionManager) session.getAttribute(SESSION_MANAGER);
         if (sessionManager == null) {
-            try {
-                for (Jurisdiction jurisdiction : federation.getAuthenticatingJurisdictions()) {
-                    logger.log(Level.FINE, "resolving user against jurisdiction {0} ({1})", new Object[]{jurisdiction.getJName(), jurisdiction.getDacsUri()});
-                    Credential credential = DacsUtil.resolveUser(jurisdiction, wrappedRequest);
-                    if (credential == null) {
-                        if (DACS_AUTH_REQUIRED) {
-                            throw new DacsException("Failed to resolve DACS credentials found in request.");
-                        } else {
-                            logger.log(Level.FINE, "creating session for anonymous user");
-                            sessionManager = new SessionManager(DACS_BASE_URI);
-                            session.setAttribute(SESSION_MANAGER, sessionManager);
-                        }
-                    } else {
-                        logger.log(Level.FINE, "resolved username as: {0}", credential);
-                        sessionManager = new SessionManager(DACS_BASE_URI);
+            logger.log(Level.FINE, "initialized new SessionManager at: {0}", new Date());
+            sessionManager = new SessionManager(federation);
 
-                        session.setAttribute(SESSION_MANAGER, credential);
+            if (DACS_AUTH_REQUIRED) {
+                try {
+                    Credential credential = sessionManager.resolveCredentials(wrappedRequest);
+                    if (credential == null) {
+                        logger.log(Level.SEVERE, "DACS Authentication is required, but no valid credentials were found in request");
+                        throw new DacsException("DACS Authentication is required, but no valid credentials were found in request");
                     }
+                } catch (DacsException ex) {
+                    sendProcessingError(ex, response);
                 }
-            } catch (DacsException ex) {
-                sendProcessingError("Failed authenticating with DACS: " + ex.getMessage(), response);
-            } catch (Exception ex) {
-                sendProcessingError("Unknown error occured: " + ex.getMessage(), response);
+
             }
+            session.setAttribute(SESSION_MANAGER, sessionManager);
         } else {
             logger.log(Level.FINE, "found session for user: {0}", sessionManager.getUsername());
         }
@@ -214,8 +204,7 @@ public class DacsFilter implements Filter {
         if (filterConfig != null) {
             try {
                 DACS_BASE_URI = filterConfig.getInitParameter("dacs_base_uri");
-                DACS_AUTH_JURISDICTION = filterConfig.getInitParameter("dacs_auth_jurisdiction");
-                DACS_AUTH_REQUIRED = filterConfig.getInitParameter("dacs_auth_jurisdiction").equals("true");
+                DACS_AUTH_REQUIRED = filterConfig.getInitParameter("auth_required").equals("true");
                 dacsClientContext = new DacsClientContext();
                 federationLoader = new FederationLoader(DACS_BASE_URI, dacsClientContext);
                 logger.log(Level.FINE, "loading federation from {0}", DACS_BASE_URI);
