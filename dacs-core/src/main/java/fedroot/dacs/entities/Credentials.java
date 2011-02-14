@@ -14,7 +14,8 @@ import java.util.Set;
 
 
 /**
- * data type for a DACS credentials
+ * data type for wrapping a set of DACS credentials, and recording the selected
+ * credential
  * @author rmorriso
  */
 public class Credentials {
@@ -24,8 +25,9 @@ public class Credentials {
     private Credential selectedCredential;
     
     /**
-     * create new Credential from Credentials XmlBean components
-     * @param dacsjur the DacsJurisdiction XmlBean unmarshalled from the DACS dacs_current_credentials service
+     * create new Credentials wrapper from DACS Credentials XmlBean components
+     * @param federationName the DACS federation name
+     * @param federationDomain the DACS federation domain
      */
     public Credentials(String federationName, String federationDomain) {
         this.federationName = federationName;
@@ -51,6 +53,15 @@ public class Credentials {
         return credentials;
     }
 
+    public boolean hasCredential(Jurisdiction jurisdiction, String username) {
+        for (Credential credential : credentials) {
+            if (credential.getJurisdictionName().equals(jurisdiction.getJName()) && credential.getName().equals(username)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     public boolean hasCredentials() {
         return credentials.size() > 0;
     }
@@ -59,7 +70,24 @@ public class Credentials {
         credentials.add(credential);
     }
 
-    public Credential getEffectiveCredential() {
+    /**
+     * get the selected Credential; the selected Credential is the designated
+     * member of the credentials set that should be used
+     * @return
+     */
+    public Credential getSelectedCredential() {
+        return selectedCredential;
+    }
+
+    /**
+     * get the effective credential;
+     * the effective credential is the selected credential, when multiple
+     * credentials are supported; otherwise the effective credential is the singleton
+     * member of the credentials list. It is an error to have multiple credentials
+     * without a selected credential
+     * @return
+     */
+    public Credential getEffectiveCredentials() {
         if (selectedCredential != null) {
             return selectedCredential;
         } else {

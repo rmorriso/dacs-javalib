@@ -49,9 +49,9 @@ public class CredentialsLoader extends WebServiceEntityLoader {
     }
 
     /**
-     * Returns the DACS current credentials
+     * Returns the Credentials wrapper for DACS current credentials
      *
-     * @return the federation
+     * @return the Credentials wrapper
      */
     public Credentials getCredentials() {
         return this.credentials;

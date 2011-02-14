@@ -3,7 +3,7 @@
  *
  * Created on February 25, 2010, 8:43 AM
  *
- * Copyright (c) 2005 Metalogic Software Corporation.
+ * Copyright (c) 2005-2011 Metalogic Software Corporation.
  * All rights reserved. See http://fedroot.com/licenses/metalogic.txt for redistribution information.
  */
 
@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 
 /**
- * data type for a DACS jurisdiction entity
+ * data type wrapper for a DACS credential
  * @author rmorriso
  */
 public class Credential {
@@ -29,7 +29,12 @@ public class Credential {
     
     /**
      * create new Credential from Credentials XmlBean components
-     * @param dacsjur the DacsJurisdiction XmlBean unmarshalled from the DACS dacs_current_credentials service
+     * @param federationName the DACS Federation name (e.g., NFIS)
+     * @param jurisdictionName the DACS jurisdiction name (eg, NRCan)
+     * @param name the DACS credential name (eg, rmorriso)
+     * @param rolesString the DACS roles (eg, black, beautiful)
+     * @param authStyle the DACS auth style used to obtain the credential
+     * @param cookieName the DACS cookie name holding the credential (e.g., DACS:NFIS::NRCan:rmorriso)
      */
     public Credential(String federationName, String jurisdictionName, String name, String rolesString, String authStyle, String cookieName) {
         this.federationName = federationName;
@@ -55,7 +60,7 @@ public class Credential {
     }
     /**
      * standard toString() operator
-     * @return string representation of this jurisdiction
+     * @return string representation of this credential
      */
     @Override
     public String toString() {
@@ -77,6 +82,8 @@ public class Credential {
     }
 
     /**
+     * get the credential name (typically the username) associated with the
+     * credential, such as rmorriso, blow@gmail.com, etc.
      * @return the name
      */
     public String getName() {
@@ -91,6 +98,8 @@ public class Credential {
     }
 
     /**
+     * get the cookie name associated with this credential; this is useful
+     * if we need to remove the cookie from a DacsContext
      * @return the cookieName
      */
     public String getCookieName() {
