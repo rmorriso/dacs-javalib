@@ -6,6 +6,7 @@
  */
 package fedroot.demo.dacsweb;
 
+import fedroot.dacs.DacsUtil;
 import fedroot.dacs.entities.Credential;
 import fedroot.dacs.entities.Federation;
 import fedroot.dacs.entities.FederationLoader;
@@ -123,7 +124,7 @@ public class DacsFilter implements Filter {
         }
 
         SessionManager sessionManager = (SessionManager) session.getAttribute(SESSION_MANAGER);
-        if (sessionManager == null) {
+        if (sessionManager == null || sessionIsStale(sessionManager, wrappedRequest)) {
             logger.log(Level.FINE, "initialized new SessionManager at: {0}", new Date());
             sessionManager = new SessionManager(federation);
 
@@ -168,6 +169,20 @@ public class DacsFilter implements Filter {
             }
             sendProcessingError(problem, response);
         }
+    }
+
+    /**
+     * the session is stale if the credential in the session differs in name or
+     * age (TBD) from the credential in the request
+     * Note: this should handle the case of a change in the selected credential
+     * @param sessionManager
+     * @param wrappedRequest
+     * @return
+     */
+    private boolean sessionIsStale(SessionManager sessionManager, RequestWrapper wrappedRequest) {
+        Credential credential = sessionManager.getSelectedCredential();
+        String cookieName = credential.getCookieName();
+        return ! DacsUtil.hasCookie(cookieName, wrappedRequest);
     }
 
     /**
