@@ -63,6 +63,23 @@ public class DacsUtil {
         return (effectiveCredential != null ? effectiveCredential.getName() : null);
     }
 
+    public static boolean hasCookie(String searchName, HttpServletRequest request) {
+        Enumeration cookieHeaders = getCookieHeaders(request);
+        while (cookieHeaders.hasMoreElements()) {
+            String cookieHeader = (String) cookieHeaders.nextElement();
+            Pattern name = Pattern.compile("(DACS:[:\\w]+[\\w][\\w\\-]*[\\.]{0,1}[\\w\\-]*[@[A-Za-z0-9-]+\\.+[A-Za-z]{2,4}]*)=([-\\w]+)", Pattern.CASE_INSENSITIVE);
+            Matcher nameMatcher = name.matcher(cookieHeader);
+            while (nameMatcher.find()) {
+                String cookieName = nameMatcher.group(1);
+                if (cookieName != null && cookieName.equals(searchName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
     /**
      * get DACS cookies matching @param domain found in @param request
      * Note that this method fails in Servlet 3.x and above due to non-standard

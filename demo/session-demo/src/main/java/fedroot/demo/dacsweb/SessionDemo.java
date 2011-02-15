@@ -31,7 +31,7 @@ public class SessionDemo extends WebService {
     // TODO do value checking for parameters in ParameterValidation (data type and enumerated value sets)
     private enum RequestType {
 
-        federation_details, info, logout
+        federation_details, info, reset
     }
 
     @Override
@@ -68,7 +68,7 @@ public class SessionDemo extends WebService {
                             out.println("No effective DACS credential is set in SessionManager.");
                         }
                         break;
-                    case logout:
+                    case reset:
                         if (sessionManager != null) {
                             serviceContext.removeSessionAttribute(SESSION_MANAGER);
                             out.println("removed SessionManager " + sessionManager + " from session");
