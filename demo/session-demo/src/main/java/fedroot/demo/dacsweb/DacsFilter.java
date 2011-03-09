@@ -54,7 +54,6 @@ import javax.servlet.http.HttpSession;
 //    @WebFilter(filterName = "DacsFilter", urlPatterns = "/*",
 initParams = {
     @WebInitParam(name = "dacs_base_uri", value = "https://test.nfis.org/dacs"),
-    @WebInitParam(name = "session_user_role", value = "dacsUserRole"),
     @WebInitParam(name = "auth_required", value = "true")})
 public class DacsFilter implements Filter {
 
@@ -133,7 +132,7 @@ public class DacsFilter implements Filter {
                     Credential credential = sessionManager.resolveCredentials(wrappedRequest);
                     if (credential == null) {
                         logger.log(Level.SEVERE, "DACS Authentication is required, but no valid credentials were found in request");
-                        throw new DacsException("DACS Authentication is required, but no valid credentials were found in request");
+                        throw new DacsException("DACS Authentication is required, but no valid credentials were found in request. Check that this resource is DACS wrapped.");
                     }
                 } catch (DacsException ex) {
                     sendProcessingError(ex, response);

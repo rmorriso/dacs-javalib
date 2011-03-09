@@ -65,7 +65,7 @@
         </repository>
         <repository>
             <id>fedroot</id>
-            <name>Repository hosting the jee6 artifacts</name>
+            <name>Repository hosting the fedroot.com artifacts</name>
             <url>https://fedroot.com/nexus/content/repositories/fedroot</url>
         </repository>
     </repositories>
@@ -79,7 +79,7 @@
         <dependency>
             <groupId>com.fedroot</groupId>
             <artifactId>fedroot-common</artifactId>
-            <version>1.13-SNAPSHOT</version>
+            <version>1.14-SNAPSHOT</version>
         </dependency>
         <dependency>
         <groupId>com.fedroot</groupId>

@@ -78,7 +78,7 @@ public class SessionDemo extends WebService {
                         break;
                 }
             } else {
-                throw new IllegalArgumentException("request must be one of " + "info or logout");
+                throw new IllegalArgumentException("request must be one of " + "info or reset");
             }
         } else {
             out.println("No SessionManager found in session");

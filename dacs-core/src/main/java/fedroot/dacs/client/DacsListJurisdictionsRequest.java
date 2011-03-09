@@ -35,6 +35,6 @@ public class DacsListJurisdictionsRequest extends DacsWebServiceRequest {
      */
     @Override
     public ParameterValidators getParameterValidators() {
-        return null;
+        return new ParameterValidators();
     }
 }
