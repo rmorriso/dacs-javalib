@@ -20,9 +20,9 @@ import fedroot.servlet.WebServiceRequest;
 public class DacsCheckRequest extends WebServiceRequest {
 
     public enum args {
-
         DACS_ACS
     };
+    
     private boolean checkOnly;
 
     public DacsCheckRequest(String uri) {

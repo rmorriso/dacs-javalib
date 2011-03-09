@@ -28,19 +28,18 @@ abstract public class WebServiceEntityLoader {
     private static final Logger logger = Logger.getLogger(WebServiceEntityLoader.class.getName());
 
     private WebServiceRequest webServiceRequest;
-    private HttpRequestType httpRequestType;
 
     /**
      * subclasses are expected to initialize the appropriate DacsWebServiceRequest
      */
     public WebServiceEntityLoader(WebServiceRequest webServiceRequest) {
-        // default request type is GET
         this(webServiceRequest, HttpRequestType.GET);
     }
 
     public WebServiceEntityLoader(WebServiceRequest webServiceRequest, HttpRequestType httpRequestType) {
         this.webServiceRequest = webServiceRequest;
-        this.httpRequestType = httpRequestType;
+        this.webServiceRequest.setHttpRequestType(httpRequestType);
+        this.webServiceRequest.validate();
     }
 
     /**

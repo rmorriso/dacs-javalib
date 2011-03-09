@@ -18,7 +18,6 @@ import fedroot.dacs.http.DacsClientContext;
  */
 public class FederationLoader extends WebServiceEntityLoader {
 
-    private DacsListJurisdictionsRequest dacsListJurisdictionsRequest;
     private Federation federation;
 
     public FederationLoader(String dacsUrl, DacsClientContext dacsClientContext) throws DacsException {
