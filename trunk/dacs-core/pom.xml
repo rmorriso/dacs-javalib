@@ -5,7 +5,7 @@
     <groupId>com.fedroot</groupId>
     <artifactId>dacs-core</artifactId>
     <packaging>jar</packaging>
-    <version>0.63-SNAPSHOT</version>
+    <version>0.64-SNAPSHOT</version>
     <name>dacs-core</name>
     <url>http://maven.apache.org</url>
     <build>
@@ -85,6 +85,18 @@
         <groupId>com.fedroot</groupId>
             <artifactId>dacs-xmlbeans</artifactId>
             <version>1.4.25</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.1-alpha2</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+            <version>4.1-beta1</version>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
