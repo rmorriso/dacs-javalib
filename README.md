@@ -9,8 +9,14 @@ web easier, safer, and more efficient.
 DACS is particularly well suited to providing single sign-on across organizational or departmental web servers, 
 and to limiting access to their web-based resources.
 
-The dcs-javaliub project was developed to permit Java applications (server and client) to access DACS-wrapped 
+The dacs-javaliub project was developed to permit Java applications (server and client) to access DACS-wrapped 
 web sites and REST APIs.
+
+*Status*
+
+This project has withered on the vine for almost 5 years while development on the DACS project has continued apace.
+
+Please don't don't expect anything to work. 
 
 
 
